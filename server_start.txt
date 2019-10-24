@@ -1,0 +1,6 @@
+commands:
+//start backend server with nodemon
+npm run server
+
+//local mongodb connection
+connect to local db using TEST_DB_URI
