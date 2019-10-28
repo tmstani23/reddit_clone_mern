@@ -7,6 +7,9 @@ const bodyParser = require("body-parser");
 const db = process.env.DATABASE_URL;
 const testDB = process.env.TEST_DB_URI;
 
+const passport = require("passport");
+const users = require("./routes/api/users.js");
+
 console.log(db);
 
 // Bodyparser middleware
@@ -27,8 +30,16 @@ mongoose
   .then(() => console.log("MongoDB successfully connected"))
   .catch(err => console.log(err));
 
+//passport middleware
+app.use(passport.initialize());
+
+//Passport config
+require("./config/passport.js")(passport);
+
+//Routes
+app.use("/api/users", users);
 
 
-app.get('/', (req, res) => res.send('Hello World!'));
+//app.get('/', (req, res) => res.send('Hello World!'));
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
