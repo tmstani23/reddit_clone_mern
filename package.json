@@ -22,7 +22,10 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
+    "client": "0.0.1",
     "concurrently": "^5.0.0",
+    "cors": "^2.8.5",
+    "create-react-app": "^3.2.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "is-empty": "^1.2.0",
@@ -32,5 +35,4 @@
     "passport-jwt": "^4.0.0",
     "validator": "^11.1.0"
   }
-  
 }
