@@ -10,20 +10,9 @@ const cors = require("cors");
 
 const passport = require("passport");
 const users = require("./routes/api/users.js");
-const routeIndex = require("./routes/api/routeIndex.js");
 const path = require('path');
 
 console.log(db);
-
-// Bodyparser middleware
-app.use(
-  bodyParser.urlencoded({
-    extended: false
-  })
-);
-app.use(bodyParser.json());
-//cors middleware
-app.use(cors());
 
 //Initialize mongoose connection with cloud db server
 // Connect to MongoDB
@@ -35,6 +24,18 @@ mongoose
   .then(() => console.log("MongoDB successfully connected"))
   .catch(err => console.log(err));
 
+// Bodyparser middleware
+app.use(
+  bodyParser.urlencoded({
+    extended: false
+  })
+);
+app.use(bodyParser.json());
+//cors middleware
+app.use(cors());
+
+
+
 //passport middleware
 app.use(passport.initialize());
 
@@ -42,13 +43,12 @@ app.use(passport.initialize());
 require("./config/passport.js")(passport);
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.static(path.join(__dirname, '../client')));
 
 //Routes
-app.use("/api/users", users);
-app.use("/api/routeIndex", routeIndex);
+app.use("/", users);
 
 //root route
-app.get('/', (req, res) => res.send('backend server working at root!'));
+//app.get('/', (req, res) => res.send('backend server working at root!'));
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

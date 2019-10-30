@@ -7,18 +7,6 @@ class App extends Component {
     apiResponse: ""
   }
 
-  componentDidMount() {
-    this.callApi()
-  }
-
-  callApi = () => {
-    fetch("http://localhost:5000/api/routeIndex")
-      .then(res => res.text())
-      .then(res => this.setState({apiResponse: res}))
-      .catch(err => err);
-  }
-
-  
   render () {
     return (
       <div className="App">
@@ -41,8 +29,18 @@ class UserRegisterComponent extends Component {
     dataReturned: null,
     apiLoginResponse: []
   }
+  
+  handleSubmit = (event) => {
+    //If handleSubmit was called by user clicking submit button in form
+    
+      //Prevent default action
+    event.preventDefault();
+      
+  
+    // initialize data returned state to false:
+    this.setState({dataReturned: false})
+    console.log(JSON.stringify(this.state), "beforefetch state")
 
-  callLoginApi = () => {
     fetch('/api/users/register', {
       method: 'POST',
       headers: {
@@ -58,20 +56,6 @@ class UserRegisterComponent extends Component {
         this.setState({apiLoginResponse: res, dataReturned: !this.state.dataReturned})
       })
       .catch(err => console.log(err))
-  }
-  handleSubmit = (event) => {
-    //If handleSubmit was called by user clicking submit button in form
-    if(event) {
-      //Prevent default action
-      event.preventDefault();
-      //Reset skip to 0
-      // if(event.target.type == undefined) {
-      //   await this.setState({skip: 0});
-      // }
-    }
-    // initialize data returned state to false:
-    this.setState({dataReturned: false})
-    this.callLoginApi();
   }
 
   handleChange = (event) => {

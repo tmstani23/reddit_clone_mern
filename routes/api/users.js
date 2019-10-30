@@ -17,7 +17,7 @@ const User = require("../../models/User");
 // @access Public
 
 //post route for the register page
-router.post("/register", (req, res) => {
+router.post("/api/users/register", (req, res) => {
     //Form validation
     //Pass the register form body to the validateRegisterInput function
         //and save the resulting objects as variables
@@ -65,7 +65,7 @@ router.post("/register", (req, res) => {
 // @desc Login user and return JWT token
 // @access Public
 
-router.post("/login", (req, res) => {
+router.post("/api/users/login", (req, res) => {
     //Form validation
     const {errors, isValid} = validateLoginInput(req.body);
     const secretOrKey = process.env.secretOrKey;
