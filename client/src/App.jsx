@@ -83,7 +83,7 @@ class UserRegisterComponent extends Component {
           </form>
           
           <UserLoginComponent/>
-          {this.state.dataReturned===true
+          {this.state.dataReturned===true && this.state.apiLoginResponse.error === undefined
             ? <div>
                 <h1>Account Created</h1>
                 <ul>

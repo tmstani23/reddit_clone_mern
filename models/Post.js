@@ -1,26 +1,6 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const schemas = require('./schemas.js');
 
-//schema for a post
-const PostSchema = new Schema ({
-    uid: {
-        type: String,
-        required: true,
-    },
-    description: {
-        type: String,
-        required: true,
-    },
-    duration: {
-        type: Number,
-        required: true,
-    },
-    date: {
-        type: Date,
-        default: Date.now,
-    },
-})
-
-
-module.exports = Post = mongoose.model("posts", PostSchema);
+//Export the Post model
+module.exports = Post = mongoose.model("posts", schemas.PostSchema);
 

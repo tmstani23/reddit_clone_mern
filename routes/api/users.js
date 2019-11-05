@@ -27,14 +27,18 @@ router.post("/api/users/register", (req, res) => {
     //check if register form inputs are valid
     if (!isValid) {
         //if invalid return errors as json
-        return res.status(400).json(errors);
+        return res.send(
+            {error: JSON.stringify(errors)}
+        );
     }
     //Search User email fields for existing email
     User.findOne({email: req.body.email})
         .then(user => {
             //if email already exists return email exists response
             if (user) {
-                return res.status(400).json({email: "Email already exists"});
+                return res.status(400).send({
+                    error: {email: "Email already exists"}
+                });
             }
             //Else create a new user and update all the required fields from the form body
             else {
@@ -53,7 +57,7 @@ router.post("/api/users/register", (req, res) => {
                         newUser
                             .save()
                             //return the new user as a response
-                            .then(user => res.json(user))
+                            .then(user => res.send(user))
                             .catch(err => console.log(err));
                     });
                 });
@@ -84,7 +88,9 @@ router.post("/api/users/login", (req, res) => {
         .then(user => {
             //If user doesnt exist send an error
             if (!user) {
-                return res.status(404).json({emailnotfound: "Email not found"})
+                return res.status(404).send({
+                    error: {emailnotfound: "Email not found"}
+                })
             }
 
             //Check password
@@ -106,7 +112,7 @@ router.post("/api/users/login", (req, res) => {
                                 expiresIn: 31556926
                             },
                             (err, token) => {
-                                res.json({
+                                res.send({
                                     success: true,
                                     token: "Bearer" + token
                                 })
@@ -114,7 +120,9 @@ router.post("/api/users/login", (req, res) => {
                         )
                     }
                     else {
-                        return res.status(400).json({passwordincorrect: "Password incorrect"});
+                        return res.status(400).send({ 
+                            error: {passwordincorrect: "Password incorrect"}
+                        });
                     }
                     
                 })
