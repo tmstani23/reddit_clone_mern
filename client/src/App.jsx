@@ -83,7 +83,7 @@ class UserRegisterComponent extends Component {
           </form>
           
           <UserLoginComponent/>
-          {this.state.dataReturned===true && this.state.apiLoginResponse.error === undefined
+          {this.state.dataReturned===true && this.state.apiLoginResponse.errors === undefined
             ? <div>
                 <h1>Account Created</h1>
                 <ul>
@@ -92,6 +92,10 @@ class UserRegisterComponent extends Component {
                 </ul> 
                 
               </div>
+            : null
+          }
+          {this.state.apiLoginResponse.errors !== undefined
+            ? <RenderErrors errors = {this.state.apiLoginResponse.errors} />
             : null
           }
           {this.state.dataReturned === false
@@ -164,7 +168,7 @@ class UserLoginComponent extends Component {
             <input id="inputPass2" type="text" name="password2" placeholder="enter password again"/>
             <input className ="submit-input" type="submit" name="submitButton" value="Submit"/>
           </form>
-          {this.state.dataReturned===true
+          {this.state.dataReturned===true && this.state.apiLoginResponse.errors === undefined
             ? <div>
                 <h1>User Logged In</h1>
                 <ul>
@@ -174,6 +178,10 @@ class UserLoginComponent extends Component {
               </div>
             : null
           }
+          {this.state.apiLoginResponse.errors !== undefined
+            ? <RenderErrors errors = {this.state.apiLoginResponse.errors} />
+            : null
+          }
           {this.state.dataReturned === false
             ? <Loading />
             : null
@@ -181,6 +189,29 @@ class UserLoginComponent extends Component {
       </div>
     ) 
   }
+}
+
+function RenderErrors(props) {
+  let errors = props.errors;
+  let errorArr = [];
+  //extract all error values into an array
+  for (var property in errors) {
+    errorArr.push(errors[property]);
+  }
+
+  //map each error to a list item
+  const errorList = errorArr.map((item, index) => {
+    return <ul key={index}>
+      <li>{item}</li>
+    </ul>
+  })
+  //return the error list with a heading as jsx
+  return (
+    <div>
+      <h2>Errors with input:</h2>
+      {errorList}
+    </div>
+  )
 }
 
 //Component to handle loading states when fetching data:

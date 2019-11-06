@@ -27,9 +27,8 @@ router.post("/api/users/register", (req, res) => {
     //check if register form inputs are valid
     if (!isValid) {
         //if invalid return errors as json
-        return res.send(
-            {error: JSON.stringify(errors)}
-        );
+        //JSON.stringify(errors)
+        return res.send({errors: errors});
     }
     //Search User email fields for existing email
     User.findOne({email: req.body.email})
@@ -37,7 +36,7 @@ router.post("/api/users/register", (req, res) => {
             //if email already exists return email exists response
             if (user) {
                 return res.status(400).send({
-                    error: {email: "Email already exists"}
+                    errors: {email: "Email already exists"}
                 });
             }
             //Else create a new user and update all the required fields from the form body
@@ -77,7 +76,7 @@ router.post("/api/users/login", (req, res) => {
     const secretOrKey = process.env.secretOrKey;
     //Check validation
     if(!isValid) {
-        return res.status(400).json(errors);
+        return res.status(400).json({errors: errors});
     }
     //Extract email and pass from the login form fields
     const email = req.body.email;
@@ -89,7 +88,7 @@ router.post("/api/users/login", (req, res) => {
             //If user doesnt exist send an error
             if (!user) {
                 return res.status(404).send({
-                    error: {emailnotfound: "Email not found"}
+                    errors: {emailnotfound: "Email not found"}
                 })
             }
 
@@ -121,7 +120,7 @@ router.post("/api/users/login", (req, res) => {
                     }
                     else {
                         return res.status(400).send({ 
-                            error: {passwordincorrect: "Password incorrect"}
+                            errors: {passwordincorrect: "Password incorrect"}
                         });
                     }
                     

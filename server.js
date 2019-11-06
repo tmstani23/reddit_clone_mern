@@ -9,7 +9,7 @@ const testDB = process.env.TEST_DB_URI;
 const cors = require("cors");
 
 const passport = require("passport");
-const users = require("./routes/api/users.js");
+const users = require("./routes/api/endpoints.js");
 const path = require('path');
 
 console.log(db);
