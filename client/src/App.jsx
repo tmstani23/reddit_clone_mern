@@ -173,6 +173,7 @@ class UserLoginComponent extends Component {
                 <h1>User Logged In</h1>
                 <ul>
                   <li><strong>Name:</strong>  {this.state.name}</li>
+                  <li><strong>User Id:</strong>  {this.state.apiLoginResponse.userId}</li>
                   <li><strong>Token:</strong> {this.state.apiLoginResponse.token}</li>
                 </ul> 
               </div>

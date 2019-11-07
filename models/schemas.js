@@ -12,10 +12,6 @@ const PostSchema = new Schema ({
         type: String,
         required: true,
     },
-    duration: {
-        type: Number,
-        required: true,
-    },
     date: {
         type: Date,
         default: Date.now,
@@ -26,7 +22,8 @@ const PostSchema = new Schema ({
 const UserSchema = new Schema ({
     name: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     email: {
         type: String,
@@ -39,6 +36,9 @@ const UserSchema = new Schema ({
     date: {
         type: Date,
         default: Date.now
+    },
+    token: {
+        type: String
     },
     posts: [PostSchema]
 })

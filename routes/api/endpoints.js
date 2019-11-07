@@ -103,20 +103,29 @@ router.post("/api/users/login", (req, res) => {
                         };
 
                         //Sign token
-                        jwt.sign(
+                        let token = jwt.sign(
                             payload,
                             secretOrKey,
                             {
                                 //expires in 1 year and seconds
                                 expiresIn: 31556926
-                            },
-                            (err, token) => {
-                                res.send({
-                                    success: true,
-                                    token: "Bearer" + token
-                                })
                             }
+                            
                         )
+
+                        //update user object with new token
+                        user.token = token;
+                        //save user
+                        user.save((err) => {
+                            err ? console.log(err) : console.log("Success!  Token added to user", JSON.stringify(user));
+                        })
+
+                        return res.send({
+                                userId: user.id,
+                                success: true,
+                                token: "Bearer" + token
+                            })
+                        
                     }
                     else {
                         return res.status(400).send({ 
@@ -131,4 +140,31 @@ router.post("/api/users/login", (req, res) => {
 
 })
 
+//route for creating posts
+router.post("/api/users/create_post", (req, res) => {
+    //extract user post fields from request
+    const postUid = req.body.uid;
+    const postDescription = req.body.description;
+    const inputToken = req.body.token;
+
+    //search db by id for User
+        //compare user token against inputToken
+        
+
+
+    let newPost = new Post({
+        uid: postUid,
+        description: postDescription
+    })
+
+    //save new post to the database
+    newPost.save(
+        (err, newPost) => err
+            ? res.send({
+                errors: {error: err.message}
+            }) 
+            : res.send({description: postDescription, postId: newPost._id})
+    )
+
+}) 
 module.exports = router;
