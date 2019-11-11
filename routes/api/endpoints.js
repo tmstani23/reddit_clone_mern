@@ -148,23 +148,45 @@ router.post("/api/users/create_post", (req, res) => {
     const inputToken = req.body.token;
 
     //search db by id for User
+    User.findById(id, (err, user) => {
+        if (err) {
+            console.log(err);
+            res.send({errors: {error: err.message}})
+        }
+
         //compare user token against inputToken
+        //if not a match
+        if (user.token !== inputToken) {
+            //return error
+            console.log("input token doesn't match user token in db");
+            res.send({errors: {error: "User not logged in."}});
+        } 
+        
+        //create new post and update its uid field and description from the form.
+        let newPost = new Post({
+            uid: postUid,
+            description: postDescription
+        })
+
+        //save new post to the database
+        newPost.save(
+            (err, newPost) => err
+                ? res.send({
+                    errors: {error: err.message}
+                }) 
+                : res.send({description: postDescription, postId: newPost._id})
+        )
         
 
-
-    let newPost = new Post({
-        uid: postUid,
-        description: postDescription
+        //Add new post to current user's list post array.
+        user.posts.push(newPost);
+        //Save current user back to the database and return user and new log as json
+        user.save((err) => {
+            err ? console.log(err) : res.json({userData: user, newLog: user.posts[user.posts.length - 1]})
+        })
     })
 
-    //save new post to the database
-    newPost.save(
-        (err, newPost) => err
-            ? res.send({
-                errors: {error: err.message}
-            }) 
-            : res.send({description: postDescription, postId: newPost._id})
-    )
+        
 
 }) 
 module.exports = router;
