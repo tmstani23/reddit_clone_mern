@@ -145,10 +145,11 @@ router.post("/api/users/create_post", (req, res) => {
     //extract user post fields from request
     const postUid = req.body.uid;
     const postDescription = req.body.description;
+    const postTitle = req.body.title;
     const inputToken = req.body.token;
 
     //search db by id for User
-    User.findById(id, (err, user) => {
+    User.findById(postUid, (err, user) => {
         if (err) {
             console.log(err);
             res.send({errors: {error: err.message}})
@@ -165,7 +166,8 @@ router.post("/api/users/create_post", (req, res) => {
         //create new post and update its uid field and description from the form.
         let newPost = new Post({
             uid: postUid,
-            description: postDescription
+            description: postDescription,
+            title: postTitle
         })
 
         //save new post to the database
@@ -174,7 +176,7 @@ router.post("/api/users/create_post", (req, res) => {
                 ? res.send({
                     errors: {error: err.message}
                 }) 
-                : res.send({description: postDescription, postId: newPost._id})
+                : console.log("new post created")
         )
         
 
@@ -182,7 +184,14 @@ router.post("/api/users/create_post", (req, res) => {
         user.posts.push(newPost);
         //Save current user back to the database and return user and new log as json
         user.save((err) => {
-            err ? console.log(err) : res.json({userData: user, newLog: user.posts[user.posts.length - 1]})
+            err ? console.log(err) : res.json({apiPostResponse: {
+                user: user, 
+                newPost: user.posts[user.posts.length - 1],
+                title: postTitle,
+                postId: newPost.id,
+            }
+                
+            })
         })
     })
 

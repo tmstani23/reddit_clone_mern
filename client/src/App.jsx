@@ -176,11 +176,94 @@ class UserLoginComponent extends Component {
                   <li><strong>User Id:</strong>  {this.state.apiLoginResponse.userId}</li>
                   <li><strong>Token:</strong> {this.state.apiLoginResponse.token}</li>
                 </ul> 
+                <CreatePostComponent uid = {this.state.apiLoginResponse.userId} />
               </div>
             : null
           }
           {this.state.apiLoginResponse.errors !== undefined
             ? <RenderErrors errors = {this.state.apiLoginResponse.errors} />
+            : null
+          }
+          {this.state.dataReturned === false
+            ? <Loading />
+            : null
+          }
+      </div>
+    ) 
+  }
+}
+
+class CreatePostComponent extends Component {
+  
+  state = {
+    uid: this.props.uid,
+    inputToken: "",
+    dataReturned: null,
+    apiPostResponse: []
+  }
+
+  handleSubmit = (event) => {
+    //If handleSubmit was called by user clicking submit button in form
+    
+      //Prevent default action
+    event.preventDefault();
+      
+  
+    // initialize data returned state to false:
+    this.setState({dataReturned: false})
+    console.log(JSON.stringify(this.state), "beforefetch state")
+
+    fetch('http://localhost:4000/api/users/create_post', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      }, 
+      body: JSON.stringify(this.state),
+    })
+      .then(res => res.json())
+      .then(res => {
+        console.log(res, "afterfetch state")
+        
+        // update state with the returned data and set data returned flag to true
+        this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
+      })
+      .catch(err => console.log(err))
+  }
+
+  handleChange = (event) => {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+
+    this.setState({
+      [name]: value
+    });
+    
+  }
+
+  render() {
+    return (
+      // display register form or else success message and login form if registered
+      <div className="post-form">
+        <form onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
+            <h3>Create Post:</h3>
+            <input id="inputTitle" type="text" name="title" placeholder="Title"/>
+            <input id="inputBody" type="text" name="description" placeholder="Text"/>
+            <input className ="submit-input" type="submit" name="submitButton" value="Submit"/>
+          </form>
+          {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
+            ? <div>
+                <h1>Post Created</h1>
+                <ul>
+                  <li><strong>Post Description:</strong>  {this.state.apiPostResponse.postDescription}</li>
+                  <li><strong>User Id:</strong>  {this.state.apiPostResponse.userId}</li>
+                  
+                </ul> 
+              </div>
+            : null
+          }
+          {this.state.apiPostResponse.errors !== undefined
+            ? <RenderErrors errors = {this.state.apiPostResponse.errors} />
             : null
           }
           {this.state.dataReturned === false
