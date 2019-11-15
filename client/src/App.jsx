@@ -176,7 +176,7 @@ class UserLoginComponent extends Component {
                   <li><strong>User Id:</strong>  {this.state.apiLoginResponse.userId}</li>
                   <li><strong>Token:</strong> {this.state.apiLoginResponse.token}</li>
                 </ul> 
-                <CreatePostComponent uid = {this.state.apiLoginResponse.userId} />
+                <CreatePostComponent token = {this.state.apiLoginResponse.token} uid = {this.state.apiLoginResponse.userId} />
               </div>
             : null
           }
@@ -197,7 +197,7 @@ class CreatePostComponent extends Component {
   
   state = {
     uid: this.props.uid,
-    inputToken: "",
+    token: this.props.token,
     dataReturned: null,
     apiPostResponse: []
   }

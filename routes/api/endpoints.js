@@ -159,7 +159,7 @@ router.post("/api/users/create_post", (req, res) => {
         //if not a match
         if (user.token !== inputToken) {
             //return error
-            console.log("input token doesn't match user token in db");
+            console.log(`User token doesn't match or exist.  User token: ${user.token}`);
             res.send({errors: {error: "User not logged in."}});
         } 
         
