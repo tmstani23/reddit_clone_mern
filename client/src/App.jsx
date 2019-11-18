@@ -255,8 +255,10 @@ class CreatePostComponent extends Component {
             ? <div>
                 <h1>Post Created</h1>
                 <ul>
-                  <li><strong>Post Description:</strong>  {this.state.apiPostResponse.postDescription}</li>
-                  <li><strong>User Id:</strong>  {this.state.apiPostResponse.userId}</li>
+                <li><strong>Post Title:</strong>  {this.state.apiPostResponse.title}</li>
+                  <li><strong>Post Description:</strong>  {this.state.apiPostResponse.newPost.description}</li>
+                  <li><strong>Post Id:</strong>  {this.state.apiPostResponse.postId}</li>
+                  <li><strong>Post Date:</strong>  {this.state.apiPostResponse.date}</li>
                   
                 </ul> 
               </div>

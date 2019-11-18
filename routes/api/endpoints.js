@@ -123,7 +123,7 @@ router.post("/api/users/login", (req, res) => {
                         return res.send({
                                 userId: user.id,
                                 success: true,
-                                token: "Bearer" + token
+                                token: token
                             })
                         
                     }
@@ -157,9 +157,9 @@ router.post("/api/users/create_post", (req, res) => {
 
         //compare user token against inputToken
         //if not a match
-        if (user.token !== inputToken) {
+        if (user.token != inputToken) {
             //return error
-            console.log(`User token doesn't match or exist.  User token: ${user.token}`);
+            console.log(`User token doesn't match or exist.  User token: ${user.token} Input Token: ${inputToken}`);
             res.send({errors: {error: "User not logged in."}});
         } 
         
@@ -184,18 +184,20 @@ router.post("/api/users/create_post", (req, res) => {
         user.posts.push(newPost);
         //Save current user back to the database and return user and new log as json
         user.save((err) => {
-            err ? console.log(err) : res.json({apiPostResponse: {
+            err ? console.log(err) : res.json({
                 user: user, 
                 newPost: user.posts[user.posts.length - 1],
                 title: postTitle,
+                description: newPost.description,
                 postId: newPost.id,
-            }
-                
+                postDate: newPost.date
             })
+                
+            
         })
     })
 
         
 
-}) 
+})
 module.exports = router;
