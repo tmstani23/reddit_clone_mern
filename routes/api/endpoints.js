@@ -197,7 +197,19 @@ router.post("/api/users/create_post", (req, res) => {
         })
     })
 
-        
+})
+
+router.get("/api/users/get_posts", (req, res) => {
+    Post.find({})
+    .sort({date: 'desc'})
+    .limit(10)
+    .exec((err, posts) => {
+        if (err) {
+            console.log(err);
+            res.send({errors: {error: err.message}})
+        }
+        res.json({latestPosts: posts})
+    })
 
 })
 module.exports = router;

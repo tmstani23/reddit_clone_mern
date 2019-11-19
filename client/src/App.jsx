@@ -19,6 +19,49 @@ class App extends Component {
   }
 }
 
+class GetPostsComponent extends Component {
+  state = {
+    apiPostResponse: [],
+    dataReturned: false
+  }
+  
+  componentDidMount() {
+    this.callApi()
+  }
+
+  callApi = () => {
+    // initialize data returned state to false:
+    console.log(JSON.stringify(this.state), "beforefetch state")
+    fetch('http://localhost:4000/api/users/get_posts', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      }, 
+      body: JSON.stringify(this.state),
+    })
+      .then(res => res.json())
+      .then(res => {
+        console.log(res, "afterfetch state")
+        
+        // update state with the returned data and set data returned flag to true
+        this.setState({apiLoginResponse: res, dataReturned: !this.state.dataReturned})
+      })
+      .catch(err => console.log(err))
+  }
+  
+    
+    
+  render() {
+    return (
+      <div>
+        <DisplayPostsComponent posts = {this.apiPostResponse} />
+      </div>
+    )
+  }
+  
+
+}
+
 //user register component
 class UserRegisterComponent extends Component {
   state = {
