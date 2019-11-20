@@ -4,7 +4,28 @@ import './App.css';
 
 class App extends Component {
   state = {
-    apiResponse: ""
+    apiPostResponse: "",
+    dataReturned: null
+  }
+  componentDidMount(){
+    this.callApi();
+  }
+  callApi = () => {
+    // initialize data returned state to false:
+    this.setState({dataReturned: false});
+    console.log(JSON.stringify(this.state), "beforefetch state");
+
+    fetch('http://localhost:4000/api/users/get_posts', {
+      method: 'GET'
+    })
+      .then(res => res.json())
+      .then(res => {
+        // update state with the returned data and set data returned flag to true
+        this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
+        //console.log(JSON.stringify(this.state), "afterfetch state")
+        
+      })
+      .catch(err => console.log(err))
   }
 
   render () {
@@ -14,6 +35,7 @@ class App extends Component {
           <h1> Welcome to React </h1>
         </header>
         <UserRegisterComponent/>
+        <GetPostsComponent updatePosts = {this.callApi}/>
       </div>
     )
   }
@@ -22,44 +44,54 @@ class App extends Component {
 class GetPostsComponent extends Component {
   state = {
     apiPostResponse: [],
-    dataReturned: false
+    dataReturned: null
   }
   
   componentDidMount() {
-    this.callApi()
+    this.props.updatePosts();
   }
 
-  callApi = () => {
-    // initialize data returned state to false:
-    console.log(JSON.stringify(this.state), "beforefetch state")
-    fetch('http://localhost:4000/api/users/get_posts', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      }, 
-      body: JSON.stringify(this.state),
-    })
-      .then(res => res.json())
-      .then(res => {
-        console.log(res, "afterfetch state")
-        
-        // update state with the returned data and set data returned flag to true
-        this.setState({apiLoginResponse: res, dataReturned: !this.state.dataReturned})
-      })
-      .catch(err => console.log(err))
-  }
   
-    
-    
+  
   render() {
     return (
+     
       <div>
-        <DisplayPostsComponent posts = {this.apiPostResponse} />
+        {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
+          ? <DisplayPostsComponent posts = {this.state.apiPostResponse} />
+          : null
+        }
+        {this.state.apiPostResponse.errors !== undefined
+          ? <RenderErrors errors = {this.state.apiPostResponse.errors} />
+          : null
+        }
+        {this.state.dataReturned === false
+          ? <Loading />
+          : null
+        }
       </div>
     )
   }
-  
+}
 
+function DisplayPostsComponent(props) {
+  let postListArr = props.posts.latestPosts;
+  console.log(JSON.stringify(props.posts.latestPosts));
+  
+  const postList = postListArr.map((item, index) => {
+    return <ul key={index}>
+      <li>Title: {item.title}</li>
+      <li>Body: {item.description}</li>
+      <li>Date: {item.date}</li>
+      <li>User: {item.uid}</li>
+    </ul>
+  })
+  return (
+    <ul>
+      <h1>Post List:</h1>
+      {postList}
+    </ul>
+  )
 }
 
 //user register component
@@ -301,7 +333,7 @@ class CreatePostComponent extends Component {
                 <li><strong>Post Title:</strong>  {this.state.apiPostResponse.title}</li>
                   <li><strong>Post Description:</strong>  {this.state.apiPostResponse.newPost.description}</li>
                   <li><strong>Post Id:</strong>  {this.state.apiPostResponse.postId}</li>
-                  <li><strong>Post Date:</strong>  {this.state.apiPostResponse.date}</li>
+                  <li><strong>Post Date:</strong>  {this.state.apiPostResponse.postDate}</li>
                   
                 </ul> 
               </div>
