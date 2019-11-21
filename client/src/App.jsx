@@ -8,7 +8,7 @@ class App extends Component {
     dataReturned: null
   }
   componentDidMount(){
-    this.callApi();
+    this.callApi()
   }
   callApi = () => {
     // initialize data returned state to false:
@@ -22,7 +22,7 @@ class App extends Component {
       .then(res => {
         // update state with the returned data and set data returned flag to true
         this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
-        //console.log(JSON.stringify(this.state), "afterfetch state")
+        console.log(JSON.stringify(this.state), "afterfetch state")
         
       })
       .catch(err => console.log(err))
@@ -35,28 +35,9 @@ class App extends Component {
           <h1> Welcome to React </h1>
         </header>
         <UserRegisterComponent/>
-        <GetPostsComponent updatePosts = {this.callApi}/>
-      </div>
-    )
-  }
-}
-
-class GetPostsComponent extends Component {
-  state = {
-    apiPostResponse: [],
-    dataReturned: null
-  }
-  
-  componentDidMount() {
-    this.props.updatePosts();
-  }
-
-  
-  
-  render() {
-    return (
-     
-      <div>
+        <UserLoginComponent/>
+        {/* Need to use hooks to save token and pass it to createpostComponent */}
+        <CreatePostComponent token = {this.state.apiLoginResponse.token} uid = {this.state.apiLoginResponse.userId} />
         {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
           ? <DisplayPostsComponent posts = {this.state.apiPostResponse} />
           : null
@@ -69,6 +50,9 @@ class GetPostsComponent extends Component {
           ? <Loading />
           : null
         }
+        
+        
+        
       </div>
     )
   }
@@ -157,7 +141,7 @@ class UserRegisterComponent extends Component {
             <input className ="submit-input" type="submit" name="submitButton" value="Submit"/>
           </form>
           
-          <UserLoginComponent/>
+          
           {this.state.dataReturned===true && this.state.apiLoginResponse.errors === undefined
             ? <div>
                 <h1>Account Created</h1>
@@ -251,7 +235,7 @@ class UserLoginComponent extends Component {
                   <li><strong>User Id:</strong>  {this.state.apiLoginResponse.userId}</li>
                   <li><strong>Token:</strong> {this.state.apiLoginResponse.token}</li>
                 </ul> 
-                <CreatePostComponent token = {this.state.apiLoginResponse.token} uid = {this.state.apiLoginResponse.userId} />
+                
               </div>
             : null
           }
