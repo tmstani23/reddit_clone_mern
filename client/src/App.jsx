@@ -5,11 +5,14 @@ import './App.css';
 class App extends Component {
   state = {
     apiPostResponse: "",
-    dataReturned: null
+    dataReturned: null, 
+    token: null,
   }
+
   componentDidMount(){
     this.callApi()
   }
+  
   callApi = () => {
     // initialize data returned state to false:
     this.setState({dataReturned: false});
@@ -28,16 +31,32 @@ class App extends Component {
       .catch(err => console.log(err))
   }
 
+  updateToken = (inputToken, userId) => {
+    this.setState({
+      token: inputToken,
+      userId: userId
+    })
+    console.log(`token added in main state ${inputToken}, userId: ${userId}`)
+  }
+
   render () {
+    // let token;
+    // this.state.apiLoginResponse.token !== undefined
+    // ? token = this.state.apiLoginResponse.token
+    // : token = null
+    
     return (
       <div className="App">
         <header>
           <h1> Welcome to React </h1>
         </header>
-        <UserRegisterComponent/>
-        <UserLoginComponent/>
-        {/* Need to use hooks to save token and pass it to createpostComponent */}
-        <CreatePostComponent token = {this.state.apiLoginResponse.token} uid = {this.state.apiLoginResponse.userId} />
+        <UserRegisterComponent />
+        <UserLoginComponent updateToken = {this.updateToken}/>
+        {this.state.token != null
+          ? <CreatePostComponent token = {this.state.token} uid = {this.state.userId} updatePosts = {this.callApi}/>
+          : null
+        }
+       
         {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
           ? <DisplayPostsComponent posts = {this.state.apiPostResponse} />
           : null
@@ -200,6 +219,10 @@ class UserLoginComponent extends Component {
         
         // update state with the returned data and set data returned flag to true
         this.setState({apiLoginResponse: res, dataReturned: !this.state.dataReturned})
+        
+      })
+      .then(() => {
+        this.props.updateToken(this.state.apiLoginResponse.token, this.state.apiLoginResponse.userId)
       })
       .catch(err => console.log(err))
   }
@@ -286,6 +309,7 @@ class CreatePostComponent extends Component {
         // update state with the returned data and set data returned flag to true
         this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
       })
+      .then(() => this.props.updatePosts())
       .catch(err => console.log(err))
   }
 
