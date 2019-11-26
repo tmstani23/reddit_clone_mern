@@ -46,29 +46,32 @@ class App extends Component {
     // : token = null
     
     return (
-      <div className="App">
-        <header>
-          <h1> Welcome to React </h1>
-        </header>
-        <UserRegisterComponent />
-        <UserLoginComponent updateToken = {this.updateToken}/>
-        {this.state.token != null
-          ? <CreatePostComponent token = {this.state.token} uid = {this.state.userId} updatePosts = {this.callApi}/>
-          : null
-        }
-       
-        {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
-          ? <DisplayPostsComponent posts = {this.state.apiPostResponse} />
-          : null
-        }
-        {this.state.apiPostResponse.errors !== undefined
-          ? <RenderErrors errors = {this.state.apiPostResponse.errors} />
-          : null
-        }
-        {this.state.dataReturned === false
-          ? <Loading />
-          : null
-        }
+      <div className="container">
+        
+          <div className="dynamic-comps">
+            
+          
+            {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
+              ? <DisplayPostsComponent className="posts-comp" posts = {this.state.apiPostResponse} />
+              : null
+            }
+            {this.state.apiPostResponse.errors !== undefined
+              ? <RenderErrors errors = {this.state.apiPostResponse.errors} />
+              : null
+            }
+            {this.state.dataReturned === false
+              ? <Loading />
+              : null
+            }
+          </div>
+          <div>
+            <UserLoginComponent className="login-comp" updateToken = {this.updateToken}/>
+            {this.state.token == null
+                ? <UserRegisterComponent className="register-comp"/>
+                : <CreatePostComponent token = {this.state.token} uid = {this.state.userId} updatePosts = {this.callApi}/>
+            }
+          </div>
+          
         
         
         
@@ -79,7 +82,7 @@ class App extends Component {
 
 function DisplayPostsComponent(props) {
   let postListArr = props.posts.latestPosts;
-  console.log(JSON.stringify(props.posts.latestPosts));
+  //console.log(JSON.stringify(props.posts.latestPosts));
   
   const postList = postListArr.map((item, index) => {
     return <ul key={index}>
@@ -90,10 +93,11 @@ function DisplayPostsComponent(props) {
     </ul>
   })
   return (
-    <ul>
+    <div>
       <h1>Post List:</h1>
       {postList}
-    </ul>
+    </div>   
+    
   )
 }
 
