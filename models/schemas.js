@@ -15,7 +15,8 @@ const PostSchema = new Schema ({
     title: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        dropDups: true
     },
     date: {
         type: Date,

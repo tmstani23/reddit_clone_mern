@@ -152,15 +152,15 @@ router.post("/api/users/create_post", (req, res) => {
     User.findById(postUid, (err, user) => {
         if (err) {
             console.log(err);
-            res.send({errors: {error: err.message}})
+            return res.send({errors: {error: err.message}})
         }
 
         //compare user token against inputToken
         //if not a match
         if (user.token != inputToken) {
             //return error
-            console.log(`User token doesn't match or exist.  User token: ${user.token} Input Token: ${inputToken}`);
-            res.send({errors: {error: "User not logged in."}});
+            return res.send({errors: {error: "User not logged in."}})
+            
         } 
         
         //create new post and update its uid field and description from the form.
@@ -170,31 +170,54 @@ router.post("/api/users/create_post", (req, res) => {
             title: postTitle
         })
 
-        //save new post to the database
-        newPost.save(
-            (err, newPost) => err
-                ? res.send({
-                    errors: {error: err.message}
-                }) 
-                : console.log("new post created")
-        )
         
-
-        //Add new post to current user's list post array.
-        user.posts.push(newPost);
-        //Save current user back to the database and return user and new log as json
-        user.save((err) => {
-            err ? console.log(err) : res.json({
-                user: user, 
-                newPost: user.posts[user.posts.length - 1],
-                title: postTitle,
-                description: newPost.description,
-                postId: newPost.id,
-                postDate: newPost.date
-            })
-                
-            
+        //Verify title doesn't already exist in db
+        Post.countDocuments({title: postTitle}, (postError, count) => {
+            if (postError) {
+                return res.send({errors: {error: postError.message}});
+            }
+            if (count > 1) {
+                return res.send({errors: {error: "Title already exists."}});
+            }
+            else {
+                //If not save the new post to the database.
+                newPost.save(
+                    (err, newPost) => {
+                        if(err) {
+                            return res.json({
+                                errors: {error: err.message}
+                            })
+                            
+                        }
+                        else {
+                            //Add new post to current user's list post array.
+                            user.posts.push(newPost);
+                            //Save current user back to the database and return user and new log as json
+                            user.save((err) => {
+                                if (err) {
+                                    return res.json({
+                                        errors: {error: err.message}
+                                    })
+                                }
+                                else {
+                                    return res.send({
+                                        user: user, 
+                                        newPost: user.posts[user.posts.length - 1],
+                                        title: postTitle,
+                                        description: newPost.description,
+                                        postId: newPost.id,
+                                        postDate: newPost.date
+                                    })
+                                } 
+                                     
+                            })
+                        }   
+                    }
+                )
+            }
+              
         })
+            
     })
 
 })
@@ -206,9 +229,9 @@ router.get("/api/users/get_posts", (req, res) => {
     .exec((err, posts) => {
         if (err) {
             console.log(err);
-            res.send({errors: {error: err.message}})
+            return res.send({errors: {error: err.message}})
         }
-        res.json({latestPosts: posts})
+        return res.json({latestPosts: posts})
     })
 
 })
