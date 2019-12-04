@@ -7,12 +7,10 @@ const bodyParser = require("body-parser");
 const db = process.env.DATABASE_URL;
 const testDB = process.env.TEST_DB_URI;
 const cors = require("cors");
-
+const moment = require('moment');
 const passport = require("passport");
 const users = require("./routes/api/endpoints.js");
 const path = require('path');
-
-console.log(db);
 
 //Initialize mongoose connection with cloud db server
 // Connect to MongoDB
@@ -23,6 +21,15 @@ mongoose
   )
   .then(() => console.log("MongoDB successfully connected"))
   .catch(err => console.log(err));
+
+// convert all dates to formatted dates
+app.set('json replacer', function (key, value) {
+  if (this[key] instanceof Date) {
+// Convert to format: January, 23, 1999
+value = moment(this[key]).format('MMMM Do YYYY, h:mm:ss a');
+  }
+  return value;
+});
 
 // Bodyparser middleware
 app.use(

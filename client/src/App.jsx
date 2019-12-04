@@ -6,7 +6,7 @@ class App extends Component {
   state = {
     apiPostResponse: "",
     dataReturned: null, 
-    token: null,
+    token: "blank",
   }
 
   componentDidMount(){
@@ -52,7 +52,7 @@ class App extends Component {
             
           
             {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
-              ? <DisplayPostsComponent className="posts-comp" posts = {this.state.apiPostResponse} />
+              ? <DisplayPostsComponent posts = {this.state.apiPostResponse} />
               : null
             }
             {this.state.apiPostResponse.errors !== undefined
@@ -64,11 +64,12 @@ class App extends Component {
               : null
             }
           </div>
-          <div>
+          <div >
             <UserLoginComponent className="login-comp" updateToken = {this.updateToken}/>
-            {this.state.token == null
-                ? <UserRegisterComponent className="register-comp"/>
-                : <CreatePostComponent token = {this.state.token} uid = {this.state.userId} updatePosts = {this.callApi}/>
+            <CreatePostComponent token = {this.state.token} uid = {this.state.userId} updatePosts = {this.callApi}/>
+            {this.state.token == "blank" 
+              ? <UserRegisterComponent className="register-comp"/>
+              : null  
             }
           </div>
           
@@ -93,7 +94,7 @@ function DisplayPostsComponent(props) {
     </ul>
   })
   return (
-    <div>
+    <div className="posts-comp">
       <h1>Post List:</h1>
       {postList}
     </div>   

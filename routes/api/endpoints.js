@@ -148,6 +148,8 @@ router.post("/api/users/create_post", (req, res) => {
     const postTitle = req.body.title;
     const inputToken = req.body.token;
 
+    console.log(inputToken);
+
     //search db by id for User
     User.findById(postUid, (err, user) => {
         if (err) {
@@ -159,6 +161,7 @@ router.post("/api/users/create_post", (req, res) => {
         //if not a match
         if (user.token != inputToken) {
             //return error
+            
             return res.send({errors: {error: "User not logged in."}})
             
         } 

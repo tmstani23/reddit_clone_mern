@@ -6,25 +6,40 @@
 }
 .login-comp {
   max-height: 300px;
+  
+}
+.login-form {
+  max-width: 350px;
+  overflow-wrap: break-word;
+  margin: 0 auto;
+}
+.register-form {
+  max-width: 350px;
+  margin: 0 auto;
 }
 .register-comp {
   max-height: 300px;
 }
+/* .posts-comp {
+  min-width: 600px;
+} */
 .dynamic-comps {
   grid-column-start: 1;
   grid-column-end: 2;
   grid-row-start: 1;
   grid-row-end: 1;
+  min-width: 600px;
   
 }
+
 .container {
   text-align: center;
   display: grid;
   grid-template-columns: 2fr 1fr;
   grid-template-rows: 1fr 2fr;
   margin: 0 auto;
-  min-height: 800px;
-  max-width: 1400px;
+  /* min-height: 800px;
+  max-width: 1400px; */
   margin-bottom: 20px;
   
   
@@ -32,5 +47,6 @@
 
 .container > div {
   border: 1px solid black;
+  overflow-wrap: break-word;
 }
 
