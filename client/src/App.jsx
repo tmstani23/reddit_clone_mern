@@ -6,13 +6,14 @@ class App extends Component {
   state = {
     apiPostResponse: "",
     dataReturned: null, 
-    token: "blank",
+    token: null,
   }
 
   componentDidMount(){
     this.callApi()
   }
   
+
   callApi = () => {
     // initialize data returned state to false:
     this.setState({dataReturned: false});
@@ -32,7 +33,7 @@ class App extends Component {
   }
 
   updateToken = (inputToken, userId) => {
-    this.setState({
+   this.setState({
       token: inputToken,
       userId: userId
     })
@@ -40,10 +41,6 @@ class App extends Component {
   }
 
   render () {
-    // let token;
-    // this.state.apiLoginResponse.token !== undefined
-    // ? token = this.state.apiLoginResponse.token
-    // : token = null
     
     return (
       <div className="container">
@@ -65,11 +62,12 @@ class App extends Component {
             }
           </div>
           <div >
-            <UserLoginComponent className="login-comp" updateToken = {this.updateToken}/>
-            <CreatePostComponent token = {this.state.token} uid = {this.state.userId} updatePosts = {this.callApi}/>
-            {this.state.token == "blank" 
+            
+             <UserLoginComponent className="login-comp" updateToken = {this.updateToken}/>
+             <CreatePostComponent token = {this.state.token} uid = {this.state.userId} updatePosts = {this.callApi}/>
+            {this.state.token == null
               ? <UserRegisterComponent className="register-comp"/>
-              : null  
+              : null
             }
           </div>
           
@@ -90,7 +88,8 @@ function DisplayPostsComponent(props) {
       <li>Title: {item.title}</li>
       <li>Body: {item.description}</li>
       <li>Date: {item.date}</li>
-      <li>User: {item.uid}</li>
+      <li>User Id: {item.uid}</li>
+      <li>Created by: {item.name}</li>
     </ul>
   })
   return (
@@ -289,11 +288,32 @@ class CreatePostComponent extends Component {
     apiPostResponse: []
   }
 
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    if (this.props.token !== prevProps.token) {
+      this.setState({
+        token: this.props.token,
+        uid: this.props.uid,
+      })
+    }
+  }
+
   handleSubmit = (event) => {
     //If handleSubmit was called by user clicking submit button in form
     
       //Prevent default action
     event.preventDefault();
+
+    if(this.state.token == null) {
+      this.setState({apiPostResponse: {errors: {error:"User not logged in"}}})
+      console.log(this.state.apiPostResponse.errors)
+      return;
+    }
+    // else if (this.state.token != null) {
+    //   this.setState({apiPostResponse: {errors: undefined}})
+    // }
+
+    
       
   
     // initialize data returned state to false:
@@ -347,7 +367,7 @@ class CreatePostComponent extends Component {
                   <li><strong>Post Description:</strong>  {this.state.apiPostResponse.newPost.description}</li>
                   <li><strong>Post Id:</strong>  {this.state.apiPostResponse.postId}</li>
                   <li><strong>Post Date:</strong>  {this.state.apiPostResponse.postDate}</li>
-                  
+                  <li><strong>Created By:</strong>  {this.state.apiPostResponse.name}</li>
                 </ul> 
               </div>
             : null

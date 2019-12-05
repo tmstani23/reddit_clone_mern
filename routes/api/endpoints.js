@@ -204,7 +204,7 @@ router.post("/api/users/create_post", (req, res) => {
                                 }
                                 else {
                                     return res.send({
-                                        user: user, 
+                                        name: user.name, 
                                         newPost: user.posts[user.posts.length - 1],
                                         title: postTitle,
                                         description: newPost.description,
