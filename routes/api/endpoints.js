@@ -139,7 +139,40 @@ router.post("/api/users/login", (req, res) => {
         })
 
 })
+//route for adding or subtracting post count
+router.post ("api/users/add_count", (req, res) => {
+    const inputCount = req.body.count;
+    const postId = req.body.postId;
 
+    Post.findById(postId, (err, post) => {
+        if (err) {
+            console.log(err);
+            return;
+            //res.send({errors: {error: err.message}})
+        }
+        //Make sure post count won't go negative
+        if (post.count == 0 && inputCount < 0) {
+            return; 
+        }
+        //Increment the post count
+        post.count += inputCount;
+        //Save the updated count
+        post.save((err) => {
+            if (err) {
+                console.log(err);
+                return res.send({errors: {error: err.message}})
+            }
+            else {
+                return res.send({
+                    count: post.count,
+                    postId: post._id
+                })
+            }
+        })
+
+    })
+
+})
 //route for creating posts
 router.post("/api/users/create_post", (req, res) => {
     //extract user post fields from request
@@ -147,8 +180,6 @@ router.post("/api/users/create_post", (req, res) => {
     const postDescription = req.body.description;
     const postTitle = req.body.title;
     const inputToken = req.body.token;
-
-    console.log(inputToken);
 
     //search db by id for User
     User.findById(postUid, (err, user) => {
@@ -170,7 +201,8 @@ router.post("/api/users/create_post", (req, res) => {
         let newPost = new Post({
             uid: postUid,
             description: postDescription,
-            title: postTitle
+            title: postTitle,
+            name: user.name
         })
 
         

@@ -12,11 +12,19 @@ const PostSchema = new Schema ({
         type: String,
         required: true,
     },
+    count: {
+        type: String,
+        default: 0
+    },
     title: {
         type: String,
         required: true,
         unique: true,
         dropDups: true
+    },
+    name: {
+        type: String,
+        unique: true
     },
     date: {
         type: Date,

@@ -40,6 +40,10 @@ class App extends Component {
     console.log(`token added in main state ${inputToken}, userId: ${userId}`)
   }
 
+  addCount = (postId) => {
+    console.log("addCount");
+  }
+
   render () {
     
     return (
@@ -49,7 +53,7 @@ class App extends Component {
             
           
             {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
-              ? <DisplayPostsComponent posts = {this.state.apiPostResponse} />
+              ? <DisplayPostsComponent addCount = {this.state.addCount} posts = {this.state.apiPostResponse} />
               : null
             }
             {this.state.apiPostResponse.errors !== undefined
@@ -79,26 +83,43 @@ class App extends Component {
   }
 }
 
-function DisplayPostsComponent(props) {
-  let postListArr = props.posts.latestPosts;
+class DisplayPostsComponent extends Component {
+  
+  
   //console.log(JSON.stringify(props.posts.latestPosts));
   
-  const postList = postListArr.map((item, index) => {
-    return <ul key={index}>
-      <li>Title: {item.title}</li>
-      <li>Body: {item.description}</li>
-      <li>Date: {item.date}</li>
-      <li>User Id: {item.uid}</li>
-      <li>Created by: {item.name}</li>
-    </ul>
-  })
-  return (
-    <div className="posts-comp">
-      <h1>Post List:</h1>
-      {postList}
-    </div>   
+  renderPostList = () => {
+    let postListArr = this.props.posts.latestPosts;
+    let postlist;
+    return postListArr.map((item, index) => {
+      return (
+        <div key={index}>
+          <ul >
+            <li>Title: {item.title}</li>
+            <li>Body: {item.description}</li>
+            <li>Date: {item.date}</li>
+            <li>User Id: {item.uid}</li>
+            <li>Created by: {item.name}</li>
+          </ul>
+          <button onClick={this.props.addCount}>Add to Count</button>
+          <h3>Count: {item.count}</h3>
+          <button>Subtract from Count</button>
+        </div>
+      )
+    })
+  }
+
+  
+  render() {
     
-  )
+    
+    return (
+      <div className="posts-comp">
+      <h1>Post List:</h1>
+      {this.renderPostList()}
+    </div>   
+    )
+  }
 }
 
 //user register component
