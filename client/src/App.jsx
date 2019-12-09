@@ -53,7 +53,7 @@ class App extends Component {
             
           
             {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
-              ? <DisplayPostsComponent addCount = {this.state.addCount} posts = {this.state.apiPostResponse} />
+              ? <DisplayPostsComponent addCount = {this.state.addCount} posts = {this.state.apiPostResponse} token={this.state.token}/>
               : null
             }
             {this.state.apiPostResponse.errors !== undefined
@@ -85,12 +85,67 @@ class App extends Component {
 
 class DisplayPostsComponent extends Component {
   
+  state = {
+    apiPostResponse: "",
+    dataReturned: null, 
+    count: null,
+    postId: null,
+    token: this.props.token
+  }
+
+  callCountApi = (count, postId) => {
+    
+      // initialize data returned state to false:
+      this.setState({
+        dataReturned: false,
+        count: count,
+        postId: postId
+      });
+      console.log(JSON.stringify(this.state), "beforefetch state");
   
+      fetch("api/users/add_count", {
+        method: 'POST',
+        headers: {
+        'Content-type': 'application/json'
+        }, 
+        body: JSON.stringify(this.state),
+      })
+        .then(res => res.json())
+        .then(res => {
+          // update state with the returned data and set data returned flag to true
+          this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
+          console.log(JSON.stringify(this.state), "afterfetch state")
+          
+        })
+        .catch(err => console.log(err))
+    
+  }
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    if (this.props.token !== prevProps.token) {
+      this.setState({
+        token: this.props.token,
+        loginError: undefined
+      })
+    }
+  }
+
+  addCount = (postId) => {
+    console.log(postId);
+    let count = 1;
+    if(this.props.token == null) {
+      this.setState({loginError: "Must be logged in to modify count."})
+    }
+    else {
+      
+      this.callCountApi(count, postId);
+    }
+    
+  }
   //console.log(JSON.stringify(props.posts.latestPosts));
   
   renderPostList = () => {
     let postListArr = this.props.posts.latestPosts;
-    let postlist;
     return postListArr.map((item, index) => {
       return (
         <div key={index}>
@@ -100,8 +155,9 @@ class DisplayPostsComponent extends Component {
             <li>Date: {item.date}</li>
             <li>User Id: {item.uid}</li>
             <li>Created by: {item.name}</li>
+            <li>Post Id: {item._id}</li>
           </ul>
-          <button onClick={this.props.addCount}>Add to Count</button>
+          <button onClick={() => this.addCount(item._id)}>Add to Count</button>
           <h3>Count: {item.count}</h3>
           <button>Subtract from Count</button>
         </div>
@@ -116,7 +172,12 @@ class DisplayPostsComponent extends Component {
     return (
       <div className="posts-comp">
       <h1>Post List:</h1>
-      {this.renderPostList()}
+      {this.state.loginError != undefined
+        ? <h3>{this.state.loginError}</h3>
+        : (
+            <div>{this.renderPostList()}</div>
+          )
+      }
     </div>   
     )
   }

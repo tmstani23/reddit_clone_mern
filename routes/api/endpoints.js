@@ -202,7 +202,7 @@ router.post("/api/users/create_post", (req, res) => {
             uid: postUid,
             description: postDescription,
             title: postTitle,
-            name: user.name
+            name: user.name,
         })
 
         
