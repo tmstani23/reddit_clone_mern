@@ -13,7 +13,7 @@ const PostSchema = new Schema ({
         required: true,
     },
     count: {
-        type: String,
+        type: Number,
         default: 0
     },
     title: {

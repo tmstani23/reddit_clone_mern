@@ -140,9 +140,12 @@ router.post("/api/users/login", (req, res) => {
 
 })
 //route for adding or subtracting post count
-router.post ("api/users/add_count", (req, res) => {
-    const inputCount = req.body.count;
+router.post("/api/users/add_count", (req, res) => {
+    const inputCount = parseInt(req.body.count);
     const postId = req.body.postId;
+    
+
+    console.log(inputCount, postId, "count,postid")
 
     Post.findById(postId, (err, post) => {
         if (err) {
@@ -154,8 +157,11 @@ router.post ("api/users/add_count", (req, res) => {
         if (post.count == 0 && inputCount < 0) {
             return; 
         }
-        //Increment the post count
+        //increment count
         post.count += inputCount;
+        
+        
+        
         //Save the updated count
         post.save((err) => {
             if (err) {

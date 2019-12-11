@@ -53,7 +53,7 @@ class App extends Component {
             
           
             {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
-              ? <DisplayPostsComponent addCount = {this.state.addCount} posts = {this.state.apiPostResponse} token={this.state.token}/>
+              ? <DisplayPostsComponent updatePosts = {this.callApi} addCount = {this.state.addCount} posts = {this.state.apiPostResponse} token ={this.state.token}/>
               : null
             }
             {this.state.apiPostResponse.errors !== undefined
@@ -93,17 +93,20 @@ class DisplayPostsComponent extends Component {
     token: this.props.token
   }
 
-  callCountApi = (count, postId) => {
+  callCountApi = async (count, postId) => {
     
       // initialize data returned state to false:
-      this.setState({
+     await this.setState({
         dataReturned: false,
         count: count,
         postId: postId
-      });
+      })
+        
       console.log(JSON.stringify(this.state), "beforefetch state");
+      
+      
   
-      fetch("api/users/add_count", {
+      fetch("http://localhost:4000/api/users/add_count", {
         method: 'POST',
         headers: {
         'Content-type': 'application/json'
@@ -117,9 +120,11 @@ class DisplayPostsComponent extends Component {
           console.log(JSON.stringify(this.state), "afterfetch state")
           
         })
+        .then(() => this.props.updatePosts())
         .catch(err => console.log(err))
     
   }
+
   componentDidUpdate(prevProps) {
     // Typical usage (don't forget to compare props):
     if (this.props.token !== prevProps.token) {
@@ -130,9 +135,8 @@ class DisplayPostsComponent extends Component {
     }
   }
 
-  addCount = (postId) => {
-    console.log(postId);
-    let count = 1;
+  addCount = (postId, count) => {
+    
     if(this.props.token == null) {
       this.setState({loginError: "Must be logged in to modify count."})
     }
@@ -157,9 +161,9 @@ class DisplayPostsComponent extends Component {
             <li>Created by: {item.name}</li>
             <li>Post Id: {item._id}</li>
           </ul>
-          <button onClick={() => this.addCount(item._id)}>Add to Count</button>
+          <button onClick={() => this.addCount(item._id, 1)}>Add to Count</button>
           <h3>Count: {item.count}</h3>
-          <button>Subtract from Count</button>
+          <button onClick={() => this.addCount(item._id, -1)}>Subtract from Count</button>
         </div>
       )
     })
