@@ -7,6 +7,7 @@ class App extends Component {
     apiPostResponse: "",
     dataReturned: null, 
     token: null,
+    displaySinglePost: null
   }
 
   componentDidMount(){
@@ -52,7 +53,7 @@ class App extends Component {
           <div className="dynamic-comps">
             
           
-            {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
+            {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined && !this.state.displaySinglePost == true
               ? <DisplayPostsComponent updatePosts = {this.callApi} addCount = {this.state.addCount} posts = {this.state.apiPostResponse} token ={this.state.token}/>
               : null
             }
@@ -62,6 +63,10 @@ class App extends Component {
             }
             {this.state.dataReturned === false
               ? <Loading />
+              : null
+            }
+            {this.state.displaySinglePost == true
+              ? <showSinglePost />
               : null
             }
           </div>
@@ -83,6 +88,92 @@ class App extends Component {
   }
 }
 
+class showSinglePost extends Component {
+  state = {
+    token: this.props.token,
+    clickedPost: this.props.post,
+    apiPostResponse: []
+  }
+
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    if (this.props.token !== prevProps.token) {
+      this.setState({
+        token: this.props.token,
+      })
+    }
+  }
+  handleSubmit = (event) => {
+    //If handleSubmit was called by user clicking submit button in form
+    
+      //Prevent default action
+    event.preventDefault();
+
+    if(this.state.token == null) {
+      this.setState({apiPostResponse: {errors: {error:"User not logged in"}}})
+      console.log(this.state.apiPostResponse.errors)
+      return;
+    }
+  
+    // initialize data returned state to false:
+    this.setState({dataReturned: false})
+    console.log(JSON.stringify(this.state), "beforefetch state")
+
+    fetch('http://localhost:4000/api/users/create_comment', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      }, 
+      body: JSON.stringify(this.state),
+    })
+      .then(res => res.json())
+      .then(res => {
+        console.log(res, "afterfetch state")
+        
+        // update state with the returned data and set data returned flag to true
+        this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
+      })
+      .catch(err => console.log(err))
+  }
+
+  handleChange = (event) => {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+
+    this.setState({
+      [name]: value
+    });
+    
+  }
+
+  render() {
+    return (
+      // display register form or else success message and login form if registered
+      <div className="comment-form">
+        <h1>Post Title</h1>
+
+        <form onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
+            <h3>Create Comment:</h3>
+            <input id="inputBody" type="text" name="description" placeholder="What are your thoughts?"/>
+            <input className ="submit-input" type="submit" name="submitButton" value="Comment"/>
+          </form>
+         
+          {this.state.apiPostResponse.errors !== undefined
+            ? <RenderErrors errors = {this.state.apiPostResponse.errors} />
+            : null
+          }
+          {this.state.dataReturned === false
+            ? <Loading />
+            : null
+          }
+          {/* <CommentList posts = {this.state.apiPostResponse.posts} /> */}
+      </div>
+    ) 
+  }
+
+}
+
 class DisplayPostsComponent extends Component {
   
   state = {
@@ -92,6 +183,8 @@ class DisplayPostsComponent extends Component {
     postId: null,
     token: this.props.token
   }
+
+  
 
   callCountApi = async (count, postId) => {
     
@@ -186,6 +279,7 @@ class DisplayPostsComponent extends Component {
     )
   }
 }
+
 
 //user register component
 class UserRegisterComponent extends Component {
