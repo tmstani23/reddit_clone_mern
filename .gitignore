@@ -1,0 +1,7 @@
+.env
+node_modules
+/node_modules
+node_modules/mongoose/package.json
+node_modules/body-parser/package.json
+node_modules/express/package.json
+node_modules/mongoose/package.json

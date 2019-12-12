@@ -1,0 +1,27 @@
+mongo database
+    one for posts one for users?
+
+user system with login/logout
+    create new user
+    read user
+    delete user
+    update user
+
+post system
+    create new post
+    read post
+    update post
+    delete post
+        subposts for comments
+        
+front end react
+    list showing top 10 posts
+        pagination
+        filter button
+            top 10
+            most recent
+    post
+        thumbs up/down counter
+        heading
+        user/timestamp
+
