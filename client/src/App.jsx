@@ -7,7 +7,8 @@ class App extends Component {
     apiPostResponse: "",
     dataReturned: null, 
     token: null,
-    displaySinglePost: null
+    displaySinglePost: null,
+    post: []
   }
 
   componentDidMount(){
@@ -41,8 +42,15 @@ class App extends Component {
     console.log(`token added in main state ${inputToken}, userId: ${userId}`)
   }
 
-  addCount = (postId) => {
-    console.log("addCount");
+  showSinglePost = async (state, post) => {
+    
+    await this.setState({
+      displaySinglePost: state,
+      post: post
+    })
+
+    console.log(this.state.post)
+
   }
 
   render () {
@@ -54,7 +62,7 @@ class App extends Component {
             
           
             {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined && !this.state.displaySinglePost == true
-              ? <DisplayPostsComponent updatePosts = {this.callApi} addCount = {this.state.addCount} posts = {this.state.apiPostResponse} token ={this.state.token}/>
+              ? <DisplayPostsComponent displaySinglePost={this.showSinglePost} updatePosts = {this.callApi} addCount = {this.state.addCount} posts = {this.state.apiPostResponse} token ={this.state.token} />
               : null
             }
             {this.state.apiPostResponse.errors !== undefined
@@ -66,7 +74,7 @@ class App extends Component {
               : null
             }
             {this.state.displaySinglePost == true
-              ? <showSinglePost />
+              ? <ShowSinglePost displaySinglePost={this.showSinglePost} post = {this.state.post} />
               : null
             }
           </div>
@@ -88,11 +96,11 @@ class App extends Component {
   }
 }
 
-class showSinglePost extends Component {
+class ShowSinglePost extends Component {
   state = {
     token: this.props.token,
-    clickedPost: this.props.post,
-    apiPostResponse: []
+    apiPostResponse: [],
+    post: this.props.post
   }
 
   componentDidUpdate(prevProps) {
@@ -102,7 +110,14 @@ class showSinglePost extends Component {
         token: this.props.token,
       })
     }
+    if (this.props.post != prevProps.post) {
+      this.setState({post: this.props.post})
+      
+      
+    }
+    console.log(this.state.post, "showSingleComp")
   }
+
   handleSubmit = (event) => {
     //If handleSubmit was called by user clicking submit button in form
     
@@ -151,13 +166,18 @@ class showSinglePost extends Component {
     return (
       // display register form or else success message and login form if registered
       <div className="comment-form">
-        <h1>Post Title</h1>
+        {this.props.post != undefined
+          ? <h1>{this.state.post.title}</h1>
+          : null
+        }
+        
 
         <form onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
             <h3>Create Comment:</h3>
             <input id="inputBody" type="text" name="description" placeholder="What are your thoughts?"/>
             <input className ="submit-input" type="submit" name="submitButton" value="Comment"/>
-          </form>
+        </form>
+        <button onClick = {() => this.props.displaySinglePost(null)}> Close </button>
          
           {this.state.apiPostResponse.errors !== undefined
             ? <RenderErrors errors = {this.state.apiPostResponse.errors} />
@@ -181,7 +201,8 @@ class DisplayPostsComponent extends Component {
     dataReturned: null, 
     count: null,
     postId: null,
-    token: this.props.token
+    token: this.props.token,
+    
   }
 
   
@@ -242,11 +263,12 @@ class DisplayPostsComponent extends Component {
   //console.log(JSON.stringify(props.posts.latestPosts));
   
   renderPostList = () => {
+    
     let postListArr = this.props.posts.latestPosts;
     return postListArr.map((item, index) => {
       return (
-        <div key={index}>
-          <ul >
+        <div  key={index}>
+          <ul onClick={() => this.props.displaySinglePost(true, item)}>
             <li>Title: {item.title}</li>
             <li>Body: {item.description}</li>
             <li>Date: {item.date}</li>

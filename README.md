@@ -1,2 +1,3 @@
 # reddit_clone_mern
- A reddit clonse created using the MERN stack
+ A reddit clone created using the MERN stack
+## Under Development
