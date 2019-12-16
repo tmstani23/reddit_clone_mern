@@ -1,3 +1,16 @@
+.post-div > p {
+  margin: 0 auto;
+  width: 75%;
+  border: 1px solid black;
+  text-align: left;
+}
+
+.comment-form > form > textarea {
+  height: 100px;
+  width: 300px;
+  margin: 0 auto;
+  border: 1px solid black;
+}
 .primary-banner {
   text-align: center;
   margin: 0 auto;

@@ -15,7 +15,6 @@ class App extends Component {
     this.callApi()
   }
   
-
   callApi = () => {
     // initialize data returned state to false:
     this.setState({dataReturned: false});
@@ -61,7 +60,7 @@ class App extends Component {
           <div className="dynamic-comps">
             
           
-            {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined && !this.state.displaySinglePost == true
+            {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined && !this.state.displaySinglePost === true
               ? <DisplayPostsComponent displaySinglePost={this.showSinglePost} updatePosts = {this.callApi} addCount = {this.state.addCount} posts = {this.state.apiPostResponse} token ={this.state.token} />
               : null
             }
@@ -73,7 +72,7 @@ class App extends Component {
               ? <Loading />
               : null
             }
-            {this.state.displaySinglePost == true
+            {this.state.displaySinglePost === true
               ? <ShowSinglePost displaySinglePost={this.showSinglePost} post = {this.state.post} />
               : null
             }
@@ -106,13 +105,11 @@ class ShowSinglePost extends Component {
   componentDidUpdate(prevProps) {
     // Typical usage (don't forget to compare props):
     if (this.props.token !== prevProps.token) {
-      this.setState({
-        token: this.props.token,
-      })
-    }
-    if (this.props.post != prevProps.post) {
-      this.setState({post: this.props.post})
+      this.setState({token: this.props.token})
       
+    }
+    if (this.props.post !== prevProps.post) {
+      this.setState({post: this.props.post})
       
     }
     console.log(this.state.post, "showSingleComp")
@@ -151,6 +148,19 @@ class ShowSinglePost extends Component {
       .catch(err => console.log(err))
   }
 
+  renderPost = () => {
+    return (
+    <div className="post-div">
+      <h1>{this.state.post.title}</h1>
+      <p>Body: {this.state.post.description}</p>
+      <ul>
+        <li>{this.state.post.date}</li>
+        <li>Posted by: {this.state.post.name}</li>
+      </ul>
+    </div>
+    )
+  } 
+
   handleChange = (event) => {
     const target = event.target;
     const value = target.value;
@@ -163,25 +173,28 @@ class ShowSinglePost extends Component {
   }
 
   render() {
+  
+    
     return (
       // display register form or else success message and login form if registered
+      
       <div className="comment-form">
-        {this.props.post != undefined
-          ? <h1>{this.state.post.title}</h1>
+        {this.state.post !== undefined
+          ? (<div>{this.renderPost()}</div>)
           : null
         }
         
 
         <form onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
             <h3>Create Comment:</h3>
-            <input id="inputBody" type="text" name="description" placeholder="What are your thoughts?"/>
+            <textarea className="commentBox" id="inputBody" type="text" name="description" placeholder="What are your thoughts?"/>
             <input className ="submit-input" type="submit" name="submitButton" value="Comment"/>
         </form>
         <button onClick = {() => this.props.displaySinglePost(null)}> Close </button>
          
           {this.state.apiPostResponse.errors !== undefined
             ? <RenderErrors errors = {this.state.apiPostResponse.errors} />
-            : null
+            :  null
           }
           {this.state.dataReturned === false
             ? <Loading />
@@ -269,10 +282,8 @@ class DisplayPostsComponent extends Component {
       return (
         <div  key={index}>
           <ul onClick={() => this.props.displaySinglePost(true, item)}>
-            <li>Title: {item.title}</li>
-            <li>Body: {item.description}</li>
+            <h2>Title: {item.title}</h2>
             <li>Date: {item.date}</li>
-            <li>User Id: {item.uid}</li>
             <li>Created by: {item.name}</li>
             <li>Post Id: {item._id}</li>
           </ul>
@@ -291,7 +302,7 @@ class DisplayPostsComponent extends Component {
     return (
       <div className="posts-comp">
       <h1>Post List:</h1>
-      {this.state.loginError != undefined
+      {this.state.loginError !== undefined
         ? <h3>{this.state.loginError}</h3>
         : (
             <div>{this.renderPostList()}</div>
@@ -558,7 +569,7 @@ class CreatePostComponent extends Component {
         <form onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
             <h3>Create Post:</h3>
             <input id="inputTitle" type="text" name="title" placeholder="Title"/>
-            <input id="inputBody" type="text" name="description" placeholder="Text"/>
+            <textarea id="inputBody" type="text" name="description" placeholder="Text"/>
             <input className ="submit-input" type="submit" name="submitButton" value="Submit"/>
           </form>
           {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
