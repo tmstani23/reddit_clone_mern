@@ -77,7 +77,7 @@ class App extends Component {
               : null
             }
           </div>
-          <div >
+          <div className="login-div" >
             
              <UserLoginComponent className="login-comp" updateToken = {this.updateToken}/>
              <CreatePostComponent token = {this.state.token} uid = {this.state.userId} updatePosts = {this.callApi}/>
@@ -280,16 +280,23 @@ class DisplayPostsComponent extends Component {
     let postListArr = this.props.posts.latestPosts;
     return postListArr.map((item, index) => {
       return (
-        <div  key={index}>
-          <ul onClick={() => this.props.displaySinglePost(true, item)}>
-            <h2>Title: {item.title}</h2>
-            <li>Date: {item.date}</li>
-            <li>Created by: {item.name}</li>
-            <li>Post Id: {item._id}</li>
-          </ul>
-          <button onClick={() => this.addCount(item._id, 1)}>Add to Count</button>
-          <h3>Count: {item.count}</h3>
-          <button onClick={() => this.addCount(item._id, -1)}>Subtract from Count</button>
+        <div className="single-post-div" key={index}>
+          <div className="count-div">
+            <button onClick={() => this.addCount(item._id, 1)}>Add to Count</button>
+            <h3>Count: {item.count}</h3>
+            <button onClick={() => this.addCount(item._id, -1)}>Subtract from Count</button>
+          </div>
+          <div className="single-post-div-div">
+            <ul onClick={() => this.props.displaySinglePost(true, item)}>
+              <h2>Title: {item.title}</h2>
+              <li>Date: {item.date}</li>
+              <li>Created by: {item.name}</li>
+              <li>Post Id: {item._id}</li>
+            </ul>
+          </div>
+          
+          
+          
         </div>
       )
     })
@@ -367,8 +374,8 @@ class UserRegisterComponent extends Component {
   render() {
     return (
       // display register form or else success message and login form if registered
-      <div className="register-form">
-        <form onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
+      <div >
+        <form className="register-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
             <h3>Register Here</h3>
             <input id="inputName" type="text" name="name" placeholder="login name"/>
             <input id="inputEmail" type="text" name="email" placeholder="email"/>
@@ -443,6 +450,12 @@ class UserLoginComponent extends Component {
       })
       .catch(err => console.log(err))
   }
+  logOut = async () => {
+    await this.setState({
+      apiLoginResponse: []
+    })
+    this.props.updateToken(this.state.apiLoginResponse.token, this.state.apiLoginResponse.userId)
+  }
 
   handleChange = (event) => {
     const target = event.target;
@@ -458,8 +471,8 @@ class UserLoginComponent extends Component {
   render() {
     return (
       // display register form or else success message and login form if registered
-      <div className="login-form">
-        <form onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
+      <div >
+        <form className="login-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
             <h3>Login Here:</h3>
             <input id="inputName" type="text" name="name" placeholder="name"/>
             <input id="inputEmail" type="text" name="email" placeholder="email"/>
@@ -467,7 +480,7 @@ class UserLoginComponent extends Component {
             <input id="inputPass2" type="text" name="password2" placeholder="enter password again"/>
             <input className ="submit-input" type="submit" name="submitButton" value="Submit"/>
           </form>
-          {this.state.dataReturned===true && this.state.apiLoginResponse.errors === undefined
+          {this.state.dataReturned===true && this.state.apiLoginResponse.token !== undefined && this.state.apiLoginResponse.errors === undefined
             ? <div>
                 <h1>User Logged In</h1>
                 <ul>
@@ -475,6 +488,7 @@ class UserLoginComponent extends Component {
                   <li><strong>User Id:</strong>  {this.state.apiLoginResponse.userId}</li>
                   <li><strong>Token:</strong> {this.state.apiLoginResponse.token}</li>
                 </ul> 
+                <button onClick = {this.logOut}>Logout</button>
                 
               </div>
             : null
@@ -565,8 +579,8 @@ class CreatePostComponent extends Component {
   render() {
     return (
       // display register form or else success message and login form if registered
-      <div className="post-form">
-        <form onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
+      <div>
+        <form className="post-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
             <h3>Create Post:</h3>
             <input id="inputTitle" type="text" name="title" placeholder="Title"/>
             <textarea id="inputBody" type="text" name="description" placeholder="Text"/>
