@@ -8,6 +8,7 @@ class App extends Component {
     dataReturned: null, 
     token: null,
     displaySinglePost: null,
+    createNewPost: false,
     post: []
   }
 
@@ -51,6 +52,13 @@ class App extends Component {
     console.log(this.state.post)
 
   }
+  createNewPost = async () => {
+    let status = !this.state.createNewPost
+    console.log(status)
+    await this.setState({
+      createNewPost: status
+    })
+  }
 
   render () {
     
@@ -60,7 +68,7 @@ class App extends Component {
           <div className="dynamic-comps">
             
           
-            {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined && !this.state.displaySinglePost === true
+            {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined && !this.state.displaySinglePost === true &&! this.state.createNewPost === true
               ? <DisplayPostsComponent displaySinglePost={this.showSinglePost} updatePosts = {this.callApi} addCount = {this.state.addCount} posts = {this.state.apiPostResponse} token ={this.state.token} />
               : null
             }
@@ -76,11 +84,19 @@ class App extends Component {
               ? <ShowSinglePost displaySinglePost={this.showSinglePost} post = {this.state.post} />
               : null
             }
+            {this.state.createNewPost === true
+              ? <CreatePostComponent createPost = {this.createNewPost} token = {this.state.token} uid = {this.state.userId} updatePosts = {this.callApi}/>
+              : null
+            }
           </div>
           <div className="login-div" >
             
-             <UserLoginComponent className="login-comp" updateToken = {this.updateToken}/>
-             <CreatePostComponent token = {this.state.token} uid = {this.state.userId} updatePosts = {this.callApi}/>
+            <UserLoginComponent className="login-comp" updateToken = {this.updateToken}/>
+            {this.state.dataReturned === true && this.state.apiPostResponse.errors === undefined && this.state.createNewPost === false
+              ? <button onClick = {this.createNewPost}>Create Post</button>
+              : null
+            }
+             
             {this.state.token == null
               ? <UserRegisterComponent className="register-comp"/>
               : null
@@ -481,7 +497,7 @@ class UserLoginComponent extends Component {
             <input className ="submit-input" type="submit" name="submitButton" value="Submit"/>
           </form>
           {this.state.dataReturned===true && this.state.apiLoginResponse.token !== undefined && this.state.apiLoginResponse.errors === undefined
-            ? <div>
+            ? <div className="login-success-div">
                 <h1>User Logged In</h1>
                 <ul>
                   <li><strong>Name:</strong>  {this.state.name}</li>
@@ -536,12 +552,6 @@ class CreatePostComponent extends Component {
       console.log(this.state.apiPostResponse.errors)
       return;
     }
-    // else if (this.state.token != null) {
-    //   this.setState({apiPostResponse: {errors: undefined}})
-    // }
-
-    
-      
   
     // initialize data returned state to false:
     this.setState({dataReturned: false})
@@ -585,28 +595,29 @@ class CreatePostComponent extends Component {
             <input id="inputTitle" type="text" name="title" placeholder="Title"/>
             <textarea id="inputBody" type="text" name="description" placeholder="Text"/>
             <input className ="submit-input" type="submit" name="submitButton" value="Submit"/>
-          </form>
-          {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
-            ? <div>
-                <h1>Post Created</h1>
-                <ul>
-                <li><strong>Post Title:</strong>  {this.state.apiPostResponse.title}</li>
-                  <li><strong>Post Description:</strong>  {this.state.apiPostResponse.newPost.description}</li>
-                  <li><strong>Post Id:</strong>  {this.state.apiPostResponse.postId}</li>
-                  <li><strong>Post Date:</strong>  {this.state.apiPostResponse.postDate}</li>
-                  <li><strong>Created By:</strong>  {this.state.apiPostResponse.name}</li>
-                </ul> 
-              </div>
-            : null
-          }
-          {this.state.apiPostResponse.errors !== undefined
-            ? <RenderErrors errors = {this.state.apiPostResponse.errors} />
-            : null
-          }
-          {this.state.dataReturned === false
-            ? <Loading />
-            : null
-          }
+        </form>
+        {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
+          ? <div>
+              <h1>Post Created</h1>
+              <ul>
+              <li><strong>Post Title:</strong>  {this.state.apiPostResponse.title}</li>
+                <li><strong>Post Description:</strong>  {this.state.apiPostResponse.newPost.description}</li>
+                <li><strong>Post Id:</strong>  {this.state.apiPostResponse.postId}</li>
+                <li><strong>Post Date:</strong>  {this.state.apiPostResponse.postDate}</li>
+                <li><strong>Created By:</strong>  {this.state.apiPostResponse.name}</li>
+              </ul> 
+            </div>
+          : null
+        }
+        <button onClick = {this.props.createPost}>Close Window</button>
+        {this.state.apiPostResponse.errors !== undefined
+          ? <RenderErrors errors = {this.state.apiPostResponse.errors} />
+          : null
+        }
+        {this.state.dataReturned === false
+          ? <Loading />
+          : null
+        }
       </div>
     ) 
   }
