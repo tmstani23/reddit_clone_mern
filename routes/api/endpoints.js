@@ -123,7 +123,8 @@ router.post("/api/users/login", (req, res) => {
                         return res.send({
                                 userId: user.id,
                                 success: true,
-                                token: token
+                                token: token,
+                                userName: user.name
                             })
                         
                     }

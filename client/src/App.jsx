@@ -7,6 +7,7 @@ class App extends Component {
     apiPostResponse: "",
     dataReturned: null, 
     token: null,
+    currentUser: null,
     displaySinglePost: null,
     createNewPost: false,
     post: []
@@ -34,12 +35,13 @@ class App extends Component {
       .catch(err => console.log(err))
   }
 
-  updateToken = (inputToken, userId) => {
+  updateToken = (inputToken, userId, userName) => {
    this.setState({
       token: inputToken,
-      userId: userId
+      userId: userId,
+      currentUser: userName
     })
-    console.log(`token added in main state ${inputToken}, userId: ${userId}`)
+    console.log(`token added in main state ${inputToken}, userId: ${userId}, username: ${userName}`)
   }
 
   showSinglePost = async (state, post) => {
@@ -91,15 +93,15 @@ class App extends Component {
           </div>
           <div className="login-div" >
             
-            <UserLoginComponent className="login-comp" updateToken = {this.updateToken}/>
+            
             {this.state.dataReturned === true && this.state.apiPostResponse.errors === undefined && this.state.createNewPost === false
               ? <button onClick = {this.createNewPost}>Create Post</button>
               : null
             }
              
-            {this.state.token == null
-              ? <UserRegisterComponent className="register-comp"/>
-              : null
+            {this.state.token == null && this.state.currentUser == ""
+              ? [<UserRegisterComponent className="register-comp"/>, <UserLoginComponent className="login-comp" updateToken = {this.updateToken}/>]
+              : <UserIsLoggedInComponent updateToken = {this.updateToken} name={this.state.currentUser}/>
             }
           </div>
           
@@ -425,6 +427,8 @@ class UserRegisterComponent extends Component {
   }
 }
 
+
+
 class UserLoginComponent extends Component {
   state = {
     name: "",
@@ -462,16 +466,11 @@ class UserLoginComponent extends Component {
         
       })
       .then(() => {
-        this.props.updateToken(this.state.apiLoginResponse.token, this.state.apiLoginResponse.userId)
+        this.props.updateToken(this.state.apiLoginResponse.token, this.state.apiLoginResponse.userId, this.state.apiLoginResponse.userName)
       })
       .catch(err => console.log(err))
   }
-  logOut = async () => {
-    await this.setState({
-      apiLoginResponse: []
-    })
-    this.props.updateToken(this.state.apiLoginResponse.token, this.state.apiLoginResponse.userId)
-  }
+  
 
   handleChange = (event) => {
     const target = event.target;
@@ -496,19 +495,6 @@ class UserLoginComponent extends Component {
             <input id="inputPass2" type="text" name="password2" placeholder="enter password again"/>
             <input className ="submit-input" type="submit" name="submitButton" value="Submit"/>
           </form>
-          {this.state.dataReturned===true && this.state.apiLoginResponse.token !== undefined && this.state.apiLoginResponse.errors === undefined
-            ? <div className="login-success-div">
-                <h1>User Logged In</h1>
-                <ul>
-                  <li><strong>Name:</strong>  {this.state.name}</li>
-                  <li><strong>User Id:</strong>  {this.state.apiLoginResponse.userId}</li>
-                  <li><strong>Token:</strong> {this.state.apiLoginResponse.token}</li>
-                </ul> 
-                <button onClick = {this.logOut}>Logout</button>
-                
-              </div>
-            : null
-          }
           {this.state.apiLoginResponse.errors !== undefined
             ? <RenderErrors errors = {this.state.apiLoginResponse.errors} />
             : null
@@ -519,6 +505,21 @@ class UserLoginComponent extends Component {
           }
       </div>
     ) 
+  }
+}
+
+class UserIsLoggedInComponent extends Component {
+
+  logOut = () => {
+    this.props.updateToken(null, null, "")
+  }
+  render() {
+    return (
+      <div>
+        <h1>Username: {this.props.name}</h1>
+        <button onClick = {this.logOut}>Logout</button>
+      </div>
+    )
   }
 }
 
