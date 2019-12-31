@@ -7,7 +7,7 @@ class App extends Component {
     apiPostResponse: "",
     dataReturned: null, 
     token: null,
-    currentUser: null,
+    currentUser: "",
     displaySinglePost: null,
     createNewPost: false,
     post: []
@@ -99,15 +99,12 @@ class App extends Component {
               : null
             }
              
-            {this.state.token == null && this.state.currentUser == ""
+            {this.state.token === null && this.state.currentUser === ""
               ? [<UserRegisterComponent className="register-comp"/>, <UserLoginComponent className="login-comp" updateToken = {this.updateToken}/>]
               : <UserIsLoggedInComponent updateToken = {this.updateToken} name={this.state.currentUser}/>
             }
           </div>
-          
-        
-        
-        
+           
       </div>
     )
   }
@@ -130,7 +127,7 @@ class ShowSinglePost extends Component {
       this.setState({post: this.props.post})
       
     }
-    console.log(this.state.post, "showSingleComp")
+    //console.log(this.state.post, "showSingleComp")
   }
 
   handleSubmit = (event) => {
@@ -141,7 +138,7 @@ class ShowSinglePost extends Component {
 
     if(this.state.token == null) {
       this.setState({apiPostResponse: {errors: {error:"User not logged in"}}})
-      console.log(this.state.apiPostResponse.errors)
+      
       return;
     }
   
@@ -238,13 +235,14 @@ class DisplayPostsComponent extends Component {
 
   
 
-  callCountApi = async (count, postId) => {
+  callCountApi = async (count, postId, uid) => {
     
       // initialize data returned state to false:
      await this.setState({
         dataReturned: false,
         count: count,
-        postId: postId
+        postId: postId,
+        uid: uid
       })
         
       console.log(JSON.stringify(this.state), "beforefetch state");
@@ -280,14 +278,14 @@ class DisplayPostsComponent extends Component {
     }
   }
 
-  addCount = (postId, count) => {
+  addCount = (postId, count, uid) => {
     
     if(this.props.token == null) {
       this.setState({loginError: "Must be logged in to modify count."})
     }
     else {
       
-      this.callCountApi(count, postId);
+      this.callCountApi(count, postId, uid);
     }
     
   }
@@ -300,9 +298,9 @@ class DisplayPostsComponent extends Component {
       return (
         <div className="single-post-div" key={index}>
           <div className="count-div">
-            <button onClick={() => this.addCount(item._id, 1)}>Add to Count</button>
+            <button onClick={() => this.addCount(item._id, 1, item.uid)}>Add to Count</button>
             <h3>Count: {item.count}</h3>
-            <button onClick={() => this.addCount(item._id, -1)}>Subtract from Count</button>
+            <button onClick={() => this.addCount(item._id, -1, item.uid)}>Subtract from Count</button>
           </div>
           <div className="single-post-div-div">
             <ul onClick={() => this.props.displaySinglePost(true, item)}>

@@ -144,9 +144,10 @@ router.post("/api/users/login", (req, res) => {
 router.post("/api/users/add_count", (req, res) => {
     const inputCount = parseInt(req.body.count);
     const postId = req.body.postId;
+    const inputUid = req.body.uid;
     
 
-    console.log(inputCount, postId, "count,postid")
+    //console.log(inputCount, postId, "count,postid")
 
     Post.findById(postId, (err, post) => {
         if (err) {
@@ -158,9 +159,30 @@ router.post("/api/users/add_count", (req, res) => {
         if (post.count == 0 && inputCount < 0) {
             return; 
         }
-        //increment count
-        post.count += inputCount;
         
+        //loop through countedUsers array in post
+        // for(user in post.usersWhoCounted) {
+        //     //if user id is found in array
+                
+        //         // if user.count is < 0 and inputCount < 0
+        //             //return
+        //         //else if count is already 1 and trying to add one
+        //             //return 
+                   //else update user and post count
+        //     //else if user id is not in the array
+        //         //increment post count
+        //             post.count += inputCount;
+        //         //add new count object to array with updated uid and count
+                        //let userCountObj = {
+                            //count: inputCount,
+                            //userId: inputUid
+                        //}
+                        //             post.usersWhoCounted.push(userCountObj)
+        //
+        // }
+        
+        //add uid and count rating to post usersWhoCounted array
+        post.count += inputCount;
         
         
         //Save the updated count
@@ -211,6 +233,7 @@ router.post("/api/users/create_post", (req, res) => {
             title: postTitle,
             name: user.name,
         })
+        
 
         
         //Verify title doesn't already exist in db

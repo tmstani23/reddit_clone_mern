@@ -16,6 +16,10 @@ const PostSchema = new Schema ({
         type: Number,
         default: 0
     },
+    usersWhoCounted: { 
+        type : Array , 
+        "default" : [] 
+    },
     title: {
         type: String,
         required: true,
