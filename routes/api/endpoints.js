@@ -13,6 +13,8 @@ const validateLoginInput = require("../../validation/login");// Load User model
 const User = require("../../models/User");
 //Load Post model
 const Post = require("../../models/Post");
+//Load count model
+const Count = require("../../models/Count");
 
 // @route POST api/users/register
 // @desc Register user
@@ -147,42 +149,96 @@ router.post("/api/users/add_count", (req, res) => {
     const inputUid = req.body.uid;
     
 
-    //console.log(inputCount, postId, "count,postid")
+    console.log(inputCount, postId, inputUid, "count,postid,inputUid");
 
     Post.findById(postId, (err, post) => {
+        let userCountArr = post.usersWhoCounted;
+        let userHasCountedIndex = userCountArr.findIndex((element) => {
+            return element.userId == inputUid
+        });
+         
+        
+        //console.log(userCountArr, "userCount length");
+        //console.log(userHasCountedIndex, "userCountArr index");
+        
         if (err) {
             console.log(err);
-            return;
+            return res.status(404);
             //res.send({errors: {error: err.message}})
         }
         //Make sure post count won't go negative
         if (post.count == 0 && inputCount < 0) {
-            return; 
-        }
+            console.log("trying to reduce count below zero")
+            return;
+        };
+        
         
         //loop through countedUsers array in post
-        // for(user in post.usersWhoCounted) {
-        //     //if user id is found in array
-                
-        //         // if user.count is < 0 and inputCount < 0
-        //             //return
-        //         //else if count is already 1 and trying to add one
-        //             //return 
-                   //else update user and post count
-        //     //else if user id is not in the array
-        //         //increment post count
-        //             post.count += inputCount;
-        //         //add new count object to array with updated uid and count
-                        //let userCountObj = {
-                            //count: inputCount,
-                            //userId: inputUid
-                        //}
-                        //             post.usersWhoCounted.push(userCountObj)
-        //
-        // }
         
-        //add uid and count rating to post usersWhoCounted array
-        post.count += inputCount;
+        //Issue here with user obj not being recognized - Need to use array.find to identify matching obj with uid
+        
+        //if user id is found in array
+        if(userHasCountedIndex !== -1) {
+            let userHasCountedObj = userCountArr[userHasCountedIndex];
+            //update flag to show user has already modified count
+            console.log("userId matches in usersWhoCountedArray", post.usersWhoCounted[userHasCountedIndex])
+            //console.log(userHasCountedObj.hasUpVoted, inputCount)
+            //if user has already downvoted
+            if(userHasCountedObj.hasDownVoted == true && inputCount < 0)
+            {
+                console.log("trying to downvote more than once")
+            }   
+            //Bypass if user has already upvoted
+            else if(userHasCountedObj.hasUpVoted == true && inputCount > 0) {
+                console.log("trying to upvote more than once")
+                
+            }
+
+            else if(inputCount > 0 && userHasCountedObj.hasUpVoted !== true) {
+                //update userobj with has upvoted
+                userHasCountedObj.hasUpVoted = true;
+                userHasCountedObj.hasDownVoted = false;
+                post.usersWhoCounted[userHasCountedIndex] = userHasCountedObj;
+                //Update post count
+                post.count += inputCount;
+            }
+            else if(inputCount < 0 && userHasCountedObj.hasDownVoted !== true) {
+                //update userobj with has upvoted
+                userHasCountedObj.hasDownVoted = true;
+                userHasCountedObj.hasUpVoted = false;
+                post.usersWhoCounted[userHasCountedIndex] = userHasCountedObj;
+                //Update post count
+                post.count += inputCount;
+            }
+        
+            
+            
+        }
+                   
+        
+       
+        
+        //else if user id is not in the array
+        else if(userHasCountedIndex == -1) {
+            //add new count object to array with updated uid and count
+            let userCountObj = {
+                hasUpVoted: false,
+                hasDownVoted: false,
+                userId: inputUid
+            }
+            //set flags for has upvoted or downvoted to userCountObject
+            inputCount == -1
+                ? userCountObj.hasDownVoted = true
+                : userCountObj.hasUpVoted = true
+            
+            
+            //increment post count
+            post.count += inputCount;
+            //add new user obj to the post's users who counted array
+            post.usersWhoCounted.push(userCountObj)
+        }
+       
+        
         
         
         //Save the updated count
@@ -192,6 +248,7 @@ router.post("/api/users/add_count", (req, res) => {
                 return res.send({errors: {error: err.message}})
             }
             else {
+                console.log(post.usersWhoCounted, "userswhocountedArr");
                 return res.send({
                     count: post.count,
                     postId: post._id

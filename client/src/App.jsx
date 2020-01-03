@@ -20,7 +20,7 @@ class App extends Component {
   callApi = () => {
     // initialize data returned state to false:
     this.setState({dataReturned: false});
-    console.log(JSON.stringify(this.state), "beforefetch state");
+    //console.log(JSON.stringify(this.state), "beforefetch state");
 
     fetch('http://localhost:4000/api/users/get_posts', {
       method: 'GET'
@@ -29,7 +29,7 @@ class App extends Component {
       .then(res => {
         // update state with the returned data and set data returned flag to true
         this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
-        console.log(JSON.stringify(this.state), "afterfetch state")
+        //console.log(JSON.stringify(this.state), "afterfetch state")
         
       })
       .catch(err => console.log(err))
@@ -41,7 +41,7 @@ class App extends Component {
       userId: userId,
       currentUser: userName
     })
-    console.log(`token added in main state ${inputToken}, userId: ${userId}, username: ${userName}`)
+    //console.log(`token added in main state ${inputToken}, userId: ${userId}, username: ${userName}`)
   }
 
   showSinglePost = async (state, post) => {
@@ -100,7 +100,7 @@ class App extends Component {
             }
              
             {this.state.token === null && this.state.currentUser === ""
-              ? [<UserRegisterComponent className="register-comp"/>, <UserLoginComponent className="login-comp" updateToken = {this.updateToken}/>]
+              ? [<UserRegisterComponent key="reg1" className="register-comp"/>, <UserLoginComponent key="reg2" className="login-comp" updateToken = {this.updateToken}/>]
               : <UserIsLoggedInComponent updateToken = {this.updateToken} name={this.state.currentUser}/>
             }
           </div>
