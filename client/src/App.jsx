@@ -6,8 +6,8 @@ class App extends Component {
   state = {
     apiPostResponse: "",
     dataReturned: null, 
-    token: null,
-    currentUser: "",
+    token: undefined,
+    currentUser: undefined,
     displaySinglePost: null,
     createNewPost: false,
     post: []
@@ -35,12 +35,16 @@ class App extends Component {
       .catch(err => console.log(err))
   }
 
-  updateToken = (inputToken, userId, userName) => {
-   this.setState({
+  updateToken = async (inputToken, userId, userName, errors) => {
+    
+    await this.setState({
       token: inputToken,
       userId: userId,
-      currentUser: userName
+      currentUser: userName,
+      currentUserErrors: errors,
     })
+    console.log(inputToken, userId, userName, errors)
+    console.log(this.state.currentUserErrors.errors, "errors in updateToken")
     //console.log(`token added in main state ${inputToken}, userId: ${userId}, username: ${userName}`)
   }
 
@@ -71,7 +75,7 @@ class App extends Component {
             
           
             {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined && !this.state.displaySinglePost === true &&! this.state.createNewPost === true
-              ? <DisplayPostsComponent displaySinglePost={this.showSinglePost} updatePosts = {this.callApi} addCount = {this.state.addCount} posts = {this.state.apiPostResponse} token ={this.state.token} />
+              ? <DisplayPostsComponent displaySinglePost={this.showSinglePost} currentUserId={this.state.userId} updatePosts = {this.callApi} posts = {this.state.apiPostResponse} token ={this.state.token} />
               : null
             }
             {this.state.apiPostResponse.errors !== undefined
@@ -99,9 +103,14 @@ class App extends Component {
               : null
             }
              
-            {this.state.token === null && this.state.currentUser === ""
+            {this.state.token === undefined && this.state.currentUser === undefined
               ? [<UserRegisterComponent key="reg1" className="register-comp"/>, <UserLoginComponent key="reg2" className="login-comp" updateToken = {this.updateToken}/>]
-              : <UserIsLoggedInComponent updateToken = {this.updateToken} name={this.state.currentUser}/>
+              : (this.state.currentUserErrors.errors === undefined
+                  ? <UserIsLoggedInComponent updateToken = {this.updateToken} name={this.state.currentUser}/>
+                  : <RenderErrors errors = {this.state.currentUserErrors.errors} />
+                )
+                  
+                
             }
           </div>
            
@@ -233,7 +242,7 @@ class DisplayPostsComponent extends Component {
     
   }
 
-  
+  //need to add current user to state here
 
   callCountApi = async (count, postId, uid) => {
     
@@ -298,9 +307,9 @@ class DisplayPostsComponent extends Component {
       return (
         <div className="single-post-div" key={index}>
           <div className="count-div">
-            <button onClick={() => this.addCount(item._id, 1, item.uid)}>Add to Count</button>
+            <button onClick={() => this.addCount(item._id, 1, this.props.currentUserId)}>Add to Count</button>
             <h3>Count: {item.count}</h3>
-            <button onClick={() => this.addCount(item._id, -1, item.uid)}>Subtract from Count</button>
+            <button onClick={() => this.addCount(item._id, -1, this.props.currentUserId)}>Subtract from Count</button>
           </div>
           <div className="single-post-div-div">
             <ul onClick={() => this.props.displaySinglePost(true, item)}>
@@ -464,7 +473,7 @@ class UserLoginComponent extends Component {
         
       })
       .then(() => {
-        this.props.updateToken(this.state.apiLoginResponse.token, this.state.apiLoginResponse.userId, this.state.apiLoginResponse.userName)
+        this.props.updateToken(this.state.apiLoginResponse.token, this.state.apiLoginResponse.userId, this.state.apiLoginResponse.userName, this.state.apiLoginResponse)
       })
       .catch(err => console.log(err))
   }
@@ -509,7 +518,7 @@ class UserLoginComponent extends Component {
 class UserIsLoggedInComponent extends Component {
 
   logOut = () => {
-    this.props.updateToken(null, null, "")
+    this.props.updateToken(undefined, null, undefined, {errors: undefined})
   }
   render() {
     return (
