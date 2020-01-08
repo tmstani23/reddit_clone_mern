@@ -163,19 +163,14 @@ router.post("/api/users/add_count", (req, res) => {
         
         if (err) {
             console.log(err);
-            return res.status(404);
-            //res.send({errors: {error: err.message}})
+            return res.send({errors: {error: err.message}})
+            
         }
         //Make sure post count won't go negative
         if (post.count == 0 && inputCount < 0) {
             console.log("trying to reduce count below zero")
-            return;
+            return res.send({errors: {error: "trying to reduce count below zero"}})
         };
-        
-        
-        //loop through countedUsers array in post
-        
-        //Issue here with user obj not being recognized - Need to use array.find to identify matching obj with uid
         
         //if user id is found in array
         if(userHasCountedIndex !== -1) {
@@ -184,35 +179,27 @@ router.post("/api/users/add_count", (req, res) => {
             console.log("userId matches in usersWhoCountedArray", post.usersWhoCounted[userHasCountedIndex])
             //console.log(userHasCountedObj.hasUpVoted, inputCount)
             //if user has already downvoted
-            if(userHasCountedObj.hasDownVoted == true && inputCount < 0)
+            if(userHasCountedObj.userCount <= -1 && inputCount < 0)
             {
-                console.log("trying to downvote more than once")
+                console.log("trying to downvote more than once");
+                return res.status(500).send({errors: {error: "trying to downvote more than once"}})
             }   
             //Bypass if user has already upvoted
-            else if(userHasCountedObj.hasUpVoted == true && inputCount > 0) {
-                console.log("trying to upvote more than once")
+            else if(userHasCountedObj.userCount >= 1 && inputCount > 0) {
+                console.log("user already upvoted");
+                return res.status(500).send({errors: {error: "trying to upvote more than once"}})
                 
             }
 
-            else if(inputCount > 0 && userHasCountedObj.hasUpVoted !== true) {
-                //update userobj with has upvoted
-                userHasCountedObj.hasUpVoted = true;
-                userHasCountedObj.hasDownVoted = false;
+            else {
+                //UserCount object's count property is summed with the new input count
+                userHasCountedObj.userCount += inputCount;
+                //Replace the object in the post usersWhoCounted array to the new object
                 post.usersWhoCounted[userHasCountedIndex] = userHasCountedObj;
-                //Update post count
+                //Add the new input count to the current post's count
                 post.count += inputCount;
             }
-            else if(inputCount < 0 && userHasCountedObj.hasDownVoted !== true) {
-                //update userobj with has upvoted
-                userHasCountedObj.hasDownVoted = true;
-                userHasCountedObj.hasUpVoted = false;
-                post.usersWhoCounted[userHasCountedIndex] = userHasCountedObj;
-                //Update post count
-                post.count += inputCount;
-            }
-        
-            
-            
+                
         }
                    
         
@@ -222,15 +209,9 @@ router.post("/api/users/add_count", (req, res) => {
         else if(userHasCountedIndex == -1) {
             //add new count object to array with updated uid and count
             let userCountObj = {
-                hasUpVoted: false,
-                hasDownVoted: false,
+                userCount: inputCount,
                 userId: inputUid
             }
-            //set flags for has upvoted or downvoted to userCountObject
-            inputCount == -1
-                ? userCountObj.hasDownVoted = true
-                : userCountObj.hasUpVoted = true
-            
             
             //increment post count
             post.count += inputCount;
@@ -339,6 +320,44 @@ router.post("/api/users/create_post", (req, res) => {
             }
               
         })
+            
+    })
+
+})
+
+//route for creating posts
+router.post("/api/users/delete_post", (req, res) => {
+    //extract user post fields from request
+    const postUid = req.body.postUserId;
+    const inputToken = req.body.token;
+    const postId = req.body.postId;
+
+    //Search User documents to see if input token matches current users token
+        //return an error if user or token doesn't match
+    User.findById(postUid, (err, user) => {
+        if (err) {
+            console.log(err);
+            return res.send({errors: {error: err.message}})
+        }
+
+        //compare user token against inputToken
+        //if not a match
+        if (user.token != inputToken) {
+            //return error
+            
+            return res.send({errors: {error: "User not logged in."}})
+            
+        }
+        
+        //Search for post by its id and delete from db
+        Post.deleteOne({_id: postId}, (err, post) => {
+            if (err) {
+                console.log(err);
+                return res.send({errors: {error: err.message}})
+            }
+            return res.send(post);
+
+        }) 
             
     })
 

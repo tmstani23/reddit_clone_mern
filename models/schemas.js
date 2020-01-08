@@ -7,14 +7,11 @@ const CountSchema = new Schema({
         type: String,
         required: true
     },
-    hasUpVoted: {
-        type: Boolean,
-        default: false
-    },
-    hasDownVoted: {
-        type: Boolean,
-        default: false
+    userCount: {
+        type: Number,
+        default: 0
     }
+    
 })
 
 //schema for a post
