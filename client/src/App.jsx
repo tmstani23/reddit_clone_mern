@@ -153,7 +153,6 @@ class ShowSinglePost extends Component {
 
     if(this.state.token == null) {
       this.setState({apiPostResponse: {errors: {error:"User not logged in"}}})
-      
       return;
     }
   
@@ -175,7 +174,7 @@ class ShowSinglePost extends Component {
         // update state with the returned data and set data returned flag to true
         this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
       })
-      .catch(err => console.log(err))
+      .catch(err =>  console.log(err));
   }
 
   renderPost = () => {
@@ -199,11 +198,11 @@ class ShowSinglePost extends Component {
           ? <RenderErrors errors = {this.state.apiPostResponse.errors} />
           :  null
         }
-        {this.state.dataReturned === false
+        {this.state.dataReturned === false && this.state.apiPostResponse.errors === undefined
         ? <Loading />
-          : null
+          : null /* <CommentList posts = {this.state.apiPostResponse.posts} /> */
         }
-        {/* <CommentList posts = {this.state.apiPostResponse.posts} /> */}
+        
     </div>
     )
   }
@@ -672,7 +671,7 @@ class DeletePostComp extends Component {
       //Prevent default action
     event.preventDefault();
 
-    if(this.state.token == null || this.state.token == undefined) {
+    if(this.state.token === null || this.state.token === undefined) {
       this.setState({apiPostResponse: {errors: {error:"User not logged in"}}})
       console.log(this.state.apiPostResponse.errors)
       return;
@@ -712,6 +711,7 @@ class DeletePostComp extends Component {
   }
 
   render() {
+    
     return (
       // display register form or else success message and login form if registered
       <div>
@@ -724,11 +724,8 @@ class DeletePostComp extends Component {
           ? <div>
               <h1>Post Deleted</h1>
               <ul>
-              <li><strong>Post Title:</strong>  {this.state.apiPostResponse.title}</li>
-                <li><strong>Post Description:</strong>  {this.state.apiPostResponse.newPost.description}</li>
-                <li><strong>Post Id:</strong>  {this.state.apiPostResponse.postId}</li>
-                <li><strong>Post Date:</strong>  {this.state.apiPostResponse.postDate}</li>
-                <li><strong>Created By:</strong>  {this.state.apiPostResponse.name}</li>
+              <li><strong>Post Id:</strong>  {this.state.apiPostResponse.postId}</li>
+              <li><strong>Created By:</strong>  {this.state.apiPostResponse.name}</li>
               </ul> 
             </div>
           : null

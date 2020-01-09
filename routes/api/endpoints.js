@@ -305,7 +305,7 @@ router.post("/api/users/create_post", (req, res) => {
                                 else {
                                     return res.send({
                                         name: user.name, 
-                                        newPost: user.posts[user.posts.length - 1],
+                                        newPost: newPost,
                                         title: postTitle,
                                         description: newPost.description,
                                         postId: newPost.id,
@@ -345,7 +345,7 @@ router.post("/api/users/delete_post", (req, res) => {
         if (user.token != inputToken) {
             //return error
             
-            return res.send({errors: {error: "User not logged in."}})
+            return res.send({errors: {error: "Cannot delete post you didn't create."}})
             
         }
         
@@ -355,7 +355,11 @@ router.post("/api/users/delete_post", (req, res) => {
                 console.log(err);
                 return res.send({errors: {error: err.message}})
             }
-            return res.send(post);
+            return res.send({
+                name: user.name, 
+                postId: postId
+                
+            })
 
         }) 
             
