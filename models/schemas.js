@@ -43,6 +43,30 @@ const PostSchema = new Schema ({
     },
 })
 
+//schema for a post
+const CommentSchema = new Schema ({
+    uid: {
+        type: String,
+        required: true,
+    },
+    description: {
+        type: String,
+        required: true,
+    },
+    count: {
+        type: Number,
+        default: 0
+    },
+    usersWhoCounted: [CountSchema],
+    name: {
+        type: String
+    },
+    date: {
+        type: Date,
+        default: Date.now,
+    },
+})
+
 //Schema for a User
 const UserSchema = new Schema ({
     name: {
@@ -71,5 +95,6 @@ const UserSchema = new Schema ({
 module.exports = {
     PostSchema: PostSchema,
     UserSchema: UserSchema,
-    CountSchema: CountSchema
+    CountSchema: CountSchema,
+    CommentSchema: CommentSchema
   };

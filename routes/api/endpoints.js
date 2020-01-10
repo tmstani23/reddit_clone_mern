@@ -15,6 +15,7 @@ const User = require("../../models/User");
 const Post = require("../../models/Post");
 //Load count model
 const Count = require("../../models/Count");
+const Comment = require("../../models/Comment");
 
 // @route POST api/users/register
 // @desc Register user
@@ -237,6 +238,78 @@ router.post("/api/users/add_count", (req, res) => {
             }
         })
 
+    })
+
+})
+
+//route for creating comments
+router.post("/api/users/create_comment", (req, res) => {
+    //extract user post fields from request
+    const commentUid = req.body.uid;
+    const commentDescription = req.body.description;
+    const inputToken = req.body.token;
+
+    //search db by id for User
+    User.findById(commentUid, (err, user) => {
+        if (err) {
+            console.log(err);
+            return res.send({errors: {error: err.message}})
+        }
+
+        //compare user token against inputToken
+        //if not a match
+        if (user.token != inputToken) {
+            //return error
+            
+            return res.send({errors: {error: "User not logged in."}})
+            
+        } 
+        
+        //create new post and update its uid field and description from the form.
+        let newComment = new Comment({
+            uid: commentUid,
+            description: commentDescription,
+            name: user.name,
+        })
+        
+
+        
+        
+        //If not save the new post to the database.
+        newComment.save(
+            (err, newComment) => {
+                if(err) {
+                    return res.json({
+                        errors: {error: err.message}
+                    })
+                    
+                }
+                else {
+                    //Add new post to current user's list post array.
+                    user.posts.push(newPost);
+                    //Save current user back to the database and return user and new log as json
+                    user.save((err) => {
+                        if (err) {
+                            return res.json({
+                                errors: {error: err.message}
+                            })
+                        }
+                        else {
+                            return res.send({
+                                name: user.name, 
+                                newPost: newPost,
+                                title: postTitle,
+                                description: newPost.description,
+                                postId: newPost.id,
+                                postDate: newPost.date
+                            })
+                        } 
+                                
+                    })
+                }   
+            }
+        )
+                  
     })
 
 })
