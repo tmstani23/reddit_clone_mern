@@ -245,7 +245,7 @@ router.post("/api/users/add_count", (req, res) => {
 //route for creating comments
 router.post("/api/users/create_comment", (req, res) => {
     //extract user post fields from request
-    const commentUid = req.body.uid;
+    const commentUid = req.body.userId;
     const commentDescription = req.body.description;
     const inputToken = req.body.token;
 
@@ -255,7 +255,7 @@ router.post("/api/users/create_comment", (req, res) => {
             console.log(err);
             return res.send({errors: {error: err.message}})
         }
-
+        console.log(JSON.stringify(user), "user obj in create_comment endpoint");
         //compare user token against inputToken
         //if not a match
         if (user.token != inputToken) {
@@ -275,7 +275,7 @@ router.post("/api/users/create_comment", (req, res) => {
 
         
         
-        //If not save the new post to the database.
+        //If not save the new comment to the database.
         newComment.save(
             (err, newComment) => {
                 if(err) {
@@ -285,27 +285,19 @@ router.post("/api/users/create_comment", (req, res) => {
                     
                 }
                 else {
-                    //Add new post to current user's list post array.
-                    user.posts.push(newPost);
+                    
                     //Save current user back to the database and return user and new log as json
-                    user.save((err) => {
-                        if (err) {
-                            return res.json({
-                                errors: {error: err.message}
-                            })
-                        }
-                        else {
-                            return res.send({
-                                name: user.name, 
-                                newPost: newPost,
-                                title: postTitle,
-                                description: newPost.description,
-                                postId: newPost.id,
-                                postDate: newPost.date
-                            })
-                        } 
-                                
+                    
+                        
+                    return res.send({
+                        name: newComment.name, 
+                        description: newComment.description,
+                        commentId: newComment._id,
+                        commentDate: newComment.date
                     })
+                        
+                                
+                    
                 }   
             }
         )

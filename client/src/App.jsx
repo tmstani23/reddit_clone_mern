@@ -145,6 +145,70 @@ class ShowSinglePost extends Component {
     //console.log(this.state.post, "showSingleComp")
   }
 
+  
+
+  renderPost = () => {
+    return (
+    <div className="post-div">
+      <h1>{this.state.post.title}</h1>
+      <p>Body: {this.state.post.description}</p>
+      <ul>
+        <li>{this.state.post.date}</li>
+        <li>Posted by: {this.state.post.name}</li>
+      </ul>
+      <button onClick = {() => this.props.displaySinglePost(null)}> Close </button>
+      <button onClick = {this.renderDeleteComp}> Delete Post </button> 
+      <CreateCommentComponent token = {this.state.token} userId = {this.state.userId}/>   
+    </div>
+    )
+  }
+  
+  renderDeleteComp = () => {
+    this.setState({
+      renderDeleteComp: true
+    })
+  }
+
+  
+
+  render() {
+  
+    
+    return (
+      // display register form or else success message and login form if registered
+      <div className="deletePosts-div">
+      {this.state.renderDeleteComp === true 
+        ? <DeletePostComp post = {this.state.post} token = {this.state.token} userId    = {this.state.userId} updatePosts = {this.props.updatePosts}                  closeSinglePost = {this.props.displaySinglePost}/>
+        : (this.state.post !== undefined
+          ? (<div>{this.renderPost()}</div>)
+          : null
+          )
+      }
+      </div>
+    ) 
+  }
+
+}
+
+class CreateCommentComponent extends Component {
+  state = {
+    dataReturned: null,
+    displayCommentForm: false,
+    userId: this.props.userId,
+    token: this.props.token,
+    apiPostResponse: [],
+  }
+
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    if (this.props.token !== prevProps.token || this.props.userId !== prevProps.userId) {
+      this.setState({
+        token: this.props.token,
+        userId: this.props.userId,
+      })
+      
+    }
+  }
   handleSubmit = (event) => {
     //If handleSubmit was called by user clicking submit button in form
     
@@ -177,39 +241,9 @@ class ShowSinglePost extends Component {
       .catch(err =>  console.log(err));
   }
 
-  renderPost = () => {
-    return (
-    <div className="post-div">
-      <h1>{this.state.post.title}</h1>
-      <p>Body: {this.state.post.description}</p>
-      <ul>
-        <li>{this.state.post.date}</li>
-        <li>Posted by: {this.state.post.name}</li>
-      </ul>
-
-      <form onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
-        <h3>Create Comment:</h3>
-        <textarea className="commentBox" id="inputBody" type="text" name="description" placeholder="What are your thoughts?"/>
-        <input className ="submit-input" type="submit" name="submitButton" value="Comment"/>
-      </form>
-      <button onClick = {() => this.props.displaySinglePost(null)}> Close </button>
-      <button onClick = {this.renderDeleteComp}> Delete Post </button> 
-        {this.state.apiPostResponse.errors !== undefined
-          ? <RenderErrors errors = {this.state.apiPostResponse.errors} />
-          :  null
-        }
-        {this.state.dataReturned === false && this.state.apiPostResponse.errors === undefined
-        ? <Loading />
-          : null /* <CommentList posts = {this.state.apiPostResponse.posts} /> */
-        }
-        
-    </div>
-    )
-  }
-  
-  renderDeleteComp = () => {
+  showCommentForm = (inputState) => {
     this.setState({
-      renderDeleteComp: true
+      displayCommentForm: inputState
     })
   }
 
@@ -223,22 +257,35 @@ class ShowSinglePost extends Component {
     });
     
   }
-
-  render() {
-  
-    
+  render () {
     return (
-      // display register form or else success message and login form if registered
-      <div className="comment-form">
-      {this.state.renderDeleteComp === true 
-        ? <DeletePostComp post = {this.state.post} token = {this.state.token} userId    = {this.state.userId} updatePosts = {this.props.updatePosts}                  closeSinglePost = {this.props.displaySinglePost}/>
-        : (this.state.post !== undefined
-          ? (<div>{this.renderPost()}</div>)
-          : null
+      <div>
+        {this.state.displayCommentForm === false
+          ? <button onClick = {() => this.showCommentForm(true)}>Create Comment</button>
+          :  (
+            <div>
+              
+              <form onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
+              <h3>Create Comment:</h3>
+              <textarea className="commentBox" id="inputBody" type="text" name="description" placeholder="What are your thoughts?"/>
+              <input className ="submit-input" type="submit" name="submitButton" value="Submit"/>
+              </form>
+              <button onClick = {() => this.showCommentForm(false)}>Close Comment</button>
+            </div>
           )
-      }
+        }
+        {this.state.apiPostResponse.errors !== undefined
+            ? <RenderErrors errors = {this.state.apiLoginResponse.errors} />
+            : null
+          }
+        {this.state.dataReturned === false && this.state.apiPostResponse.errors === undefined
+          ? <Loading />
+          : null
+        }
+        
       </div>
-    ) 
+      
+    )
   }
 
 }
