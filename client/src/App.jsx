@@ -35,9 +35,9 @@ class App extends Component {
       .catch(err => console.log(err))
   }
 
-  updateToken = async (inputToken, userId, userName, errors) => {
+  updateToken = (inputToken, userId, userName, errors) => {
     
-    await this.setState({
+    this.setState({
       token: inputToken,
       userId: userId,
       currentUser: userName,
@@ -48,9 +48,9 @@ class App extends Component {
     //console.log(`token added in main state ${inputToken}, userId: ${userId}, username: ${userName}`)
   }
 
-  showSinglePost = async (state, post) => {
+  showSinglePost = (state, post) => {
     
-    await this.setState({
+    this.setState({
       displaySinglePost: state,
       post: post
     })
@@ -121,44 +121,22 @@ class App extends Component {
 
 class ShowSinglePost extends Component {
   state = {
-    token: this.props.token,
+    renderDeleteComp:false,
     apiPostResponse: [],
-    post: this.props.post,
-    userId: this.props.userId,
-    renderDeleteComp:false
   }
-
-  componentDidUpdate(prevProps) {
-    // Typical usage (don't forget to compare props):
-    if (this.props.token !== prevProps.token) {
-      this.setState({token: this.props.token})
-      
-    }
-    if (this.props.post !== prevProps.post) {
-      this.setState({post: this.props.post})
-      
-    }
-    if (this.props.userId !== prevProps.userId) {
-      this.setState({userId: this.props.userId})
-      
-    }
-    //console.log(this.state.post, "showSingleComp")
-  }
-
   
-
   renderPost = () => {
     return (
     <div className="post-div">
-      <h1>{this.state.post.title}</h1>
-      <p>Body: {this.state.post.description}</p>
+      <h1>{this.props.post.title}</h1>
+      <p>Body: {this.props.post.description}</p>
       <ul>
-        <li>{this.state.post.date}</li>
-        <li>Posted by: {this.state.post.name}</li>
+        <li>{this.props.post.date}</li>
+        <li>Posted by: {this.props.post.name}</li>
       </ul>
       <button onClick = {() => this.props.displaySinglePost(null)}> Close </button>
       <button onClick = {this.renderDeleteComp}> Delete Post </button> 
-      <CreateCommentComponent token = {this.state.token} userId = {this.state.userId}/>   
+      <CreateCommentComponent token = {this.props.token} userId = {this.props.userId}/>   
     </div>
     )
   }
@@ -178,8 +156,8 @@ class ShowSinglePost extends Component {
       // display register form or else success message and login form if registered
       <div className="deletePosts-div">
       {this.state.renderDeleteComp === true 
-        ? <DeletePostComp post = {this.state.post} token = {this.state.token} userId    = {this.state.userId} updatePosts = {this.props.updatePosts}                  closeSinglePost = {this.props.displaySinglePost}/>
-        : (this.state.post !== undefined
+        ? <DeletePostComp post = {this.props.post} token = {this.props.token} userId = {this.props.userId} updatePosts = {this.props.updatePosts}                  closeSinglePost = {this.props.displaySinglePost}/>
+        : (this.props.post !== undefined
           ? (<div>{this.renderPost()}</div>)
           : null
           )
@@ -194,28 +172,32 @@ class CreateCommentComponent extends Component {
   state = {
     dataReturned: null,
     displayCommentForm: false,
-    userId: this.props.userId,
-    token: this.props.token,
+    
     apiPostResponse: [],
   }
 
-  componentDidUpdate(prevProps) {
-    // Typical usage (don't forget to compare props):
-    if (this.props.token !== prevProps.token || this.props.userId !== prevProps.userId) {
-      this.setState({
-        token: this.props.token,
-        userId: this.props.userId,
-      })
+  // componentDidUpdate(prevProps) {
+  //   // Typical usage (don't forget to compare props):
+  //   if (this.props.token !== prevProps.token || this.props.userId !== prevProps.userId) {
+  //     this.setState({
+  //       token: this.props.token,
+  //       userId: this.props.userId,
+  //     })
       
-    }
-  }
+  //   }
+  // }
+  //If handleSubmit was called by user clicking submit button in form
   handleSubmit = (event) => {
-    //If handleSubmit was called by user clicking submit button in form
     
+    let bodyObj = {
+      userId: this.props.userId,
+      token: this.props.token,
+      description: this.state.description
+    }
       //Prevent default action
     event.preventDefault();
 
-    if(this.state.token == null) {
+    if(this.props.token == null || this.props.token == undefined) {
       this.setState({apiPostResponse: {errors: {error:"User not logged in"}}})
       return;
     }
@@ -229,7 +211,7 @@ class CreateCommentComponent extends Component {
       headers: {
         'Content-type': 'application/json'
       }, 
-      body: JSON.stringify(this.state),
+      body: JSON.stringify(bodyObj),
     })
       .then(res => res.json())
       .then(res => {
@@ -257,6 +239,7 @@ class CreateCommentComponent extends Component {
     });
     
   }
+  
   render () {
     return (
       <div>
@@ -275,7 +258,7 @@ class CreateCommentComponent extends Component {
           )
         }
         {this.state.apiPostResponse.errors !== undefined
-            ? <RenderErrors errors = {this.state.apiLoginResponse.errors} />
+            ? <RenderErrors errors = {this.state.apiPostResponse.errors} />
             : null
           }
         {this.state.dataReturned === false && this.state.apiPostResponse.errors === undefined
