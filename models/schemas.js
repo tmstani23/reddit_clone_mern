@@ -2,6 +2,18 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 //const PostSchema = require('./Post');
 
+const CountSchema = new Schema({
+    userId: {
+        type: String,
+        required: true
+    },
+    userCount: {
+        type: Number,
+        default: 0
+    }
+    
+})
+
 //schema for a post
 const PostSchema = new Schema ({
     uid: {
@@ -16,15 +28,38 @@ const PostSchema = new Schema ({
         type: Number,
         default: 0
     },
+    usersWhoCounted: [CountSchema],
     title: {
         type: String,
         required: true,
         unique: true,
-        dropDups: true
     },
     name: {
+        type: String
+    },
+    date: {
+        type: Date,
+        default: Date.now,
+    },
+})
+
+//schema for a post
+const CommentSchema = new Schema ({
+    uid: {
         type: String,
-        unique: true
+        required: true,
+    },
+    description: {
+        type: String,
+        required: true,
+    },
+    count: {
+        type: Number,
+        default: 0
+    },
+    usersWhoCounted: [CountSchema],
+    name: {
+        type: String
     },
     date: {
         type: Date,
@@ -59,5 +94,7 @@ const UserSchema = new Schema ({
 
 module.exports = {
     PostSchema: PostSchema,
-    UserSchema: UserSchema
+    UserSchema: UserSchema,
+    CountSchema: CountSchema,
+    CommentSchema: CommentSchema
   };

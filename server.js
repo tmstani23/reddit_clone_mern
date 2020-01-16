@@ -22,6 +22,16 @@ mongoose
   .then(() => console.log("MongoDB successfully connected"))
   .catch(err => console.log(err));
 
+//reset test server
+// mongoose.connect(testDB, function(err) {
+//   if(err) {
+//     console.log(err);
+//   }
+//   //Log if connection was established or not
+//   console.log(mongoose.connection.readyState, "Mongo DB connection established");
+//   mongoose.connection.db.dropDatabase();
+// });
+
 // convert all dates to formatted dates
 app.set('json replacer', function (key, value) {
   if (this[key] instanceof Date) {

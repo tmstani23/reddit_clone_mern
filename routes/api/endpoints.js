@@ -13,6 +13,9 @@ const validateLoginInput = require("../../validation/login");// Load User model
 const User = require("../../models/User");
 //Load Post model
 const Post = require("../../models/Post");
+//Load count model
+const Count = require("../../models/Count");
+const Comment = require("../../models/Comment");
 
 // @route POST api/users/register
 // @desc Register user
@@ -123,7 +126,8 @@ router.post("/api/users/login", (req, res) => {
                         return res.send({
                                 userId: user.id,
                                 success: true,
-                                token: token
+                                token: token,
+                                userName: user.name
                             })
                         
                     }
@@ -143,22 +147,79 @@ router.post("/api/users/login", (req, res) => {
 router.post("/api/users/add_count", (req, res) => {
     const inputCount = parseInt(req.body.count);
     const postId = req.body.postId;
+    const inputUid = req.body.uid;
     
 
-    console.log(inputCount, postId, "count,postid")
+    console.log(inputCount, postId, inputUid, "count,postid,inputUid");
 
     Post.findById(postId, (err, post) => {
+        let userCountArr = post.usersWhoCounted;
+        let userHasCountedIndex = userCountArr.findIndex((element) => {
+            return element.userId == inputUid
+        });
+         
+        
+        //console.log(userCountArr, "userCount length");
+        //console.log(userHasCountedIndex, "userCountArr index");
+        
         if (err) {
             console.log(err);
-            return;
-            //res.send({errors: {error: err.message}})
+            return res.send({errors: {error: err.message}})
+            
         }
         //Make sure post count won't go negative
         if (post.count == 0 && inputCount < 0) {
-            return; 
+            console.log("trying to reduce count below zero")
+            return res.send({errors: {error: "trying to reduce count below zero"}})
+        };
+        
+        //if user id is found in array
+        if(userHasCountedIndex !== -1) {
+            let userHasCountedObj = userCountArr[userHasCountedIndex];
+            //update flag to show user has already modified count
+            console.log("userId matches in usersWhoCountedArray", post.usersWhoCounted[userHasCountedIndex])
+            //console.log(userHasCountedObj.hasUpVoted, inputCount)
+            //if user has already downvoted
+            if(userHasCountedObj.userCount <= -1 && inputCount < 0)
+            {
+                console.log("trying to downvote more than once");
+                return res.status(500).send({errors: {error: "trying to downvote more than once"}})
+            }   
+            //Bypass if user has already upvoted
+            else if(userHasCountedObj.userCount >= 1 && inputCount > 0) {
+                console.log("user already upvoted");
+                return res.status(500).send({errors: {error: "trying to upvote more than once"}})
+                
+            }
+
+            else {
+                //UserCount object's count property is summed with the new input count
+                userHasCountedObj.userCount += inputCount;
+                //Replace the object in the post usersWhoCounted array to the new object
+                post.usersWhoCounted[userHasCountedIndex] = userHasCountedObj;
+                //Add the new input count to the current post's count
+                post.count += inputCount;
+            }
+                
         }
-        //increment count
-        post.count += inputCount;
+                   
+        
+       
+        
+        //else if user id is not in the array
+        else if(userHasCountedIndex == -1) {
+            //add new count object to array with updated uid and count
+            let userCountObj = {
+                userCount: inputCount,
+                userId: inputUid
+            }
+            
+            //increment post count
+            post.count += inputCount;
+            //add new user obj to the post's users who counted array
+            post.usersWhoCounted.push(userCountObj)
+        }
+       
         
         
         
@@ -169,6 +230,7 @@ router.post("/api/users/add_count", (req, res) => {
                 return res.send({errors: {error: err.message}})
             }
             else {
+                console.log(post.usersWhoCounted, "userswhocountedArr");
                 return res.send({
                     count: post.count,
                     postId: post._id
@@ -176,6 +238,70 @@ router.post("/api/users/add_count", (req, res) => {
             }
         })
 
+    })
+
+})
+
+//route for creating comments
+router.post("/api/users/create_comment", (req, res) => {
+    //extract user post fields from request
+    const commentUid = req.body.userId;
+    const commentDescription = req.body.description;
+    const inputToken = req.body.token;
+
+    //search db by id for User
+    User.findById(commentUid, (err, user) => {
+        if (err) {
+            console.log(err);
+            return res.send({errors: {error: err.message}})
+        }
+        console.log(JSON.stringify(user), "user obj in create_comment endpoint");
+        //compare user token against inputToken
+        //if not a match
+        if (user.token != inputToken) {
+            //return error
+            
+            return res.send({errors: {error: "User not logged in."}})
+            
+        } 
+        
+        //create new post and update its uid field and description from the form.
+        let newComment = new Comment({
+            uid: commentUid,
+            description: commentDescription,
+            name: user.name,
+        })
+        
+
+        
+        
+        //If not save the new comment to the database.
+        newComment.save(
+            (err, newComment) => {
+                if(err) {
+                    return res.json({
+                        errors: {error: err.message}
+                    })
+                    
+                }
+                else {
+                    
+                    //Save current user back to the database and return user and new log as json
+                    
+                        
+                    return res.send({
+                        name: newComment.name, 
+                        description: newComment.description,
+                        commentId: newComment._id,
+                        commentDate: newComment.date
+                    })
+                        
+                                
+                    
+                }   
+            }
+        )
+                  
     })
 
 })
@@ -210,6 +336,7 @@ router.post("/api/users/create_post", (req, res) => {
             title: postTitle,
             name: user.name,
         })
+        
 
         
         //Verify title doesn't already exist in db
@@ -243,7 +370,7 @@ router.post("/api/users/create_post", (req, res) => {
                                 else {
                                     return res.send({
                                         name: user.name, 
-                                        newPost: user.posts[user.posts.length - 1],
+                                        newPost: newPost,
                                         title: postTitle,
                                         description: newPost.description,
                                         postId: newPost.id,
@@ -258,6 +385,48 @@ router.post("/api/users/create_post", (req, res) => {
             }
               
         })
+            
+    })
+
+})
+
+//route for creating posts
+router.post("/api/users/delete_post", (req, res) => {
+    //extract user post fields from request
+    const postUid = req.body.postUserId;
+    const inputToken = req.body.token;
+    const postId = req.body.postId;
+
+    //Search User documents to see if input token matches current users token
+        //return an error if user or token doesn't match
+    User.findById(postUid, (err, user) => {
+        if (err) {
+            console.log(err);
+            return res.send({errors: {error: err.message}})
+        }
+
+        //compare user token against inputToken
+        //if not a match
+        if (user.token != inputToken) {
+            //return error
+            
+            return res.send({errors: {error: "Cannot delete post you didn't create."}})
+            
+        }
+        
+        //Search for post by its id and delete from db
+        Post.deleteOne({_id: postId}, (err, post) => {
+            if (err) {
+                console.log(err);
+                return res.send({errors: {error: err.message}})
+            }
+            return res.send({
+                name: user.name, 
+                postId: postId
+                
+            })
+
+        }) 
             
     })
 
