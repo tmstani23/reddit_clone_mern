@@ -136,7 +136,8 @@ class ShowSinglePost extends Component {
       </ul>
       <button onClick = {() => this.props.displaySinglePost(null)}> Close </button>
       <button onClick = {this.renderDeleteComp}> Delete Post </button> 
-      <CreateCommentComponent token = {this.props.token} userId = {this.props.userId}/>   
+      <CreateCommentComponent token = {this.props.token} postId = {this.props.post._id} userId = {this.props.userId} />
+      <CommentListComponent token = {this.props.token} postId = {this.props.post._id}userId = {this.props.userId }/>   
     </div>
     )
   }
@@ -192,7 +193,8 @@ class CreateCommentComponent extends Component {
     let bodyObj = {
       userId: this.props.userId,
       token: this.props.token,
-      description: this.state.description
+      description: this.state.description,
+      postId: this.props.postId,
     }
       //Prevent default action
     event.preventDefault();
@@ -271,6 +273,145 @@ class CreateCommentComponent extends Component {
     )
   }
 
+}
+
+class CommentListComponent extends Component {
+  
+  state = {
+    apiCommentResponse: [],
+    dataReturned: null, 
+    count: null,
+    postId: null,
+    
+  }
+  componentDidMount() {
+    // initialize data returned state to false:
+    this.setState({dataReturned: false});
+    //Add props to new fetch obj
+    let bodyObj = {
+      token: this.props.token,
+      postId: this.props.postId,
+    }
+    console.log(JSON.stringify(bodyObj), "beforefetch state");
+
+    fetch('http://localhost:4000/api/users/get_comments', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      }, 
+      body: JSON.stringify(bodyObj),
+    })
+      .then(res => res.json())
+      .then(res => {
+        // update state with the returned data and set data returned flag to true
+        this.setState({apiCommentResponse: res, dataReturned: !this.state.dataReturned})
+        console.log(JSON.stringify(this.state), "afterfetch state")
+        
+      })
+      .catch(err => console.log(err))
+  }
+  //need to add current user to state here
+
+  callCountApi = async (count, commentId, uid) => {
+    
+      // initialize data returned state to false:
+     await this.setState({
+        dataReturned: false,
+        count: count,
+        commentId: commentId,
+        userId: uid
+      })
+        
+      console.log(JSON.stringify(this.state), "beforefetch state");
+      
+      
+  
+      fetch("http://localhost:4000/api/users/comment_count", {
+        method: 'POST',
+        headers: {
+        'Content-type': 'application/json'
+        }, 
+        body: JSON.stringify(this.state),
+      })
+        .then(res => res.json())
+        .then(res => {
+          // update state with the returned data and set data returned flag to true
+          this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
+          console.log(JSON.stringify(this.state), "afterfetch state")
+          
+        })
+        .then(() => this.callCommentApi())
+        .catch(err => console.log(err))
+    
+  }
+
+  // componentDidUpdate(prevProps) {
+  //   // Typical usage (don't forget to compare props):
+  //   if (this.props.token !== prevProps.token) {
+  //     this.setState({
+  //       loginError: undefined
+  //     })
+  //   }
+  // }
+
+  addCount = (commentId, count, uid) => {
+    
+    if(this.props.token == null) {
+      this.setState({loginError: "Must be logged in to modify count."})
+    }
+    else {
+      
+      this.callCountApi(count, commentId, uid);
+    }
+    
+  }
+  //console.log(JSON.stringify(props.posts.latestPosts));
+  
+  renderCommentList = () => {
+    
+    let commentListArr = this.state.apiCommentResponse.latestComments;
+    return commentListArr.map((item, index) => {
+      return (
+        <div className="single-post-div" key={index}>
+          <div className="count-div">
+            <button onClick={() => this.addCount(item._id, 1, this.props.currentUserId)}>Add to Count</button>
+            <h3>Count: {item.count}</h3>
+            <button onClick={() => this.addCount(item._id, -1, this.props.currentUserId)}>Subtract from Count</button>
+          </div>
+          <div className="single-post-div-div">
+            <ul>
+              <h2>Title: {item.title}</h2>
+              <li>Date: {item.date}</li>
+              <li>Created by: {item.name}</li>
+              <li>Post Id: {item._id}</li>
+            </ul>
+          </div>
+          
+          
+          
+        </div>
+      )
+    })
+  }
+
+  
+  render() {
+    
+    
+    return (
+      <div className="posts-comp">
+      <h1>Post List:</h1>
+      {this.state.loginError !== undefined
+        ? <h3>{this.state.loginError}</h3>
+        : (this.state.apiCommentResponse.length == 0
+            ? null
+            : (<div>{this.renderCommentList()}</div>)
+            
+          )
+      }
+    </div>   
+    )
+  }
 }
 
 class DisplayPostsComponent extends Component {

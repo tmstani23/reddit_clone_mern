@@ -202,9 +202,6 @@ router.post("/api/users/add_count", (req, res) => {
             }
                 
         }
-                   
-        
-       
         
         //else if user id is not in the array
         else if(userHasCountedIndex == -1) {
@@ -248,6 +245,7 @@ router.post("/api/users/create_comment", (req, res) => {
     const commentUid = req.body.userId;
     const commentDescription = req.body.description;
     const inputToken = req.body.token;
+    const postId = req.body.postId;
 
     //search db by id for User
     User.findById(commentUid, (err, user) => {
@@ -270,10 +268,8 @@ router.post("/api/users/create_comment", (req, res) => {
             uid: commentUid,
             description: commentDescription,
             name: user.name,
+            postId: postId
         })
-        
-
-        
         
         //If not save the new comment to the database.
         newComment.save(
@@ -305,6 +301,24 @@ router.post("/api/users/create_comment", (req, res) => {
     })
 
 })
+
+//Route for getting a list of the latest posts
+router.get("/api/users/get_comments", (req, res) => {
+    const postId = req.body.postId;
+
+    Comment.find({postId: postId})
+    .sort({date: 'desc'})
+    .limit(10)
+    .exec((err, comments) => {
+        if (err) {
+            console.log(err);
+            return res.send({errors: {error: err.message}})
+        }
+        return res.send({latestComments: comments})
+    })
+
+})
+
 //route for creating posts
 router.post("/api/users/create_post", (req, res) => {
     //extract user post fields from request
@@ -431,7 +445,7 @@ router.post("/api/users/delete_post", (req, res) => {
     })
 
 })
-
+//Route for getting a list of the latest posts
 router.get("/api/users/get_posts", (req, res) => {
     Post.find({})
     .sort({date: 'desc'})
