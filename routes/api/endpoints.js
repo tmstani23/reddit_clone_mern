@@ -289,7 +289,8 @@ router.post("/api/users/create_comment", (req, res) => {
                         name: newComment.name, 
                         description: newComment.description,
                         commentId: newComment._id,
-                        commentDate: newComment.date
+                        commentDate: newComment.date,
+                        userId: newComment.uid
                     })
                         
                                 
@@ -303,7 +304,7 @@ router.post("/api/users/create_comment", (req, res) => {
 })
 
 //Route for getting a list of the latest posts
-router.get("/api/users/get_comments", (req, res) => {
+router.post("/api/users/get_comments", (req, res) => {
     const postId = req.body.postId;
 
     Comment.find({postId: postId})
