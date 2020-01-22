@@ -227,7 +227,7 @@ class CreateCommentComponent extends Component {
       //Prevent default action
     event.preventDefault();
 
-    if(this.props.token == null || this.props.token == undefined) {
+    if(this.props.token === null || this.props.token === undefined) {
       this.setState({apiPostResponse: {errors: {error:"User not logged in"}}})
       return;
     }

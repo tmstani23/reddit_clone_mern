@@ -239,6 +239,102 @@ router.post("/api/users/add_count", (req, res) => {
 
 })
 
+//route for adding or subtracting comment count
+router.post("/api/users/comment_count", (req, res) => {
+    const inputCount = parseInt(req.body.count);
+    const commentId = req.body.commentId;
+    const inputUid = req.body.userId;
+    
+
+    console.log(inputCount, commentId, inputUid, "count,commentid,inputUid");
+
+    Comment.findById(commentId, (err, comment) => {
+        let userCountArr = comment.usersWhoCounted;
+        let userHasCountedIndex = userCountArr.findIndex((element) => {
+            return element.userId == inputUid
+        });
+         
+        
+        //console.log(userCountArr, "userCount length");
+        //console.log(userHasCountedIndex, "userCountArr index");
+        
+        if (err) {
+            console.log(err);
+            return res.send({errors: {error: err.message}})
+            
+        }
+        //Make sure post count won't go negative
+        if (comment.count == 0 && inputCount < 0) {
+            console.log("trying to reduce count below zero")
+            return res.send({errors: {error: "trying to reduce count below zero"}})
+        };
+        
+        //if user id is found in array
+        if(userHasCountedIndex !== -1) {
+            let userHasCountedObj = userCountArr[userHasCountedIndex];
+            //update flag to show user has already modified count
+            console.log("userId matches in usersWhoCountedArray", comment.usersWhoCounted[userHasCountedIndex])
+            //console.log(userHasCountedObj.hasUpVoted, inputCount)
+            //if user has already downvoted
+            if(userHasCountedObj.userCount <= -1 && inputCount < 0)
+            {
+                console.log("trying to downvote more than once");
+                return res.status(500).send({errors: {error: "trying to downvote more than once"}})
+            }   
+            //Bypass if user has already upvoted
+            else if(userHasCountedObj.userCount >= 1 && inputCount > 0) {
+                console.log("user already upvoted");
+                return res.status(500).send({errors: {error: "trying to upvote more than once"}})
+                
+            }
+
+            else {
+                //UserCount object's count property is summed with the new input count
+                userHasCountedObj.userCount += inputCount;
+                //Replace the object in the post usersWhoCounted array to the new object
+                comment.usersWhoCounted[userHasCountedIndex] = userHasCountedObj;
+                //Add the new input count to the current post's count
+                comment.count += inputCount;
+            }
+                
+        }
+        
+        //else if user id is not in the array
+        else if(userHasCountedIndex == -1) {
+            //add new count object to array with updated uid and count
+            let userCountObj = {
+                userCount: inputCount,
+                userId: inputUid
+            }
+            
+            //increment post count
+            comment.count += inputCount;
+            //add new user obj to the post's users who counted array
+            comment.usersWhoCounted.push(userCountObj)
+        }
+       
+        
+        
+        
+        //Save the updated count
+        comment.save((err) => {
+            if (err) {
+                console.log(err);
+                return res.send({errors: {error: err.message}})
+            }
+            else {
+                console.log(comment.usersWhoCounted, "userswhocountedArr");
+                return res.send({
+                    count: comment.count,
+                    commentId: comment._id
+                })
+            }
+        })
+
+    })
+
+})
+
 //route for creating comments
 router.post("/api/users/create_comment", (req, res) => {
     //extract user post fields from request
