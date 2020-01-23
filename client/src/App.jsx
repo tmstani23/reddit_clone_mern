@@ -10,11 +10,18 @@ class App extends Component {
     currentUser: undefined,
     displaySinglePost: null,
     createNewPost: false,
-    post: []
+    post: [],
+    skip: 0
   }
 
   componentDidMount(){
     this.callApi()
+  }
+
+  calculateSkip = async (skipAmount) => {
+    let skip = this.state.skip += skipAmount;
+    await this.setState({skip: skip});
+    await this.callApi();
   }
   
   callApi = () => {
@@ -23,7 +30,11 @@ class App extends Component {
     //console.log(JSON.stringify(this.state), "beforefetch state");
 
     fetch('http://localhost:4000/api/users/get_posts', {
-      method: 'GET'
+      method: 'POST',
+      headers: {
+      'Content-type': 'application/json'
+      }, 
+      body: JSON.stringify(this.state),
     })
       .then(res => res.json())
       .then(res => {
@@ -75,7 +86,7 @@ class App extends Component {
             
           
             {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined && !this.state.displaySinglePost === true &&! this.state.createNewPost === true
-              ? <DisplayPostsComponent displaySinglePost={this.showSinglePost} currentUserId={this.state.userId} updatePosts = {this.callApi} posts = {this.state.apiPostResponse} token ={this.state.token} />
+              ? <DisplayPostsComponent calculateSkip = {this.calculateSkip} displaySinglePost={this.showSinglePost} currentUserId={this.state.userId} updatePosts = {this.callApi} posts = {this.state.apiPostResponse} token ={this.state.token} />
               : null
             }
             {this.state.apiPostResponse.errors !== undefined
@@ -508,9 +519,6 @@ class DisplayPostsComponent extends Component {
               <li>Post Id: {item._id}</li>
             </ul>
           </div>
-          
-          
-          
         </div>
       )
     })
@@ -525,9 +533,13 @@ class DisplayPostsComponent extends Component {
       <h1>Post List:</h1>
       {this.state.loginError !== undefined
         ? <h3>{this.state.loginError}</h3>
-        : (
-            <div>{this.renderPostList()}</div>
-          )
+        : ([
+            <div key="posts1">{this.renderPostList()}</div>, 
+            <div key="posts2">
+              <button onClick = {() => this.props.calculateSkip (10)}>Next Results</button>
+              <button onClick = {() => this.props.calculateSkip (-10)}>Previous Results</button>
+            </div>
+          ])
       }
     </div>   
     )

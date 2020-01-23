@@ -543,9 +543,12 @@ router.post("/api/users/delete_post", (req, res) => {
 
 })
 //Route for getting a list of the latest posts
-router.get("/api/users/get_posts", (req, res) => {
+router.post("/api/users/get_posts", (req, res) => {
+    const skip = req.body.skip;
+    
     Post.find({})
     .sort({date: 'desc'})
+    .skip(skip)
     .limit(10)
     .exec((err, posts) => {
         if (err) {
