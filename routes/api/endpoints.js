@@ -545,7 +545,21 @@ router.post("/api/users/delete_post", (req, res) => {
 //Route for getting a list of the latest posts
 router.post("/api/users/get_posts", (req, res) => {
     const skip = req.body.skip;
+    //let totalResults;
     
+    //totalResults = getTotalResults(Post);
+
+    let totalResults = 0;
+
+    Post.find({}).countDocuments((err, count) => {
+        if (err) {
+          console.log(err);
+        }
+        console.log(count, "total count");
+        totalResults = count;
+        //return totalResults;
+    });
+
     Post.find({})
     .sort({date: 'desc'})
     .skip(skip)
@@ -555,8 +569,24 @@ router.post("/api/users/get_posts", (req, res) => {
             console.log(err);
             return res.send({errors: {error: err.message}})
         }
-        return res.json({latestPosts: posts})
+        return res.json({latestPosts: posts, totalResults: totalResults})
     })
 
 })
+
+// Helper functions
+function getTotalResults(Post) {
+    let totalResults = 0;
+
+    Post.find({}).countDocuments((err, count) => {
+        if (err) {
+          console.log(err);
+        }
+        console.log(count, "total count");
+        totalResults = count;
+        return totalResults;
+      });
+}
+
+
 module.exports = router;

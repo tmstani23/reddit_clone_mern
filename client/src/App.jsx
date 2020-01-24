@@ -20,14 +20,27 @@ class App extends Component {
 
   calculateSkip = async (skipAmount) => {
     let skip = this.state.skip += skipAmount;
-    await this.setState({skip: skip});
+    const totalPostResults = this.state.apiPostResponse.totalResults;
+    console.log(totalPostResults, "total post results");
+    //If last few posts shown
+    if(skip >= totalPostResults) {
+      //Display remaining results
+      return skip = totalPostResults - this.state.skip;
+    }
+    //Prevent error when clicking previous results on first result page
+    else if(skip < 0) {
+      return skip = this.state.skip;
+    }
+    //Update skip value in state and refresh the post list
+    await this.setState({skip: skipAmount});
     await this.callApi();
+    
   }
   
   callApi = () => {
     // initialize data returned state to false:
     this.setState({dataReturned: false});
-    //console.log(JSON.stringify(this.state), "beforefetch state");
+    console.log(JSON.stringify(this.state), "beforefetch state");
 
     fetch('http://localhost:4000/api/users/get_posts', {
       method: 'POST',
@@ -39,8 +52,11 @@ class App extends Component {
       .then(res => res.json())
       .then(res => {
         // update state with the returned data and set data returned flag to true
-        this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
-        //console.log(JSON.stringify(this.state), "afterfetch state")
+        this.setState({
+          apiPostResponse: res,
+          dataReturned: !this.state.dataReturned,
+        })
+        console.log(JSON.stringify(this.state), "afterfetch state")
         
       })
       .catch(err => console.log(err))
@@ -97,7 +113,7 @@ class App extends Component {
               ? <Loading />
               : null
             }
-            {this.state.displaySinglePost === true
+            {this.state.displaySinglePost === true && this.state.createNewPost === false
               ? <ShowSinglePost token = {this.state.token} updatePosts = {this.callApi} userId = {this.state.userId} displaySinglePost={this.showSinglePost} post = {this.state.post} />
               : null
             }
@@ -535,9 +551,9 @@ class DisplayPostsComponent extends Component {
         ? <h3>{this.state.loginError}</h3>
         : ([
             <div key="posts1">{this.renderPostList()}</div>, 
-            <div key="posts2">
-              <button onClick = {() => this.props.calculateSkip (10)}>Next Results</button>
+            <div  className="posts-skip-div" key="posts2"> 
               <button onClick = {() => this.props.calculateSkip (-10)}>Previous Results</button>
+              <button onClick = {() => this.props.calculateSkip (10)}>Next Results</button>
             </div>
           ])
       }
@@ -697,7 +713,6 @@ class UserLoginComponent extends Component {
       <div >
         <form className="login-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
             <h3>Login Here:</h3>
-            <input id="inputName" type="text" name="name" placeholder="name"/>
             <input id="inputEmail" type="text" name="email" placeholder="email"/>
             <input id="inputPass1" type="text" name="password" placeholder="password"/>
             <input id="inputPass2" type="text" name="password2" placeholder="enter password again"/>

@@ -15,6 +15,10 @@
 .single-post-div-div {
   width: 75%;
 }
+.posts-skip-div {
+  margin-top: 50px;
+  border: 1px solid black;
+}
 
 .comment-form > form > textarea {
   height: 100px;
