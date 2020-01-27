@@ -402,16 +402,29 @@ router.post("/api/users/create_comment", (req, res) => {
 //Route for getting a list of the latest posts
 router.post("/api/users/get_comments", (req, res) => {
     const postId = req.body.postId;
+    const skip = req.body.skip;
+    let totalComments = 0;
+
+    //Get count of total posts
+    Comment.find({postId: postId}).countDocuments((err, count) => {
+        if (err) {
+          console.log(err);
+        }
+        console.log(count, "total count");
+        totalResults = count;
+        //return totalResults;
+    });
 
     Comment.find({postId: postId})
     .sort({date: 'desc'})
+    .skip(skip)
     .limit(10)
     .exec((err, comments) => {
         if (err) {
             console.log(err);
             return res.send({errors: {error: err.message}})
         }
-        return res.send({latestComments: comments})
+        return res.send({latestComments: comments, totalResults: totalComments})
     })
 
 })
@@ -545,17 +558,14 @@ router.post("/api/users/delete_post", (req, res) => {
 //Route for getting a list of the latest posts
 router.post("/api/users/get_posts", (req, res) => {
     const skip = req.body.skip;
-    //let totalResults;
-    
-    //totalResults = getTotalResults(Post);
 
     let totalResults = 0;
-
+    //Get count of total posts
     Post.find({}).countDocuments((err, count) => {
         if (err) {
           console.log(err);
         }
-        console.log(count, "total count");
+        //console.log(count, "total count");
         totalResults = count;
         //return totalResults;
     });
@@ -573,20 +583,6 @@ router.post("/api/users/get_posts", (req, res) => {
     })
 
 })
-
-// Helper functions
-function getTotalResults(Post) {
-    let totalResults = 0;
-
-    Post.find({}).countDocuments((err, count) => {
-        if (err) {
-          console.log(err);
-        }
-        console.log(count, "total count");
-        totalResults = count;
-        return totalResults;
-      });
-}
 
 
 module.exports = router;

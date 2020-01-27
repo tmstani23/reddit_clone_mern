@@ -21,18 +21,19 @@ class App extends Component {
   calculateSkip = async (skipAmount) => {
     let skip = this.state.skip += skipAmount;
     const totalPostResults = this.state.apiPostResponse.totalResults;
-    console.log(totalPostResults, "total post results");
+    
     //If last few posts shown
     if(skip >= totalPostResults) {
       //Display remaining results
-      return skip = totalPostResults - this.state.skip;
+      skip = this.state.skip -= skipAmount;
     }
     //Prevent error when clicking previous results on first result page
     else if(skip < 0) {
-      return skip = this.state.skip;
+      skip = 0;
     }
     //Update skip value in state and refresh the post list
-    await this.setState({skip: skipAmount});
+    await this.setState({skip: skip});
+    console.log(totalPostResults, skip, "total post results, skip in calcSkip func");
     await this.callApi();
     
   }
@@ -148,8 +149,29 @@ class App extends Component {
 
 class ShowSinglePost extends Component {
   state = {
+    skip: 0,
     renderDeleteComp:false,
-    apiPostResponse: [],
+  
+  }
+
+  calculateSkip = async (skipAmount) => {
+    let skip = this.state.skip += skipAmount;
+    const totalPostResults = this.state.apiCommentResponse.totalResults;
+    
+    //If last few posts shown
+    if(skip >= totalPostResults) {
+      //Display remaining results
+      skip = this.state.skip -= skipAmount;
+    }
+    //Prevent error when clicking previous results on first result page
+    else if(skip < 0) {
+      skip = 0;
+    }
+    //Update skip value in state and refresh the post list
+    await this.setState({skip: skip});
+    console.log(totalPostResults, skip, "total post results, skip in calcSkip func");
+    await this.callCommentApi();
+    
   }
 
   //need to add current user to state here
@@ -160,6 +182,7 @@ class ShowSinglePost extends Component {
     let bodyObj = {
       token: this.props.token,
       postId: this.props.post._id,
+      skip: this.state.skip,
     }
     console.log(JSON.stringify(bodyObj), "beforefetch state");
 
@@ -192,7 +215,7 @@ class ShowSinglePost extends Component {
       <button onClick = {() => this.props.displaySinglePost(null)}> Close </button>
       <button onClick = {this.renderDeleteComp}> Delete Post </button> 
       <CreateCommentComponent updateComments={this.callCommentApi} token = {this.props.token} postId = {this.props.post._id} userId = {this.props.userId} />
-      <CommentListComponent comments = {this.state.apiCommentResponse} updateComments={this.callCommentApi} token = {this.props.token} postId = {this.props.post._id}userId = {this.props.userId }/>   
+      <CommentListComponent calculateSkip = {this.calculateSkip} comments = {this.state.apiCommentResponse} updateComments={this.callCommentApi} token = {this.props.token} postId = {this.props.post._id}userId = {this.props.userId }/>   
     </div>
     )
   }
@@ -419,9 +442,6 @@ class CommentListComponent extends Component {
               <li>Comment Id: {item._id}</li>
             </ul>
           </div>
-          
-          
-          
         </div>
       )
     })
@@ -432,14 +452,20 @@ class CommentListComponent extends Component {
     
     
     return (
-      <div className="posts-comp">
+      <div className="comments-comp">
       <h1>Comment List:</h1>
       {this.state.loginError !== undefined
         ? <h3>{this.state.loginError}</h3>
         : null
       }
       {this.props.comments !== undefined
-          ? (<div>{this.renderCommentList()}</div>)
+          ? ([
+              <div key="comments1">{this.renderCommentList()}</div>,
+              <div className="comments-skip-div" key="comments2"> 
+                <button onClick = {() => this.props.calculateSkip (-10)}>Previous Results</button>
+                <button onClick = {() => this.props.calculateSkip (10)}>Next Results</button>
+              </div>  
+            ])
           : null
       }
     </div>   
