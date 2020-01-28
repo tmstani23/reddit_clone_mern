@@ -150,25 +150,31 @@ class App extends Component {
 class ShowSinglePost extends Component {
   state = {
     skip: 0,
+    commentSkip: 0,
     renderDeleteComp:false,
   
   }
 
+  componentDidMount() {
+    this.callCommentApi();
+   }
+ 
+
   calculateSkip = async (skipAmount) => {
-    let skip = this.state.skip += skipAmount;
+    let skip = this.state.commentSkip += skipAmount;
     const totalPostResults = this.state.apiCommentResponse.totalResults;
-    
+    console.log(skipAmount, totalPostResults, "skipAmount, totalPostResults")
     //If last few posts shown
     if(skip >= totalPostResults) {
       //Display remaining results
-      skip = this.state.skip -= skipAmount;
+      skip = this.state.commentSkip -= skipAmount;
     }
     //Prevent error when clicking previous results on first result page
     else if(skip < 0) {
       skip = 0;
     }
     //Update skip value in state and refresh the post list
-    await this.setState({skip: skip});
+    await this.setState({commentSkip: skip});
     console.log(totalPostResults, skip, "total post results, skip in calcSkip func");
     await this.callCommentApi();
     
@@ -182,7 +188,7 @@ class ShowSinglePost extends Component {
     let bodyObj = {
       token: this.props.token,
       postId: this.props.post._id,
-      skip: this.state.skip,
+      skip: this.state.commentSkip,
     }
     console.log(JSON.stringify(bodyObj), "beforefetch state");
 
@@ -235,7 +241,7 @@ class ShowSinglePost extends Component {
       // display register form or else success message and login form if registered
       <div className="deletePosts-div">
       {this.state.renderDeleteComp === true 
-        ? <DeletePostComp post = {this.props.post} token = {this.props.token} userId = {this.props.userId} updatePosts = {this.props.updatePosts}                  closeSinglePost = {this.props.displaySinglePost}/>
+        ? <DeletePostComp post = {this.props.post} token = {this.props.token} userId = {this.props.userId} updatePosts = {this.props.updatePosts} closeSinglePost = {this.props.displaySinglePost}/>
         : (this.props.post !== undefined
           ? (<div>{this.renderPost()}</div>)
           : null
@@ -421,6 +427,13 @@ class CommentListComponent extends Component {
     }
     
   }
+
+  renderDeleteComment = (comment, renderFlag) => {
+    this.setState({
+      deleteComment: renderFlag,
+      comment: comment,
+    })
+  }
   //console.log(JSON.stringify(props.posts.latestPosts));
   
   renderCommentList = () => {
@@ -442,6 +455,9 @@ class CommentListComponent extends Component {
               <li>Comment Id: {item._id}</li>
             </ul>
           </div>
+          <div>
+            <button onClick={() => this.renderDeleteComment(item, true)}>Delete Comment</button>
+          </div>
         </div>
       )
     })
@@ -458,7 +474,7 @@ class CommentListComponent extends Component {
         ? <h3>{this.state.loginError}</h3>
         : null
       }
-      {this.props.comments !== undefined
+      {this.props.comments !== undefined && !this.deleteComment 
           ? ([
               <div key="comments1">{this.renderCommentList()}</div>,
               <div className="comments-skip-div" key="comments2"> 
@@ -467,6 +483,10 @@ class CommentListComponent extends Component {
               </div>  
             ])
           : null
+      }
+      {this.state.deleteComment === true 
+        ? <DeleteCommentComp updateComments = {this.props.updateComments} comment = {this.state.comment} renderDeleteComment = {this.renderDeleteComment} token = {this.props.token} />
+        : null
       }
     </div>   
     )
@@ -950,6 +970,110 @@ class DeletePostComp extends Component {
             <input className ="submit-input" type="submit" name="submitButton" value="Delete"/>
         </form>
         <button onClick = {() => this.props.closeSinglePost(null)}>Close Window</button>
+        {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
+          ? <div>
+              <h1>Post Deleted</h1>
+              <ul>
+              <li><strong>Post Id:</strong>  {this.state.apiPostResponse.postId}</li>
+              <li><strong>Created By:</strong>  {this.state.apiPostResponse.name}</li>
+              </ul> 
+            </div>
+          : null
+        }
+        
+        {this.state.apiPostResponse.errors !== undefined
+          ? <RenderErrors errors = {this.state.apiPostResponse.errors} />
+          : null
+        }
+        {this.state.dataReturned === false
+          ? <Loading />
+          : null
+        }
+      </div>
+    ) 
+  }
+}
+
+class DeleteCommentComp extends Component {
+  
+  state = {
+    dataReturned: null,
+    apiPostResponse: [],
+  }
+
+  // componentDidUpdate(prevProps) {
+  //   // Typical usage (don't forget to compare props):
+  //   if (this.props.token !== prevProps.token) {
+  //     this.setState({
+  //       token: this.props.token,
+  //       userId: this.props.userId,
+  //       inputPost: this.props.post
+  //     })
+  //   }
+  // }
+
+  handleSubmit = (event) => {
+    //If handleSubmit was called by user clicking submit button in form
+    
+      //Prevent default action
+    event.preventDefault();
+
+    if(this.props.token === null || this.props.token === undefined) {
+      this.setState({apiPostResponse: {errors: {error:"User not logged in"}}})
+      console.log(this.state.apiPostResponse.errors)
+      return;
+    }
+  
+    // initialize data returned state to false:
+    this.setState({dataReturned: false})
+    console.log(JSON.stringify(this.state), "beforefetch state")
+
+    let bodyObj = {
+      commentUserId: this.props.comment.uid,
+      token: this.props.token,
+      commentId: this.props.comment._id,
+
+    }
+
+    fetch('http://localhost:4000/api/users/delete_comment', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      }, 
+      body: JSON.stringify(bodyObj),
+    })
+      .then(res => res.json())
+      .then(res => {
+        console.log(res, "afterfetch state")
+        
+        // update state with the returned data and set data returned flag to true
+        this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
+      })
+      .then(() => this.props.updateComments())
+      .catch(err => console.log(err))
+  }
+
+  handleChange = (event) => {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+
+    this.setState({
+      [name]: value
+    });
+    
+  }
+
+  render() {
+    
+    return (
+      // display register form or else success message and login form if registered
+      <div>
+        <form className="delete-comment-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
+            <h3>Do you want to delete this post?</h3>
+            <input className ="submit-input" type="submit" name="submitButton" value="Delete"/>
+        </form>
+        <button onClick = {() => this.props.renderDeleteComment(null, false)}>Close Window</button>
         {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
           ? <div>
               <h1>Post Deleted</h1>

@@ -410,8 +410,8 @@ router.post("/api/users/get_comments", (req, res) => {
         if (err) {
           console.log(err);
         }
-        console.log(count, "total count");
-        totalResults = count;
+        console.log(count, skip, "total count, skip, in get_comments endpoint");
+        totalComments = count;
         //return totalResults;
     });
 
@@ -555,6 +555,50 @@ router.post("/api/users/delete_post", (req, res) => {
     })
 
 })
+
+//route for creating posts
+router.post("/api/users/delete_comment", (req, res) => {
+    //extract user post fields from request
+    const commentUid = req.body.commentUserId;
+    const inputToken = req.body.token;
+    const commentId = req.body.commentId;
+
+    //Search User documents to see if input token matches current users token
+        //return an error if user or token doesn't match
+    User.findById(commentUid, (err, user) => {
+        if (err) {
+            console.log(err);
+            return res.send({errors: {error: err.message}})
+        }
+
+        //compare user token against inputToken
+        //if not a match
+        if (user.token != inputToken) {
+            //return error
+            
+            return res.send({errors: {error: "Cannot delete post you didn't create."}})
+            
+        }
+        
+        //Search for post by its id and delete from db
+        Comment.deleteOne({_id: commentId}, (err, comment) => {
+            if (err) {
+                console.log(err);
+                return res.send({errors: {error: err.message}})
+            }
+            return res.send({
+                name: user.name, 
+                commentId: commentId
+                
+            })
+
+        }) 
+            
+    })
+
+})
+
+
 //Route for getting a list of the latest posts
 router.post("/api/users/get_posts", (req, res) => {
     const skip = req.body.skip;
