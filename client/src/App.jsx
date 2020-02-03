@@ -2,6 +2,8 @@
 import React, { Component } from 'react';
 import './App.css';
 
+
+
 class App extends Component {
   state = {
     apiPostResponse: "",
@@ -10,26 +12,54 @@ class App extends Component {
     currentUser: undefined,
     displaySinglePost: null,
     createNewPost: false,
-    post: []
+    post: [],
+    skip: 0
   }
 
   componentDidMount(){
     this.callApi()
   }
+
+  calculateSkip = async (skipAmount) => {
+    let skip = this.state.skip += skipAmount;
+    const totalPostResults = this.state.apiPostResponse.totalResults;
+    
+    //If last few posts shown
+    if(skip >= totalPostResults) {
+      //Display remaining results
+      skip = this.state.skip -= skipAmount;
+    }
+    //Prevent error when clicking previous results on first result page
+    else if(skip < 0) {
+      skip = 0;
+    }
+    //Update skip value in state and refresh the post list
+    await this.setState({skip: skip});
+    console.log(totalPostResults, skip, "total post results, skip in calcSkip func");
+    await this.callApi();
+    
+  }
   
   callApi = () => {
     // initialize data returned state to false:
     this.setState({dataReturned: false});
-    //console.log(JSON.stringify(this.state), "beforefetch state");
+    console.log(JSON.stringify(this.state), "beforefetch state");
 
     fetch('http://localhost:4000/api/users/get_posts', {
-      method: 'GET'
+      method: 'POST',
+      headers: {
+      'Content-type': 'application/json'
+      }, 
+      body: JSON.stringify(this.state),
     })
       .then(res => res.json())
       .then(res => {
         // update state with the returned data and set data returned flag to true
-        this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
-        //console.log(JSON.stringify(this.state), "afterfetch state")
+        this.setState({
+          apiPostResponse: res,
+          dataReturned: !this.state.dataReturned,
+        })
+        console.log(JSON.stringify(this.state), "afterfetch state")
         
       })
       .catch(err => console.log(err))
@@ -75,7 +105,7 @@ class App extends Component {
             
           
             {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined && !this.state.displaySinglePost === true &&! this.state.createNewPost === true
-              ? <DisplayPostsComponent displaySinglePost={this.showSinglePost} currentUserId={this.state.userId} updatePosts = {this.callApi} posts = {this.state.apiPostResponse} token ={this.state.token} />
+              ? <DisplayPostsComponent calculateSkip = {this.calculateSkip} displaySinglePost={this.showSinglePost} currentUserId={this.state.userId} updatePosts = {this.callApi} posts = {this.state.apiPostResponse} token ={this.state.token} />
               : null
             }
             {this.state.apiPostResponse.errors !== undefined
@@ -86,7 +116,7 @@ class App extends Component {
               ? <Loading />
               : null
             }
-            {this.state.displaySinglePost === true
+            {this.state.displaySinglePost === true && this.state.createNewPost === false
               ? <ShowSinglePost token = {this.state.token} updatePosts = {this.callApi} userId = {this.state.userId} displaySinglePost={this.showSinglePost} post = {this.state.post} />
               : null
             }
@@ -121,8 +151,35 @@ class App extends Component {
 
 class ShowSinglePost extends Component {
   state = {
+    skip: 0,
+    commentSkip: 0,
     renderDeleteComp:false,
-    apiPostResponse: [],
+  
+  }
+
+  componentDidMount() {
+    this.callCommentApi();
+   }
+ 
+
+  calculateSkip = async (skipAmount) => {
+    let skip = this.state.commentSkip += skipAmount;
+    const totalPostResults = this.state.apiCommentResponse.totalResults;
+    console.log(skipAmount, totalPostResults, "skipAmount, totalPostResults")
+    //If last few posts shown
+    if(skip >= totalPostResults) {
+      //Display remaining results
+      skip = this.state.commentSkip -= skipAmount;
+    }
+    //Prevent error when clicking previous results on first result page
+    else if(skip < 0) {
+      skip = 0;
+    }
+    //Update skip value in state and refresh the post list
+    await this.setState({commentSkip: skip});
+    console.log(totalPostResults, skip, "total post results, skip in calcSkip func");
+    await this.callCommentApi();
+    
   }
 
   //need to add current user to state here
@@ -133,6 +190,7 @@ class ShowSinglePost extends Component {
     let bodyObj = {
       token: this.props.token,
       postId: this.props.post._id,
+      skip: this.state.commentSkip,
     }
     console.log(JSON.stringify(bodyObj), "beforefetch state");
 
@@ -165,7 +223,7 @@ class ShowSinglePost extends Component {
       <button onClick = {() => this.props.displaySinglePost(null)}> Close </button>
       <button onClick = {this.renderDeleteComp}> Delete Post </button> 
       <CreateCommentComponent updateComments={this.callCommentApi} token = {this.props.token} postId = {this.props.post._id} userId = {this.props.userId} />
-      <CommentListComponent comments = {this.state.apiCommentResponse} updateComments={this.callCommentApi} token = {this.props.token} postId = {this.props.post._id}userId = {this.props.userId }/>   
+      <CommentListComponent calculateSkip = {this.calculateSkip} comments = {this.state.apiCommentResponse} updateComments={this.callCommentApi} token = {this.props.token} postId = {this.props.post._id}userId = {this.props.userId }/>   
     </div>
     )
   }
@@ -179,18 +237,17 @@ class ShowSinglePost extends Component {
   
 
   render() {
-  
-    
+
     return (
       // display register form or else success message and login form if registered
       <div className="deletePosts-div">
-      {this.state.renderDeleteComp === true 
-        ? <DeletePostComp post = {this.props.post} token = {this.props.token} userId = {this.props.userId} updatePosts = {this.props.updatePosts}                  closeSinglePost = {this.props.displaySinglePost}/>
-        : (this.props.post !== undefined
-          ? (<div>{this.renderPost()}</div>)
-          : null
-          )
-      }
+        {this.state.renderDeleteComp === true 
+          ? <DeletePostComp post = {this.props.post} token = {this.props.token} userId = {this.props.userId} updatePosts = {this.props.updatePosts} closeSinglePost = {this.props.displaySinglePost}/>
+          : (this.props.post !== undefined
+            ? (<div>{this.renderPost()}</div>)
+            : null
+            )
+        }
       </div>
     ) 
   }
@@ -204,17 +261,6 @@ class CreateCommentComponent extends Component {
     
     apiPostResponse: [],
   }
-
-  // componentDidUpdate(prevProps) {
-  //   // Typical usage (don't forget to compare props):
-  //   if (this.props.token !== prevProps.token || this.props.userId !== prevProps.userId) {
-  //     this.setState({
-  //       token: this.props.token,
-  //       userId: this.props.userId,
-  //     })
-      
-  //   }
-  // }
   //If handleSubmit was called by user clicking submit button in form
   handleSubmit = (event) => {
     
@@ -351,15 +397,6 @@ class CommentListComponent extends Component {
     
   }
 
-  // componentDidUpdate(prevProps) {
-  //   // Typical usage (don't forget to compare props):
-  //   if (this.props.token !== prevProps.token) {
-  //     this.setState({
-  //       loginError: undefined
-  //     })
-  //   }
-  // }
-
   addCount = (commentId, count, uid) => {
     
     if(this.props.token == null) {
@@ -370,6 +407,13 @@ class CommentListComponent extends Component {
       this.callCountApi(count, commentId, uid);
     }
     
+  }
+
+  renderDeleteComment = (comment, renderFlag) => {
+    this.setState({
+      deleteComment: renderFlag,
+      comment: comment,
+    })
   }
   //console.log(JSON.stringify(props.posts.latestPosts));
   
@@ -392,9 +436,9 @@ class CommentListComponent extends Component {
               <li>Comment Id: {item._id}</li>
             </ul>
           </div>
-          
-          
-          
+          <div>
+            <button onClick={() => this.renderDeleteComment(item, true)}>Delete Comment</button>
+          </div>
         </div>
       )
     })
@@ -405,15 +449,25 @@ class CommentListComponent extends Component {
     
     
     return (
-      <div className="posts-comp">
+      <div className="comments-comp">
       <h1>Comment List:</h1>
       {this.state.loginError !== undefined
         ? <h3>{this.state.loginError}</h3>
         : null
       }
-      {this.props.comments !== undefined
-          ? (<div>{this.renderCommentList()}</div>)
+      {this.props.comments !== undefined && !this.deleteComment 
+          ? ([
+              <div key="comments1">{this.renderCommentList()}</div>,
+              <div className="comments-skip-div" key="comments2"> 
+                <button onClick = {() => this.props.calculateSkip (-10)}>Previous Results</button>
+                <button onClick = {() => this.props.calculateSkip (10)}>Next Results</button>
+              </div>  
+            ])
           : null
+      }
+      {this.state.deleteComment === true 
+        ? <DeleteCommentComp updateComments = {this.props.updateComments} comment = {this.state.comment} renderDeleteComment = {this.renderDeleteComment} token = {this.props.token} />
+        : null
       }
     </div>   
     )
@@ -508,9 +562,6 @@ class DisplayPostsComponent extends Component {
               <li>Post Id: {item._id}</li>
             </ul>
           </div>
-          
-          
-          
         </div>
       )
     })
@@ -525,9 +576,13 @@ class DisplayPostsComponent extends Component {
       <h1>Post List:</h1>
       {this.state.loginError !== undefined
         ? <h3>{this.state.loginError}</h3>
-        : (
-            <div>{this.renderPostList()}</div>
-          )
+        : ([
+            <div key="posts1">{this.renderPostList()}</div>, 
+            <div  className="posts-skip-div" key="posts2"> 
+              <button onClick = {() => this.props.calculateSkip (-10)}>Previous Results</button>
+              <button onClick = {() => this.props.calculateSkip (10)}>Next Results</button>
+            </div>
+          ])
       }
     </div>   
     )
@@ -685,7 +740,6 @@ class UserLoginComponent extends Component {
       <div >
         <form className="login-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
             <h3>Login Here:</h3>
-            <input id="inputName" type="text" name="name" placeholder="name"/>
             <input id="inputEmail" type="text" name="email" placeholder="email"/>
             <input id="inputPass1" type="text" name="password" placeholder="password"/>
             <input id="inputPass2" type="text" name="password2" placeholder="enter password again"/>
@@ -912,8 +966,93 @@ class DeletePostComp extends Component {
           ? <RenderErrors errors = {this.state.apiPostResponse.errors} />
           : null
         }
-        {this.state.dataReturned === false
-          ? <Loading />
+      </div>
+    ) 
+  }
+}
+
+class DeleteCommentComp extends Component {
+  
+  state = {
+    dataReturned: false,
+    apiPostResponse: [],
+  }
+
+  handleSubmit = (event) => {
+    //If handleSubmit was called by user clicking submit button in form
+    
+      //Prevent default action
+    event.preventDefault();
+
+    if(this.props.token === null || this.props.token === undefined) {
+      this.setState({apiPostResponse: {errors: {error:"User not logged in"}}})
+      console.log(this.state.apiPostResponse.errors)
+      return;
+    }
+  
+    // initialize data returned state to false:
+    this.setState({dataReturned: false})
+    console.log(JSON.stringify(this.state), "beforefetch state")
+
+    let bodyObj = {
+      commentUserId: this.props.comment.uid,
+      token: this.props.token,
+      commentId: this.props.comment._id,
+
+    }
+
+    fetch('http://localhost:4000/api/users/delete_comment', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      }, 
+      body: JSON.stringify(bodyObj),
+    })
+      .then(res => res.json())
+      .then(res => {
+        console.log(res, "afterfetch state")
+        
+        // update state with the returned data and set data returned flag to true
+        this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
+      })
+      .then(() => this.props.updateComments())
+      .catch(err => console.log(err))
+  }
+
+  handleChange = (event) => {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+
+    this.setState({
+      [name]: value
+    });
+    
+  }
+
+  render() {
+    
+    return (
+      // display register form or else success message and login form if registered
+      <div className="delete-comment-div">
+        <form className="delete-comment-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
+            <h3>Do you want to delete this comment?</h3>
+            <input className ="submit-input" type="submit" name="submitButton" value="Delete"/>
+        </form>
+        <button onClick = {() => this.props.renderDeleteComment(null, false)}>Close Window</button>
+        {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
+          ? <div>
+              <h1>Post Deleted</h1>
+              <ul>
+              <li><strong>Comment Id:</strong>  {this.state.apiPostResponse.commentId}</li>
+              <li><strong>Created By:</strong>  {this.state.apiPostResponse.name}</li>
+              </ul> 
+            </div>
+          : null
+        }
+        
+        {this.state.apiPostResponse.errors !== undefined
+          ? <RenderErrors errors = {this.state.apiPostResponse.errors} />
           : null
         }
       </div>
@@ -971,6 +1110,5 @@ class Loading extends React.Component {
       )
   }
 }
-
 
 export default App;
