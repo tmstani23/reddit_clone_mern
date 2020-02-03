@@ -410,7 +410,7 @@ router.post("/api/users/get_comments", (req, res) => {
         if (err) {
           console.log(err);
         }
-        console.log(count, skip, "total count, skip, in get_comments endpoint");
+        //console.log(count, skip, "total count, skip, in get_comments endpoint");
         totalComments = count;
         //return totalResults;
     });

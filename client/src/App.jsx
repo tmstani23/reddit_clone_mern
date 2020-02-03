@@ -2,6 +2,8 @@
 import React, { Component } from 'react';
 import './App.css';
 
+
+
 class App extends Component {
   state = {
     apiPostResponse: "",
@@ -235,18 +237,17 @@ class ShowSinglePost extends Component {
   
 
   render() {
-  
-    
+
     return (
       // display register form or else success message and login form if registered
       <div className="deletePosts-div">
-      {this.state.renderDeleteComp === true 
-        ? <DeletePostComp post = {this.props.post} token = {this.props.token} userId = {this.props.userId} updatePosts = {this.props.updatePosts} closeSinglePost = {this.props.displaySinglePost}/>
-        : (this.props.post !== undefined
-          ? (<div>{this.renderPost()}</div>)
-          : null
-          )
-      }
+        {this.state.renderDeleteComp === true 
+          ? <DeletePostComp post = {this.props.post} token = {this.props.token} userId = {this.props.userId} updatePosts = {this.props.updatePosts} closeSinglePost = {this.props.displaySinglePost}/>
+          : (this.props.post !== undefined
+            ? (<div>{this.renderPost()}</div>)
+            : null
+            )
+        }
       </div>
     ) 
   }
@@ -260,17 +261,6 @@ class CreateCommentComponent extends Component {
     
     apiPostResponse: [],
   }
-
-  // componentDidUpdate(prevProps) {
-  //   // Typical usage (don't forget to compare props):
-  //   if (this.props.token !== prevProps.token || this.props.userId !== prevProps.userId) {
-  //     this.setState({
-  //       token: this.props.token,
-  //       userId: this.props.userId,
-  //     })
-      
-  //   }
-  // }
   //If handleSubmit was called by user clicking submit button in form
   handleSubmit = (event) => {
     
@@ -406,15 +396,6 @@ class CommentListComponent extends Component {
         .catch(err => console.log(err))
     
   }
-
-  // componentDidUpdate(prevProps) {
-  //   // Typical usage (don't forget to compare props):
-  //   if (this.props.token !== prevProps.token) {
-  //     this.setState({
-  //       loginError: undefined
-  //     })
-  //   }
-  // }
 
   addCount = (commentId, count, uid) => {
     
@@ -985,10 +966,6 @@ class DeletePostComp extends Component {
           ? <RenderErrors errors = {this.state.apiPostResponse.errors} />
           : null
         }
-        {this.state.dataReturned === false
-          ? <Loading />
-          : null
-        }
       </div>
     ) 
   }
@@ -997,20 +974,9 @@ class DeletePostComp extends Component {
 class DeleteCommentComp extends Component {
   
   state = {
-    dataReturned: null,
+    dataReturned: false,
     apiPostResponse: [],
   }
-
-  // componentDidUpdate(prevProps) {
-  //   // Typical usage (don't forget to compare props):
-  //   if (this.props.token !== prevProps.token) {
-  //     this.setState({
-  //       token: this.props.token,
-  //       userId: this.props.userId,
-  //       inputPost: this.props.post
-  //     })
-  //   }
-  // }
 
   handleSubmit = (event) => {
     //If handleSubmit was called by user clicking submit button in form
@@ -1068,9 +1034,9 @@ class DeleteCommentComp extends Component {
     
     return (
       // display register form or else success message and login form if registered
-      <div>
+      <div className="delete-comment-div">
         <form className="delete-comment-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
-            <h3>Do you want to delete this post?</h3>
+            <h3>Do you want to delete this comment?</h3>
             <input className ="submit-input" type="submit" name="submitButton" value="Delete"/>
         </form>
         <button onClick = {() => this.props.renderDeleteComment(null, false)}>Close Window</button>
@@ -1078,7 +1044,7 @@ class DeleteCommentComp extends Component {
           ? <div>
               <h1>Post Deleted</h1>
               <ul>
-              <li><strong>Post Id:</strong>  {this.state.apiPostResponse.postId}</li>
+              <li><strong>Comment Id:</strong>  {this.state.apiPostResponse.commentId}</li>
               <li><strong>Created By:</strong>  {this.state.apiPostResponse.name}</li>
               </ul> 
             </div>
@@ -1087,10 +1053,6 @@ class DeleteCommentComp extends Component {
         
         {this.state.apiPostResponse.errors !== undefined
           ? <RenderErrors errors = {this.state.apiPostResponse.errors} />
-          : null
-        }
-        {this.state.dataReturned === false
-          ? <Loading />
           : null
         }
       </div>
@@ -1148,6 +1110,5 @@ class Loading extends React.Component {
       )
   }
 }
-
 
 export default App;
