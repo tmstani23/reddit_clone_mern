@@ -22,15 +22,8 @@ mongoose
   .then(() => console.log("MongoDB successfully connected"))
   .catch(err => console.log(err));
 
-//reset test server
-// mongoose.connect(testDB, function(err) {
-//   if(err) {
-//     console.log(err);
-//   }
-//   //Log if connection was established or not
-//   console.log(mongoose.connection.readyState, "Mongo DB connection established");
-//   mongoose.connection.db.dropDatabase();
-// });
+//Clear database of all connections and reset
+//clearDatabase(testDB)
 
 // convert all dates to formatted dates
 app.set('json replacer', function (key, value) {
@@ -69,3 +62,18 @@ app.use("/", users);
 //app.get('/', (req, res) => res.send('backend server working at root!'));
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+
+//Helper functions
+
+
+function clearDatabase(database){
+  mongoose.connect(database, function(err) {
+    if(err) {
+      console.log(err);
+    }
+    //Log if connection was established or not
+    console.log(mongoose.connection.readyState, "Mongo DB connection established");
+    //Clear all collections from database.
+    mongoose.connection.db.dropDatabase();
+  });
+}

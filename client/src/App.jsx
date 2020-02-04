@@ -127,21 +127,19 @@ class App extends Component {
           </div>
           <div className="login-div" >
             
-            
-            {this.state.dataReturned === true && this.state.apiPostResponse.errors === undefined && this.state.createNewPost === false
-              ? <button onClick = {this.createNewPost}>Create Post</button>
-              : null
-            }
-             
             {this.state.token === undefined && this.state.currentUser === undefined
               ? [<UserRegisterComponent key="reg1" className="register-comp"/>, <UserLoginComponent key="reg2" className="login-comp" updateToken = {this.updateToken}/>]
               : (this.state.currentUserErrors.errors === undefined
                   ? <UserIsLoggedInComponent updateToken = {this.updateToken} name={this.state.currentUser}/>
                   : <RenderErrors errors = {this.state.currentUserErrors.errors} />
                 )
-                  
-                
             }
+            {this.state.dataReturned === true && this.state.apiPostResponse.errors === undefined && this.state.createNewPost === false
+              ? <button onClick = {this.createNewPost}>Create Post</button>
+              : null
+            }
+             
+            
           </div>
            
       </div>
@@ -573,7 +571,6 @@ class DisplayPostsComponent extends Component {
     
     return (
       <div className="posts-comp">
-      <h1>Post List:</h1>
       {this.state.loginError !== undefined
         ? <h3>{this.state.loginError}</h3>
         : ([
