@@ -2,7 +2,7 @@
 purple: (96,70,95)
 dark grey: (91,93,114)
 almost black (45,45,45)
-pea green: (156,149,79)
+gold: (156,149,79)
 light grey: (219,219,219)
 */
 p {
@@ -23,8 +23,13 @@ h3 {
 li {
   color: rgb(219,219,219);
 }
+
 input {
   margin: 5px;
+  border: 1px solid rgb(156,149,79);
+  background-color: rgb(91,93,114);
+  border-radius: 5%;
+  color: (219,219,219)
 }
 
 .post-div > p {
@@ -64,7 +69,7 @@ input {
 .login-comp {
   max-height: 300px; 
 }
-.login-div {
+.login-reg-div {
   
   grid-column-start: 2;
   grid-column-end: 2;
@@ -77,13 +82,14 @@ input {
   padding: 20px;
   /* border: 1px solid lightgray */
 }
-.login-div > div {
+.login-reg-div > div {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   margin: 10px;
   align-items: center;
-  border: 1px solid rgb(219,219,219);
+  border: 1px solid rgb(91,93,114);
+  border-radius: 2%;
 }
 .login-form {
   display: flex;
@@ -91,6 +97,10 @@ input {
   justify-content: center;
   align-items: center;
   padding: 10px;
+}
+.login-form:hover{
+  border: 1px solid rgb(219,219,219);
+  border-radius: 2%;
 }
 .login-success-div {
   max-width: 250px;
@@ -102,16 +112,22 @@ input {
   align-items: center;
 }
 .posts-comp {
-  border: 1px solid rgb(219,219,219);
+  border: 1px solid rgb(91,93,114);
 }
-.register-comp {
+.register-div {
   max-height: 300px;
+  
+}
+.register-div > form:hover {
+  border: 1px solid rgb(219,219,219);
+  border-radius: 2%;
 }
 .register-form {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 10px;
 }
 .dynamic-comps {
   grid-column-start: 1;

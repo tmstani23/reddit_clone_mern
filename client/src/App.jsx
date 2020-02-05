@@ -125,10 +125,10 @@ class App extends Component {
               : null
             }
           </div>
-          <div className="login-div" >
+          <div className="login-reg-div" >
             
             {this.state.token === undefined && this.state.currentUser === undefined
-              ? [<UserRegisterComponent key="reg1" className="register-comp"/>, <UserLoginComponent key="reg2" className="login-comp" updateToken = {this.updateToken}/>]
+              ? [<UserRegisterComponent key="reg1" />, <UserLoginComponent key="reg2" className="login-comp" updateToken = {this.updateToken}/>]
               : (this.state.currentUserErrors.errors === undefined
                   ? <UserIsLoggedInComponent updateToken = {this.updateToken} name={this.state.currentUser}/>
                   : <RenderErrors errors = {this.state.currentUserErrors.errors} />
@@ -640,7 +640,7 @@ class UserRegisterComponent extends Component {
   render() {
     return (
       // display register form or else success message and login form if registered
-      <div >
+      <div className="register-div">
         <form className="register-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
             <h3>Register Here</h3>
             <input id="inputName" type="text" name="name" placeholder="login name"/>
@@ -648,7 +648,7 @@ class UserRegisterComponent extends Component {
             <input id="inputPass1" type="text" name="password" placeholder="password"/>
             <input id="inputPass2" type="text" name="password2" placeholder="enter password again"/>
             <input className ="submit-input" type="submit" name="submitButton" value="Submit"/>
-          </form>
+        </form>
           
           
           {this.state.dataReturned===true && this.state.apiLoginResponse.errors === undefined
@@ -734,7 +734,7 @@ class UserLoginComponent extends Component {
   render() {
     return (
       // display register form or else success message and login form if registered
-      <div >
+      <div className="login-div">
         <form className="login-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
             <h3>Login Here:</h3>
             <input id="inputEmail" type="text" name="email" placeholder="email"/>
