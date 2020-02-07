@@ -74,23 +74,49 @@ input {
   grid-column-start: 2;
   grid-column-end: 2;
   grid-row-start: 1;
-  grid-row-end: 1;
+  grid-row-end: 3;
   display: flex;
+  width: 60%;
+  height: 100%;
   flex-direction: column;
   margin: 0 auto;
   align-items: top;
   padding: 20px;
-  /* border: 1px solid lightgray */
+  border: 1px solid rgb(91,93,114);
 }
 .login-reg-div > div {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  margin: 10px;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  border: 1px solid rgb(91,93,114);
   border-radius: 2%;
 }
+
+.login-reg-div > button {
+  width: 60%;
+  align-self: center;
+  margin: 10px;
+  border: 1px solid rgb(156,149,79);
+  border-radius: 2%;
+  background-color: rgb(91,93,114);
+}
+.login-reg-div > button:hover {
+  border: 1px solid rgb(219,219,219);
+  border-radius: 2%;
+}
+.login-reg-div > div > button {
+  width: 40%;
+  border: 1px solid rgb(156,149,79);
+  border-radius: 5px;
+  background-color: rgb(91,93,114);
+  align-self: center;
+}
+.login-reg-div > div > button:hover {
+  color: red;
+  border: 1px solid rgb(219,219,219);
+  border-radius: 5px;
+}
+
 .login-form {
   display: flex;
   flex-direction: column;
@@ -105,6 +131,7 @@ input {
 .login-success-div {
   max-width: 250px;
 }
+
 .post-form {
   display: flex;
   flex-direction: column;

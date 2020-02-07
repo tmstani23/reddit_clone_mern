@@ -130,7 +130,7 @@ class App extends Component {
             {this.state.token === undefined && this.state.currentUser === undefined
               ? [<UserRegisterComponent key="reg1" />, <UserLoginComponent key="reg2" className="login-comp" updateToken = {this.updateToken}/>]
               : (this.state.currentUserErrors.errors === undefined
-                  ? <UserIsLoggedInComponent updateToken = {this.updateToken} name={this.state.currentUser}/>
+                  ? <LogoutUser updateToken = {this.updateToken} name={this.state.currentUser}/>
                   : <RenderErrors errors = {this.state.currentUserErrors.errors} />
                 )
             }
@@ -755,19 +755,20 @@ class UserLoginComponent extends Component {
   }
 }
 
-class UserIsLoggedInComponent extends Component {
+class LogoutUser extends Component {
 
   logOut = () => {
     this.props.updateToken(undefined, null, undefined, {errors: undefined})
   }
-  render() {
+  render () {
     return (
-      <div>
+      <div className="logout-div">
         <h1>Username: {this.props.name}</h1>
         <button onClick = {this.logOut}>Logout</button>
       </div>
     )
-  }
+  }    
+ 
 }
 
 class CreatePostComponent extends Component {
