@@ -99,10 +99,11 @@ class App extends Component {
   render () {
     
     return (
+      
       <div className="container">
-        
+          <React.StrictMode>
           <div className="dynamic-comps">
-            
+          
           
             {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined && !this.state.displaySinglePost === true &&! this.state.createNewPost === true
               ? <DisplayPostsComponent calculateSkip = {this.calculateSkip} displaySinglePost={this.showSinglePost} currentUserId={this.state.userId} updatePosts = {this.callApi} posts = {this.state.apiPostResponse} token ={this.state.token} />
@@ -124,7 +125,9 @@ class App extends Component {
               ? <CreatePostComponent createPost = {this.createNewPost} token = {this.state.token} uid = {this.state.userId} updatePosts = {this.callApi}/>
               : null
             }
+          
           </div>
+          
           <div className="login-reg-div" >
             
             {this.state.token === undefined && this.state.currentUser === undefined
@@ -141,8 +144,9 @@ class App extends Component {
              
             
           </div>
-           
+        </ React.StrictMode> 
       </div>
+     
     )
   }
 }
@@ -212,14 +216,18 @@ class ShowSinglePost extends Component {
   renderPost = () => {
     return (
     <div className="post-div">
-      <h1>{this.props.post.title}</h1>
-      <p>Body: {this.props.post.description}</p>
-      <ul>
-        <li>{this.props.post.date}</li>
-        <li>Posted by: {this.props.post.name}</li>
-      </ul>
-      <button onClick = {() => this.props.displaySinglePost(null)}> Close </button>
-      <button onClick = {this.renderDeleteComp}> Delete Post </button> 
+      <div className="post-body-div">
+        <h1>{this.props.post.title}</h1>
+        
+          <p>Body: {this.props.post.description}</p>
+        
+        <ul>
+          <li>{this.props.post.date}</li>
+          <li>Posted by: {this.props.post.name}</li>
+        </ul>
+        <button onClick = {() => this.props.displaySinglePost(null)}> Close </button>
+        <button onClick = {this.renderDeleteComp}> Delete Post </button> 
+      </div>
       <CreateCommentComponent updateComments={this.callCommentApi} token = {this.props.token} postId = {this.props.post._id} userId = {this.props.userId} />
       <CommentListComponent calculateSkip = {this.calculateSkip} comments = {this.state.apiCommentResponse} updateComments={this.callCommentApi} token = {this.props.token} postId = {this.props.post._id}userId = {this.props.userId }/>   
     </div>
@@ -420,23 +428,24 @@ class CommentListComponent extends Component {
     let commentListArr = this.props.comments.latestComments;
     return commentListArr.map((item, index) => {
       return (
-        <div className="single-post-div" key={index}>
-          <div className="count-div">
+        <div className="single-comment-div" key={index}>
+          <div className="comment-count-div">
             <button onClick={() => this.addCount(item._id, 1, this.props.userId)}>Add to Count</button>
             <h3>Count: {item.count}</h3>
             <button onClick={() => this.addCount(item._id, -1, this.props.userId)}>Subtract from Count</button>
           </div>
-          <div className="single-post-div-div">
+          <div className="comment-div">
             <ul>
-              <h2>Body: {item.description}</h2>
+              <p>Body: {item.description}</p>
               <li>Date: {item.date}</li>
               <li>Created by: {item.name}</li>
               <li>Comment Id: {item._id}</li>
             </ul>
           </div>
-          <div>
+          <div className = "delete-comment-button-div">
             <button onClick={() => this.renderDeleteComment(item, true)}>Delete Comment</button>
           </div>
+          
         </div>
       )
     })
@@ -552,7 +561,7 @@ class DisplayPostsComponent extends Component {
             <h3>Count: {item.count}</h3>
             <button onClick={() => this.addCount(item._id, -1, this.props.currentUserId)}>Subtract from Count</button>
           </div>
-          <div className="single-post-div-div">
+          <div className="single-list-div">
             <ul onClick={() => this.props.displaySinglePost(true, item)}>
               <h2>Title: {item.title}</h2>
               <li>Date: {item.date}</li>
@@ -574,7 +583,7 @@ class DisplayPostsComponent extends Component {
       {this.state.loginError !== undefined
         ? <h3>{this.state.loginError}</h3>
         : ([
-            <div key="posts1">{this.renderPostList()}</div>, 
+            <div className="post-list-div" key="posts1">{this.renderPostList()}</div>, 
             <div  className="posts-skip-div" key="posts2"> 
               <button onClick = {() => this.props.calculateSkip (-10)}>Previous Results</button>
               <button onClick = {() => this.props.calculateSkip (10)}>Next Results</button>

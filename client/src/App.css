@@ -32,27 +32,60 @@ input {
   color: (219,219,219)
 }
 
-.post-div > p {
+/* .post-div > p {
   margin: 0 auto;
   width: 75%;
   border: 1px solid black;
   text-align: left;
-}
+} */
 .single-post-div {
-  border-top: 1px solid black;
+  border-bottom: 1px solid rgb(91,93,114);
   display: flex;
   flex-direction: row;
   justify-content: left;
   align-items: center;
+  height: 100px;
+  padding: 20px;
   
 }
-.single-post-div-div {
+.single-comment-div {
+  border-bottom: 1px solid rgb(91,93,114);
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+  height: 100%;
+  padding: 20px;
+  
+}
+.single-comment-div {
+  border-bottom: 1px solid rgb(91,93,114);
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+  height: 100%;
+  padding: 20px;
+  
+}
+.delete-comment-button-div {
+  flex-direction: column;
+  align-items: flex-end;
+  height: inherit;
+  width: 30%;
+}
+
+.single-list-div > ul > h2 {
+  margin: 0px;
+}
+
+.single-list-div {
   width: 75%;
+  /* border: 1px solid red; */
+ 
 }
-.posts-skip-div {
-  margin-top: 50px;
-  border: 1px solid black;
-}
+
+
 
 .comment-form > form > textarea {
   height: 100px;
@@ -83,13 +116,18 @@ input {
   align-items: top;
   padding: 20px;
   border: 1px solid rgb(91,93,114);
+  border-radius: 5px;
+}
+.login-reg-div:hover{
+  border: 1px solid rgb(219,219,219);
+  border-radius: 2%;
 }
 .login-reg-div > div {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 2%;
+  border-radius: 5px;
 }
 
 .login-reg-div > button {
@@ -124,14 +162,23 @@ input {
   align-items: center;
   padding: 10px;
 }
-.login-form:hover{
-  border: 1px solid rgb(219,219,219);
-  border-radius: 2%;
-}
+
 .login-success-div {
   max-width: 250px;
 }
-
+.post-div {
+  
+  
+}
+.post-body-div {
+  min-height: 200px;
+  min-width: 500px;
+  padding: 20px;
+  border: 1px solid rgb(91,93,114);
+  text-align: left;
+  
+  
+}
 .post-form {
   display: flex;
   flex-direction: column;
@@ -140,15 +187,17 @@ input {
 }
 .posts-comp {
   border: 1px solid rgb(91,93,114);
+  border-radius: 5px;
+}
+.posts-comp:hover {
+  border: 1px solid rgb(219,219,219);
+  border-radius: 5px;
 }
 .register-div {
   max-height: 300px;
   
 }
-.register-div > form:hover {
-  border: 1px solid rgb(219,219,219);
-  border-radius: 2%;
-}
+
 .register-form {
   display: flex;
   flex-direction: column;
