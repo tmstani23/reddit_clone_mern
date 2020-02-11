@@ -99,10 +99,11 @@ class App extends Component {
   render () {
     
     return (
+      
       <div className="container">
-        
+          <React.StrictMode>
           <div className="dynamic-comps">
-            
+          
           
             {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined && !this.state.displaySinglePost === true &&! this.state.createNewPost === true
               ? <DisplayPostsComponent calculateSkip = {this.calculateSkip} displaySinglePost={this.showSinglePost} currentUserId={this.state.userId} updatePosts = {this.callApi} posts = {this.state.apiPostResponse} token ={this.state.token} />
@@ -124,27 +125,28 @@ class App extends Component {
               ? <CreatePostComponent createPost = {this.createNewPost} token = {this.state.token} uid = {this.state.userId} updatePosts = {this.callApi}/>
               : null
             }
+          
           </div>
-          <div className="login-div" >
+          
+          <div className="login-reg-div" >
             
-            
+            {this.state.token === undefined && this.state.currentUser === undefined
+              ? [<UserRegisterComponent key="reg1" />, <UserLoginComponent key="reg2" className="login-comp" updateToken = {this.updateToken}/>]
+              : (this.state.currentUserErrors.errors === undefined
+                  ? <LogoutUser updateToken = {this.updateToken} name={this.state.currentUser}/>
+                  : <RenderErrors errors = {this.state.currentUserErrors.errors} />
+                )
+            }
             {this.state.dataReturned === true && this.state.apiPostResponse.errors === undefined && this.state.createNewPost === false
               ? <button onClick = {this.createNewPost}>Create Post</button>
               : null
             }
              
-            {this.state.token === undefined && this.state.currentUser === undefined
-              ? [<UserRegisterComponent key="reg1" className="register-comp"/>, <UserLoginComponent key="reg2" className="login-comp" updateToken = {this.updateToken}/>]
-              : (this.state.currentUserErrors.errors === undefined
-                  ? <UserIsLoggedInComponent updateToken = {this.updateToken} name={this.state.currentUser}/>
-                  : <RenderErrors errors = {this.state.currentUserErrors.errors} />
-                )
-                  
-                
-            }
+            
           </div>
-           
+        </ React.StrictMode> 
       </div>
+     
     )
   }
 }
@@ -214,14 +216,18 @@ class ShowSinglePost extends Component {
   renderPost = () => {
     return (
     <div className="post-div">
-      <h1>{this.props.post.title}</h1>
-      <p>Body: {this.props.post.description}</p>
-      <ul>
-        <li>{this.props.post.date}</li>
-        <li>Posted by: {this.props.post.name}</li>
-      </ul>
-      <button onClick = {() => this.props.displaySinglePost(null)}> Close </button>
-      <button onClick = {this.renderDeleteComp}> Delete Post </button> 
+      <div className="post-body-div">
+        <h2>{this.props.post.title}</h2>
+        
+          <p>Body: {this.props.post.description}</p>
+        
+        <ul>
+          <li>{this.props.post.date}</li>
+          <li>Posted by: {this.props.post.name}</li>
+        </ul>
+        <button onClick = {() => this.props.displaySinglePost(null)}> Close </button>
+        <button onClick = {this.renderDeleteComp}> Delete Post </button> 
+      </div>
       <CreateCommentComponent updateComments={this.callCommentApi} token = {this.props.token} postId = {this.props.post._id} userId = {this.props.userId} />
       <CommentListComponent calculateSkip = {this.calculateSkip} comments = {this.state.apiCommentResponse} updateComments={this.callCommentApi} token = {this.props.token} postId = {this.props.post._id}userId = {this.props.userId }/>   
     </div>
@@ -300,11 +306,7 @@ class CreateCommentComponent extends Component {
       .catch(err =>  console.log(err));
   }
 
-  showCommentForm = (inputState) => {
-    this.setState({
-      displayCommentForm: inputState
-    })
-  }
+ 
 
   handleChange = (event) => {
     const target = event.target;
@@ -319,21 +321,19 @@ class CreateCommentComponent extends Component {
   
   render () {
     return (
-      <div>
-        {this.state.displayCommentForm === false
-          ? <button onClick = {() => this.showCommentForm(true)}>Create Comment</button>
-          :  (
-            <div>
+      <div className="comment-form-div">
+        
+            <div >
               
               <form onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
               <h3>Create Comment:</h3>
               <textarea className="commentBox" id="inputBody" type="text" name="description" placeholder="What are your thoughts?"/>
               <input className ="submit-input" type="submit" name="submitButton" value="Submit"/>
               </form>
-              <button onClick = {() => this.showCommentForm(false)}>Close Comment</button>
+              
             </div>
-          )
-        }
+          
+        
         {this.state.apiPostResponse.errors !== undefined
             ? <RenderErrors errors = {this.state.apiPostResponse.errors} />
             : null
@@ -422,23 +422,24 @@ class CommentListComponent extends Component {
     let commentListArr = this.props.comments.latestComments;
     return commentListArr.map((item, index) => {
       return (
-        <div className="single-post-div" key={index}>
-          <div className="count-div">
+        <div className="single-comment-div" key={index}>
+          <div className="comment-count-div">
             <button onClick={() => this.addCount(item._id, 1, this.props.userId)}>Add to Count</button>
             <h3>Count: {item.count}</h3>
             <button onClick={() => this.addCount(item._id, -1, this.props.userId)}>Subtract from Count</button>
           </div>
-          <div className="single-post-div-div">
+          <div className="comment-div">
             <ul>
-              <h2>Body: {item.description}</h2>
+              <p>Body: {item.description}</p>
               <li>Date: {item.date}</li>
               <li>Created by: {item.name}</li>
               <li>Comment Id: {item._id}</li>
             </ul>
           </div>
-          <div>
+          <div className = "delete-comment-button-div">
             <button onClick={() => this.renderDeleteComment(item, true)}>Delete Comment</button>
           </div>
+          
         </div>
       )
     })
@@ -449,8 +450,8 @@ class CommentListComponent extends Component {
     
     
     return (
-      <div className="comments-comp">
-      <h1>Comment List:</h1>
+    <div className="comments-comp">
+      <h2>Comments:</h2>
       {this.state.loginError !== undefined
         ? <h3>{this.state.loginError}</h3>
         : null
@@ -554,12 +555,15 @@ class DisplayPostsComponent extends Component {
             <h3>Count: {item.count}</h3>
             <button onClick={() => this.addCount(item._id, -1, this.props.currentUserId)}>Subtract from Count</button>
           </div>
-          <div className="single-post-div-div">
+          <div className="single-list-div">
             <ul onClick={() => this.props.displaySinglePost(true, item)}>
+              
               <h2>Title: {item.title}</h2>
-              <li>Date: {item.date}</li>
-              <li>Created by: {item.name}</li>
-              <li>Post Id: {item._id}</li>
+              <div className="post-timestamp-div"> 
+                <li>Date: {item.date}</li>
+                <li>Created by: {item.name}</li>
+                <li>Post Id: {item._id}</li>
+              </div>
             </ul>
           </div>
         </div>
@@ -573,11 +577,10 @@ class DisplayPostsComponent extends Component {
     
     return (
       <div className="posts-comp">
-      <h1>Post List:</h1>
       {this.state.loginError !== undefined
         ? <h3>{this.state.loginError}</h3>
         : ([
-            <div key="posts1">{this.renderPostList()}</div>, 
+            <div className="post-list-div" key="posts1">{this.renderPostList()}</div>, 
             <div  className="posts-skip-div" key="posts2"> 
               <button onClick = {() => this.props.calculateSkip (-10)}>Previous Results</button>
               <button onClick = {() => this.props.calculateSkip (10)}>Next Results</button>
@@ -643,7 +646,7 @@ class UserRegisterComponent extends Component {
   render() {
     return (
       // display register form or else success message and login form if registered
-      <div >
+      <div className="register-div">
         <form className="register-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
             <h3>Register Here</h3>
             <input id="inputName" type="text" name="name" placeholder="login name"/>
@@ -651,7 +654,7 @@ class UserRegisterComponent extends Component {
             <input id="inputPass1" type="text" name="password" placeholder="password"/>
             <input id="inputPass2" type="text" name="password2" placeholder="enter password again"/>
             <input className ="submit-input" type="submit" name="submitButton" value="Submit"/>
-          </form>
+        </form>
           
           
           {this.state.dataReturned===true && this.state.apiLoginResponse.errors === undefined
@@ -737,7 +740,7 @@ class UserLoginComponent extends Component {
   render() {
     return (
       // display register form or else success message and login form if registered
-      <div >
+      <div className="login-div">
         <form className="login-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
             <h3>Login Here:</h3>
             <input id="inputEmail" type="text" name="email" placeholder="email"/>
@@ -758,19 +761,20 @@ class UserLoginComponent extends Component {
   }
 }
 
-class UserIsLoggedInComponent extends Component {
+class LogoutUser extends Component {
 
   logOut = () => {
     this.props.updateToken(undefined, null, undefined, {errors: undefined})
   }
-  render() {
+  render () {
     return (
-      <div>
+      <div className="logout-div">
         <h1>Username: {this.props.name}</h1>
         <button onClick = {this.logOut}>Logout</button>
       </div>
     )
-  }
+  }    
+ 
 }
 
 class CreatePostComponent extends Component {

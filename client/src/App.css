@@ -1,28 +1,133 @@
-.post-div > p {
+/* color scheme purple girl
+purple: (96,70,95)
+dark grey: (91,93,114)
+almost black (45,45,45)
+gold: (156,149,79)
+light grey: (219,219,219)
+*/
+p {
+  color: rgb(219,219,219)
+}
+body {
+  background-color: rgb(45,45,45);
+}
+h1 {
+  color: rgb(219,219,219);
+}
+h2 {
+  color: rgb(156,149,79)
+}
+h3 {
+  color: rgb(156,149,79)
+}
+li {
+  color: rgb(219,219,219);
+  margin: 10px;
+}
+
+input {
+  margin: 5px;
+  border: 1px solid rgb(156,149,79);
+  background-color: rgb(91,93,114);
+  border-radius: 5%;
+  color: rgb(219,219,219)
+}
+button {
+  border: 1px solid rgb(156,149,79);
+  background-color: rgb(91,93,114);
+  border-radius: 5%;
+  color: rgb(219,219,219)
+}
+
+/* .post-div > p {
   margin: 0 auto;
   width: 75%;
   border: 1px solid black;
   text-align: left;
+} */
+
+
+.single-comment-div {
+  border-bottom: 1px solid rgb(91,93,114);
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  text-align: left;
+  align-items: top;
+  padding: 10px;
+  max-height: 575px;
+  width: 100%;
+  overflow: auto;
+  margin-left: 15%;
+  
+}
+
+.delete-comment-button-div {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  margin-top: 100px;
+  padding: 10px;
+}
+.delete-comment-button-div > button {
+  height: 20px;
+  width: 150px;
+}
+.single-list-div > ul {
+  float: left;
 }
 .single-post-div {
-  border-top: 1px solid black;
+  border-bottom: 1px solid rgb(91,93,114);
   display: flex;
   flex-direction: row;
   justify-content: left;
   align-items: center;
+  height: 100px;
+  padding: 10px;
+  text-align: left;
   
 }
-.single-post-div-div {
-  width: 75%;
-}
-.posts-skip-div {
-  margin-top: 50px;
-  border: 1px solid black;
+.single-post-div > .count-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-height: 70%;
+  margin:10px;
+  
 }
 
-.comment-form > form > textarea {
-  height: 100px;
-  width: 300px;
+.single-list-div {
+  width: 75%;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px;
+  /* border: 1px solid red; */
+ 
+}
+.post-timestamp-div {
+  display:flex;
+  flex-direction: row;
+  text-align: left;
+  align-items: center;
+  margin: 20px;
+  font-size: 10px;
+}
+
+
+.comment-form-div {
+  float: left;
+  margin: 20px;
+  text-align: left;
+  border: 1px solid rgb(91,93,114);
+  border-radius: 5px;
+  padding: 20px;
+}
+
+.commentBox {
+  height: 200px;
+  width: 500px;
   margin: 0 auto;
   border: 1px solid black;
 }
@@ -35,47 +140,107 @@
 .login-comp {
   max-height: 300px; 
 }
-.login-div {
+.login-reg-div {
   
   grid-column-start: 2;
   grid-column-end: 2;
   grid-row-start: 1;
-  grid-row-end: 1;
+  grid-row-end: 3;
   display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
+  width: 60%;
+  height: 100%;
+  flex-direction: column;
+  margin: 0 auto;
   align-items: top;
   padding: 20px;
+  border: 1px solid rgb(91,93,114);
+  border-radius: 5px;
 }
-.login-div > div {
+.login-reg-div:hover{
+  border: 1px solid rgb(219,219,219);
+  border-radius: 2%;
+}
+.login-reg-div > div {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
+  border-radius: 5px;
 }
+
+.login-reg-div > button {
+  width: 60%;
+  align-self: center;
+  margin: 10px;
+  border: 1px solid rgb(156,149,79);
+  border-radius: 2%;
+  background-color: rgb(91,93,114);
+}
+.login-reg-div > button:hover {
+  border: 1px solid rgb(219,219,219);
+  border-radius: 2%;
+}
+.login-reg-div > div > button {
+  width: 40%;
+  border: 1px solid rgb(156,149,79);
+  border-radius: 5px;
+  background-color: rgb(91,93,114);
+  align-self: center;
+}
+.login-reg-div > div > button:hover {
+  color: red;
+  border: 1px solid rgb(219,219,219);
+  border-radius: 5px;
+}
+
 .login-form {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 10px;
 }
+
 .login-success-div {
   max-width: 250px;
 }
+.post-div {
+  text-align: left;
+}
+
+.post-body-div {
+  min-height: 200px;
+  min-width: 500px;
+  padding: 10px;
+  border: 1px solid rgb(91,93,114);
+  text-align: left;
+}
+
 .post-form {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
-.register-comp {
-  max-height: 300px;
+.posts-comp {
+  border: 1px solid rgb(91,93,114);
+  border-radius: 5px;
 }
+.posts-comp:hover {
+  border: 1px solid rgb(219,219,219);
+  border-radius: 5px;
+}
+.register-div {
+  max-height: 300px;
+  
+}
+
 .register-form {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 10px;
 }
 .dynamic-comps {
   grid-column-start: 1;
@@ -104,8 +269,8 @@
   grid-template-columns: 2fr 1fr;
   grid-template-rows: 200px 1fr 1fr;
   margin: 0 auto;
-  /* min-height: 800px;
-  max-width: 1400px; */
+  /* min-height: 800px; */
+  max-width: 1400px;
   margin-bottom: 20px;
   
   
