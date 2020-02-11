@@ -18,10 +18,11 @@ h2 {
   color: rgb(156,149,79)
 }
 h3 {
-  color: rgb(96,70,95);
+  color: rgb(156,149,79)
 }
 li {
   color: rgb(219,219,219);
+  margin: 10px;
 }
 
 input {
@@ -29,7 +30,13 @@ input {
   border: 1px solid rgb(156,149,79);
   background-color: rgb(91,93,114);
   border-radius: 5%;
-  color: (219,219,219)
+  color: rgb(219,219,219)
+}
+button {
+  border: 1px solid rgb(156,149,79);
+  background-color: rgb(91,93,114);
+  border-radius: 5%;
+  color: rgb(219,219,219)
 }
 
 /* .post-div > p {
@@ -38,6 +45,37 @@ input {
   border: 1px solid black;
   text-align: left;
 } */
+
+
+.single-comment-div {
+  border-bottom: 1px solid rgb(91,93,114);
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  text-align: left;
+  align-items: top;
+  padding: 10px;
+  max-height: 575px;
+  width: 100%;
+  overflow: auto;
+  margin-left: 15%;
+  
+}
+
+.delete-comment-button-div {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  margin-top: 100px;
+  padding: 10px;
+}
+.delete-comment-button-div > button {
+  height: 20px;
+  width: 150px;
+}
+.single-list-div > ul {
+  float: left;
+}
 .single-post-div {
   border-bottom: 1px solid rgb(91,93,114);
   display: flex;
@@ -45,51 +83,51 @@ input {
   justify-content: left;
   align-items: center;
   height: 100px;
-  padding: 20px;
+  padding: 10px;
+  text-align: left;
   
 }
-.single-comment-div {
-  border-bottom: 1px solid rgb(91,93,114);
+.single-post-div > .count-div {
   display: flex;
-  flex-direction: row;
-  justify-content: left;
-  align-items: center;
-  height: 100%;
-  padding: 20px;
-  
-}
-.single-comment-div {
-  border-bottom: 1px solid rgb(91,93,114);
-  display: flex;
-  flex-direction: row;
-  justify-content: left;
-  align-items: center;
-  height: 100%;
-  padding: 20px;
-  
-}
-.delete-comment-button-div {
   flex-direction: column;
-  align-items: flex-end;
-  height: inherit;
-  width: 30%;
-}
-
-.single-list-div > ul > h2 {
-  margin: 0px;
+  align-items: center;
+  justify-content: center;
+  max-height: 70%;
+  margin:10px;
+  
 }
 
 .single-list-div {
   width: 75%;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px;
   /* border: 1px solid red; */
  
 }
+.post-timestamp-div {
+  display:flex;
+  flex-direction: row;
+  text-align: left;
+  align-items: center;
+  margin: 20px;
+  font-size: 10px;
+}
 
 
+.comment-form-div {
+  float: left;
+  margin: 20px;
+  text-align: left;
+  border: 1px solid rgb(91,93,114);
+  border-radius: 5px;
+  padding: 20px;
+}
 
-.comment-form > form > textarea {
-  height: 100px;
-  width: 300px;
+.commentBox {
+  height: 200px;
+  width: 500px;
   margin: 0 auto;
   border: 1px solid black;
 }
@@ -167,18 +205,17 @@ input {
   max-width: 250px;
 }
 .post-div {
-  
-  
+  text-align: left;
 }
+
 .post-body-div {
   min-height: 200px;
   min-width: 500px;
-  padding: 20px;
+  padding: 10px;
   border: 1px solid rgb(91,93,114);
   text-align: left;
-  
-  
 }
+
 .post-form {
   display: flex;
   flex-direction: column;

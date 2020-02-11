@@ -217,7 +217,7 @@ class ShowSinglePost extends Component {
     return (
     <div className="post-div">
       <div className="post-body-div">
-        <h1>{this.props.post.title}</h1>
+        <h2>{this.props.post.title}</h2>
         
           <p>Body: {this.props.post.description}</p>
         
@@ -306,11 +306,7 @@ class CreateCommentComponent extends Component {
       .catch(err =>  console.log(err));
   }
 
-  showCommentForm = (inputState) => {
-    this.setState({
-      displayCommentForm: inputState
-    })
-  }
+ 
 
   handleChange = (event) => {
     const target = event.target;
@@ -325,21 +321,19 @@ class CreateCommentComponent extends Component {
   
   render () {
     return (
-      <div>
-        {this.state.displayCommentForm === false
-          ? <button onClick = {() => this.showCommentForm(true)}>Create Comment</button>
-          :  (
-            <div>
+      <div className="comment-form-div">
+        
+            <div >
               
               <form onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
               <h3>Create Comment:</h3>
               <textarea className="commentBox" id="inputBody" type="text" name="description" placeholder="What are your thoughts?"/>
               <input className ="submit-input" type="submit" name="submitButton" value="Submit"/>
               </form>
-              <button onClick = {() => this.showCommentForm(false)}>Close Comment</button>
+              
             </div>
-          )
-        }
+          
+        
         {this.state.apiPostResponse.errors !== undefined
             ? <RenderErrors errors = {this.state.apiPostResponse.errors} />
             : null
@@ -456,8 +450,8 @@ class CommentListComponent extends Component {
     
     
     return (
-      <div className="comments-comp">
-      <h1>Comment List:</h1>
+    <div className="comments-comp">
+      <h2>Comments:</h2>
       {this.state.loginError !== undefined
         ? <h3>{this.state.loginError}</h3>
         : null
@@ -563,10 +557,13 @@ class DisplayPostsComponent extends Component {
           </div>
           <div className="single-list-div">
             <ul onClick={() => this.props.displaySinglePost(true, item)}>
+              
               <h2>Title: {item.title}</h2>
-              <li>Date: {item.date}</li>
-              <li>Created by: {item.name}</li>
-              <li>Post Id: {item._id}</li>
+              <div className="post-timestamp-div"> 
+                <li>Date: {item.date}</li>
+                <li>Created by: {item.name}</li>
+                <li>Post Id: {item._id}</li>
+              </div>
             </ul>
           </div>
         </div>
