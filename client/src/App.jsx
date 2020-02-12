@@ -424,9 +424,9 @@ class CommentListComponent extends Component {
       return (
         <div className="single-comment-div" key={index}>
           <div className="comment-count-div">
-            <button onClick={() => this.addCount(item._id, 1, this.props.userId)}>Add to Count</button>
+            <button onClick={() => this.addCount(item._id, 1, this.props.userId)}>Upvote</button>
             <h3>Count: {item.count}</h3>
-            <button onClick={() => this.addCount(item._id, -1, this.props.userId)}>Subtract from Count</button>
+            <button onClick={() => this.addCount(item._id, -1, this.props.userId)}>Downvote</button>
           </div>
           <div className="comment-div">
             <ul>
@@ -453,7 +453,7 @@ class CommentListComponent extends Component {
     <div className="comments-comp">
       <h2>Comments:</h2>
       {this.state.loginError !== undefined
-        ? <h3>{this.state.loginError}</h3>
+        ? <h3 className="render-error">{this.state.loginError}</h3>
         : null
       }
       {this.props.comments !== undefined && !this.deleteComment 
@@ -551,9 +551,9 @@ class DisplayPostsComponent extends Component {
       return (
         <div className="single-post-div" key={index}>
           <div className="count-div">
-            <button onClick={() => this.addCount(item._id, 1, this.props.currentUserId)}>Add to Count</button>
+            <button onClick={() => this.addCount(item._id, 1, this.props.currentUserId)}>Upvote</button>
             <h3>Count: {item.count}</h3>
-            <button onClick={() => this.addCount(item._id, -1, this.props.currentUserId)}>Subtract from Count</button>
+            <button onClick={() => this.addCount(item._id, -1, this.props.currentUserId)}>Downvote</button>
           </div>
           <div className="single-list-div">
             <ul onClick={() => this.props.displaySinglePost(true, item)}>
@@ -574,11 +574,10 @@ class DisplayPostsComponent extends Component {
   
   render() {
     
-    
     return (
-      <div className="posts-comp">
+      <div className='posts-comp'>
       {this.state.loginError !== undefined
-        ? <h3>{this.state.loginError}</h3>
+        ? <h3 className="render-error">{this.state.loginError}</h3>
         : ([
             <div className="post-list-div" key="posts1">{this.renderPostList()}</div>, 
             <div  className="posts-skip-div" key="posts2"> 
@@ -844,8 +843,8 @@ class CreatePostComponent extends Component {
   render() {
     return (
       // display register form or else success message and login form if registered
-      <div>
-        <form className="post-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
+      <div className="post-form">
+        <form  onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
             <h3>Create Post:</h3>
             <input id="inputTitle" type="text" name="title" placeholder="Title"/>
             <textarea id="inputBody" type="text" name="description" placeholder="Text"/>
@@ -1080,7 +1079,7 @@ function RenderErrors(props) {
   })
   //return the error list with a heading as jsx
   return (
-    <div>
+    <div className="render-error">
       <h2>Errors with input:</h2>
       {errorList}
     </div>

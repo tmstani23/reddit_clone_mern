@@ -26,7 +26,8 @@ li {
 }
 
 input {
-  margin: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
   border: 1px solid rgb(156,149,79);
   background-color: rgb(91,93,114);
   border-radius: 5%;
@@ -36,7 +37,8 @@ button {
   border: 1px solid rgb(156,149,79);
   background-color: rgb(91,93,114);
   border-radius: 5%;
-  color: rgb(219,219,219)
+  color: rgb(219,219,219);
+  max-width: 100px;
 }
 
 /* .post-div > p {
@@ -85,7 +87,6 @@ button {
   height: 100px;
   padding: 10px;
   text-align: left;
-  
 }
 .single-post-div > .count-div {
   display: flex;
@@ -118,11 +119,16 @@ button {
 
 .comment-form-div {
   float: left;
-  margin: 20px;
+  margin-top: 10px;
   text-align: left;
   border: 1px solid rgb(91,93,114);
   border-radius: 5px;
   padding: 20px;
+  max-width: 500px;
+}
+.comment-form-div:hover {
+  border: 1px solid rgb(219,219,219);
+  border-radius: 5px;
 }
 
 .commentBox {
@@ -206,6 +212,8 @@ button {
 }
 .post-div {
   text-align: left;
+  display:flex;
+  flex-direction: column;
 }
 
 .post-body-div {
@@ -215,12 +223,30 @@ button {
   border: 1px solid rgb(91,93,114);
   text-align: left;
 }
-
-.post-form {
+.post-body-div:hover {
+  border: 1px solid rgb(219,219,219);
+  border-radius: 5px;
+}
+.post-form{
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  padding: 20px;
+  align-items: left;
+  
+  border: 1px solid rgb(91,93,114);
+}
+.post-form > form {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  align-items: left;
+  text-align: left;
+  max-width: 200px;
+  
+}
+.post-form > form > textarea {
+  min-height: 200px;
+  min-width: 500px;
 }
 .posts-comp {
   border: 1px solid rgb(91,93,114);
@@ -281,3 +307,6 @@ button {
   overflow-wrap: break-word;
 }
 
+.render-error {
+  color: red;
+}
