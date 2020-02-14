@@ -38,7 +38,8 @@ button {
   background-color: rgb(91,93,114);
   border-radius: 5%;
   color: rgb(219,219,219);
-  max-width: 100px;
+  max-width: 150px;
+  margin: 5px;
 }
 
 /* .post-div > p {
@@ -60,16 +61,15 @@ button {
   max-height: 575px;
   width: 100%;
   overflow: auto;
-  margin-left: 15%;
+  margin-left: 5%;
   
 }
 
 .delete-comment-button-div {
   display: flex;
   flex-direction: column;
-  align-items: left;
-  margin-top: 100px;
-  padding: 10px;
+  align-items: right;
+  
 }
 .delete-comment-button-div > button {
   height: 20px;
@@ -227,6 +227,11 @@ button {
   border: 1px solid rgb(219,219,219);
   border-radius: 5px;
 }
+.post-body-div > ul {
+  display: flex;
+  flex-direction: row;
+  font-size: 8px;
+}
 .post-form{
   display: flex;
   flex-direction: column;
@@ -251,6 +256,7 @@ button {
 .posts-comp {
   border: 1px solid rgb(91,93,114);
   border-radius: 5px;
+  margin-bottom: 20px;
 }
 .posts-comp:hover {
   border: 1px solid rgb(219,219,219);

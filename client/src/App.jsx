@@ -1,6 +1,6 @@
-
-import React, { Component } from 'react';
 import './App.css';
+import React, {Component, PropTypes} from 'react';
+import RichTextEditor from 'react-rte';
 
 
 
@@ -101,7 +101,7 @@ class App extends Component {
     return (
       
       <div className="container">
-          <React.StrictMode>
+          
           <div className="dynamic-comps">
           
           
@@ -144,7 +144,7 @@ class App extends Component {
              
             
           </div>
-        </ React.StrictMode> 
+        
       </div>
      
     )
@@ -219,10 +219,10 @@ class ShowSinglePost extends Component {
       <div className="post-body-div">
         <h2>{this.props.post.title}</h2>
         
-          <p>Body: {this.props.post.description}</p>
+          <p>{this.props.post.description}</p>
         
         <ul>
-          <li>{this.props.post.date}</li>
+          <li>Created on: {this.props.post.date}</li>
           <li>Posted by: {this.props.post.name}</li>
         </ul>
         <button onClick = {() => this.props.displaySinglePost(null)}> Close </button>
@@ -264,16 +264,18 @@ class CreateCommentComponent extends Component {
   state = {
     dataReturned: null,
     displayCommentForm: false,
-    
+    description: RichTextEditor.createEmptyValue(),
     apiPostResponse: [],
   }
   //If handleSubmit was called by user clicking submit button in form
   handleSubmit = (event) => {
-    
+    let htmlifiedValue = this.state.description._cache.html;
+    console.log(htmlifiedValue, "htmlified value in handlesubmit method")
+
     let bodyObj = {
       userId: this.props.userId,
       token: this.props.token,
-      description: this.state.description,
+      description: htmlifiedValue,
       postId: this.props.postId,
     }
       //Prevent default action
@@ -308,27 +310,40 @@ class CreateCommentComponent extends Component {
 
  
 
-  handleChange = (event) => {
-    const target = event.target;
-    const value = target.value;
-    const name = target.name;
-
+  updateStateWithDescription = (value) => {
+    // const target = event.target;
+    // const value = target.value;
+    // const name = target.name;
+    
+    //Update the input description value to html
+    value.toString('html')
+    
     this.setState({
-      [name]: value
+      // [name]: value
+      description: value,
     });
+    
     
   }
   
   render () {
     return (
       <div className="comment-form-div">
-        
+          
             <div >
+           
+
+              <form onSubmit={this.handleSubmit}  method="post">
+                <h3>Create Comment:</h3>
+                <RichTextEditor
+                  value={this.state.description}
+                  onChange={this.updateStateWithDescription}
+                  className="commentBox"
+                  
+                />
+               <input onSubmit={this.handleSubmit} className ="submit-input" type="submit" name="submitButton" value="Submit"/>
+                {/* <textarea className="commentBox" id="inputBody" type="text" name="description" placeholder="What are your thoughts?"/> */}
               
-              <form onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
-              <h3>Create Comment:</h3>
-              <textarea className="commentBox" id="inputBody" type="text" name="description" placeholder="What are your thoughts?"/>
-              <input className ="submit-input" type="submit" name="submitButton" value="Submit"/>
               </form>
               
             </div>
@@ -421,6 +436,7 @@ class CommentListComponent extends Component {
     
     let commentListArr = this.props.comments.latestComments;
     return commentListArr.map((item, index) => {
+      
       return (
         <div className="single-comment-div" key={index}>
           <div className="comment-count-div">
@@ -430,15 +446,16 @@ class CommentListComponent extends Component {
           </div>
           <div className="comment-div">
             <ul>
-              <p>Body: {item.description}</p>
-              <li>Date: {item.date}</li>
+              <p dangerouslySetInnerHTML={{__html: item.description}}></p>
+              <li>Created on: {item.date}</li>
               <li>Created by: {item.name}</li>
               <li>Comment Id: {item._id}</li>
             </ul>
+            <div className = "delete-comment-button-div">
+              <button onClick={() => this.renderDeleteComment(item, true)}>Delete Comment</button>
+            </div>
           </div>
-          <div className = "delete-comment-button-div">
-            <button onClick={() => this.renderDeleteComment(item, true)}>Delete Comment</button>
-          </div>
+          
           
         </div>
       )
@@ -451,14 +468,17 @@ class CommentListComponent extends Component {
     
     return (
     <div className="comments-comp">
-      <h2>Comments:</h2>
+      
       {this.state.loginError !== undefined
         ? <h3 className="render-error">{this.state.loginError}</h3>
         : null
       }
-      {this.props.comments !== undefined && !this.deleteComment 
+      {this.props.comments !== undefined && !this.deleteComment && this.props.comments.latestComments.length !== 0
           ? ([
-              <div key="comments1">{this.renderCommentList()}</div>,
+              <div key="comments1">
+                <h2>Comments:</h2>,
+                {this.renderCommentList()},
+              </div>,
               <div className="comments-skip-div" key="comments2"> 
                 <button onClick = {() => this.props.calculateSkip (-10)}>Previous Results</button>
                 <button onClick = {() => this.props.calculateSkip (10)}>Next Results</button>
@@ -560,7 +580,7 @@ class DisplayPostsComponent extends Component {
               
               <h2>Title: {item.title}</h2>
               <div className="post-timestamp-div"> 
-                <li>Date: {item.date}</li>
+                <li>Created on: {item.date}</li>
                 <li>Created by: {item.name}</li>
                 <li>Post Id: {item._id}</li>
               </div>
