@@ -342,6 +342,7 @@ router.post("/api/users/create_comment", (req, res) => {
     const commentDescription = req.body.description;
     const inputToken = req.body.token;
     const postId = req.body.postId;
+    
 
     //search db by id for User
     User.findById(commentUid, (err, user) => {

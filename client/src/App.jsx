@@ -1,6 +1,7 @@
 import './App.css';
 import React, {Component, PropTypes} from 'react';
 import RichTextEditor from 'react-rte';
+var sanitizeHtml = require('sanitize-html');
 
 
 
@@ -269,7 +270,26 @@ class CreateCommentComponent extends Component {
   }
   //If handleSubmit was called by user clicking submit button in form
   handleSubmit = (event) => {
-    let htmlifiedValue = this.state.description._cache.html;
+    //Prevent default action
+    event.preventDefault();
+    //save rich text elem ref to a var
+    var richTextCompRef = this.refs.richTextCompRef;
+    //save html input from description field of form to a variable
+    let dirtyHtmlifiedValue = this.state.description._cache.html;
+
+    //Sanitize the html input to allow only certain tags.  Content in between tags is left as is
+    // Allow only a super restricted set of tags and attributes
+    //need to extract this to a helper function
+    let htmlifiedValue = sanitizeHtml(dirtyHtmlifiedValue, {
+      allowedTags: [ 'b','ul','ol','li', 'i', 'em', 'strong', 'a' ],
+      allowedAttributes: {
+        'a': [ 'href' ]
+      },
+    });
+
+
+
+
     console.log(htmlifiedValue, "htmlified value in handlesubmit method")
 
     let bodyObj = {
@@ -278,14 +298,17 @@ class CreateCommentComponent extends Component {
       description: htmlifiedValue,
       postId: this.props.postId,
     }
-      //Prevent default action
-    event.preventDefault();
+      
 
     if(this.props.token === null || this.props.token === undefined) {
       this.setState({apiPostResponse: {errors: {error:"User not logged in"}}})
       return;
     }
-  
+    
+    //reset the textbox body field to empty
+    console.log(richTextCompRef);
+    richTextCompRef.refs.editor.editor.innerText = " ";
+
     // initialize data returned state to false:
     this.setState({dataReturned: false})
     console.log(JSON.stringify(this.state), "beforefetch state")
@@ -327,18 +350,40 @@ class CreateCommentComponent extends Component {
   }
   
   render () {
+    //richTextEditor toolbar config
+    const toolbarConfig = {
+      // Optionally specify the groups to display (displayed in the order listed).
+      display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'BLOCK_TYPE_DROPDOWN'],
+      INLINE_STYLE_BUTTONS: [
+        {label: 'Bold', style: 'BOLD', className: 'custom-css-class'},
+        {label: 'Italic', style: 'ITALIC'},
+        {label: 'Underline', style: 'UNDERLINE'}
+      ],
+      BLOCK_TYPE_DROPDOWN: [
+        {label: 'Normal', style: 'unstyled'},
+        {label: 'Heading Large', style: 'header-one'},
+        {label: 'Heading Medium', style: 'header-two'},
+        {label: 'Heading Small', style: 'header-three'}
+      ],
+      BLOCK_TYPE_BUTTONS: [
+        {label: 'UL', style: 'unordered-list-item'},
+        {label: 'OL', style: 'ordered-list-item'}
+      ]
+    };
+    
     return (
-      <div className="comment-form-div">
+      <div >
           
-            <div >
-           
-
+            <div className="comment-form-div">
+        
               <form onSubmit={this.handleSubmit}  method="post">
                 <h3>Create Comment:</h3>
                 <RichTextEditor
                   value={this.state.description}
                   onChange={this.updateStateWithDescription}
                   className="commentBox"
+                  ref="richTextCompRef"
+                  toolbarConfig={toolbarConfig}
                   
                 />
                <input onSubmit={this.handleSubmit} className ="submit-input" type="submit" name="submitButton" value="Submit"/>
@@ -444,9 +489,9 @@ class CommentListComponent extends Component {
             <h3>Count: {item.count}</h3>
             <button onClick={() => this.addCount(item._id, -1, this.props.userId)}>Downvote</button>
           </div>
-          <div className="comment-div">
+          <div className="comment-body-div">
             <ul>
-              <p dangerouslySetInnerHTML={{__html: item.description}}></p>
+              <p className="inputHTML" dangerouslySetInnerHTML={{__html: item.description}}></p>
               <li>Created on: {item.date}</li>
               <li>Created by: {item.name}</li>
               <li>Comment Id: {item._id}</li>
@@ -1099,8 +1144,8 @@ function RenderErrors(props) {
   })
   //return the error list with a heading as jsx
   return (
-    <div className="render-error">
-      <h2>Errors with input:</h2>
+    <div>
+      <h2 className="render-error">Errors with input:</h2>
       {errorList}
     </div>
   )

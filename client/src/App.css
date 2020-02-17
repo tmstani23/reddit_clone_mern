@@ -31,7 +31,8 @@ input {
   border: 1px solid rgb(156,149,79);
   background-color: rgb(91,93,114);
   border-radius: 5%;
-  color: rgb(219,219,219)
+  color: rgb(219,219,219);
+  max-width: 120px;
 }
 button {
   border: 1px solid rgb(156,149,79);
@@ -58,7 +59,7 @@ button {
   text-align: left;
   align-items: top;
   padding: 10px;
-  max-height: 575px;
+  max-height: 300px;
   width: 100%;
   overflow: auto;
   margin-left: 5%;
@@ -118,23 +119,31 @@ button {
 
 
 .comment-form-div {
+  
   float: left;
   margin-top: 10px;
   text-align: left;
   border: 1px solid rgb(91,93,114);
   border-radius: 5px;
   padding: 20px;
-  max-width: 500px;
+  
 }
 .comment-form-div:hover {
   border: 1px solid rgb(219,219,219);
   border-radius: 5px;
 }
+.comment-form-div > form {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+}
 
 .commentBox {
+  
   height: 200px;
-  width: 500px;
-  margin: 0 auto;
+  width: 600px;
+  float: left;
+  overflow: auto;
   border: 1px solid black;
 }
 .primary-banner {
