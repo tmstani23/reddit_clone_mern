@@ -220,7 +220,7 @@ class ShowSinglePost extends Component {
       <div className="post-body-div">
         <h2>{this.props.post.title}</h2>
         
-          <p>{this.props.post.description}</p>
+          <p className="inputHTML" dangerouslySetInnerHTML={{__html: this.props.post.description}}></p>
         
         <ul>
           <li>Created on: {this.props.post.date}</li>
@@ -272,23 +272,12 @@ class CreateCommentComponent extends Component {
   handleSubmit = (event) => {
     //Prevent default action
     event.preventDefault();
-    //save rich text elem ref to a var
+    //save rich text editor dom elem 
     var richTextCompRef = this.refs.richTextCompRef;
-    //save html input from description field of form to a variable
-    let dirtyHtmlifiedValue = this.state.description._cache.html;
+    
 
-    //Sanitize the html input to allow only certain tags.  Content in between tags is left as is
-    // Allow only a super restricted set of tags and attributes
-    //need to extract this to a helper function
-    let htmlifiedValue = sanitizeHtml(dirtyHtmlifiedValue, {
-      allowedTags: [ 'b','ul','ol','li', 'i', 'em', 'strong', 'a' ],
-      allowedAttributes: {
-        'a': [ 'href' ]
-      },
-    });
-
-
-
+    //remove sanctioned html tags from textbox input html
+    let htmlifiedValue = sanitizeBodyHtml(this.state.description._cache.html);
 
     console.log(htmlifiedValue, "htmlified value in handlesubmit method")
 
@@ -306,8 +295,9 @@ class CreateCommentComponent extends Component {
     }
     
     //reset the textbox body field to empty
-    console.log(richTextCompRef);
-    richTextCompRef.refs.editor.editor.innerText = " ";
+    //console.log(richTextCompRef);
+    //richTextCompRef.refs.editor.editor.innerText = " ";
+    setTextBoxToEmpty(richTextCompRef)
 
     // initialize data returned state to false:
     this.setState({dataReturned: false})
@@ -350,26 +340,6 @@ class CreateCommentComponent extends Component {
   }
   
   render () {
-    //richTextEditor toolbar config
-    const toolbarConfig = {
-      // Optionally specify the groups to display (displayed in the order listed).
-      display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'BLOCK_TYPE_DROPDOWN'],
-      INLINE_STYLE_BUTTONS: [
-        {label: 'Bold', style: 'BOLD', className: 'custom-css-class'},
-        {label: 'Italic', style: 'ITALIC'},
-        {label: 'Underline', style: 'UNDERLINE'}
-      ],
-      BLOCK_TYPE_DROPDOWN: [
-        {label: 'Normal', style: 'unstyled'},
-        {label: 'Heading Large', style: 'header-one'},
-        {label: 'Heading Medium', style: 'header-two'},
-        {label: 'Heading Small', style: 'header-three'}
-      ],
-      BLOCK_TYPE_BUTTONS: [
-        {label: 'UL', style: 'unordered-list-item'},
-        {label: 'OL', style: 'ordered-list-item'}
-      ]
-    };
     
     return (
       <div >
@@ -846,6 +816,7 @@ class CreatePostComponent extends Component {
   state = {
     uid: this.props.uid,
     token: this.props.token,
+    description: RichTextEditor.createEmptyValue(),
     dataReturned: null,
     apiPostResponse: []
   }
@@ -871,17 +842,39 @@ class CreatePostComponent extends Component {
       console.log(this.state.apiPostResponse.errors)
       return;
     }
+    //save rich text editor dom elem 
+    var richTextCompRef = this.refs.richTextCompRefPost;
+    
+    //remove sanctioned html tags from textbox input html
+    let htmlifiedValue = sanitizeBodyHtml(this.state.description._cache.html);
+    //let dirtyHtmlifiedValue = html._cache.html;
+    
+    
   
-    // initialize data returned state to false:
-    this.setState({dataReturned: false})
+    // initialize data returned state to false and update description with sanitized value
+    console.log(htmlifiedValue, 'htmlified value in handleSubmit')
+    this.setState({dataReturned: false});
     console.log(JSON.stringify(this.state), "beforefetch state")
+
+    let bodyObj = {
+      uid: this.state.uid,
+      title: this.state.title,
+      token: this.state.token,
+      description: htmlifiedValue,
+
+    }
+
+    //reset the textbox body field to empty
+    //console.log(richTextCompRef);
+    //richTextCompRef.refs.editor.editor.innerText = " ";
+    setTextBoxToEmpty(richTextCompRef)
 
     fetch('http://localhost:4000/api/users/create_post', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
       }, 
-      body: JSON.stringify(this.state),
+      body: JSON.stringify(bodyObj),
     })
       .then(res => res.json())
       .then(res => {
@@ -894,7 +887,7 @@ class CreatePostComponent extends Component {
       .catch(err => console.log(err))
   }
 
-  handleChange = (event) => {
+  handleTitleChange = (event) => {
     const target = event.target;
     const value = target.value;
     const name = target.name;
@@ -904,15 +897,40 @@ class CreatePostComponent extends Component {
     });
     
   }
+  updateStateWithDescription = (value) => {
+    // const target = event.target;
+    // const value = target.value;
+    // const name = target.name;
+    
+    //Update the input description value to html
+    value.toString('html');
+    
+    this.setState({
+      // [name]: value
+      description: value,
+    });
+    
+    
+  }
 
   render() {
     return (
       // display register form or else success message and login form if registered
       <div className="post-form">
-        <form  onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
+        <form  onSubmit={this.handleSubmit} method="post">
+            
             <h3>Create Post:</h3>
-            <input id="inputTitle" type="text" name="title" placeholder="Title"/>
-            <textarea id="inputBody" type="text" name="description" placeholder="Text"/>
+            
+            <input onChange={this.handleTitleChange} id="inputTitle" type="text" name="title" placeholder="Title"/>
+            {/* <textarea id="inputBody" type="text" name="description" placeholder="Text"/> */}
+            <RichTextEditor
+                  value={this.state.description}
+                  onChange={this.updateStateWithDescription}
+                  className="commentBox"
+                  ref="richTextCompRefPost"
+                  toolbarConfig={toolbarConfig}
+                  
+            />
             <input className ="submit-input" type="submit" name="submitButton" value="Submit"/>
         </form>
         {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
@@ -920,7 +938,7 @@ class CreatePostComponent extends Component {
               <h1>Post Created</h1>
               <ul>
               <li><strong>Post Title:</strong>  {this.state.apiPostResponse.title}</li>
-                <li><strong>Post Description:</strong>  {this.state.apiPostResponse.newPost.description}</li>
+                <li><strong>Post Description: {this.state.apiPostResponse.newPost.description}</strong></li>
                 <li><strong>Post Id:</strong>  {this.state.apiPostResponse.postId}</li>
                 <li><strong>Post Date:</strong>  {this.state.apiPostResponse.postDate}</li>
                 <li><strong>Created By:</strong>  {this.state.apiPostResponse.name}</li>
@@ -1178,5 +1196,52 @@ class Loading extends React.Component {
       )
   }
 }
+
+// Helper Functions
+const setTextBoxToEmpty = (textboxDomElem) => {
+  let emptyTextBoxNode = textboxDomElem.refs.editor.editor.innerText = ' ';
+  return emptyTextBoxNode;
+}
+
+const sanitizeBodyHtml = (html) => {
+  //save html input from description field of form to a variable
+//let dirtyHtmlifiedValue = this.state.description._cache.html;
+  
+
+  //Sanitize the html input to allow only certain tags.  Content in between tags is left as is
+  // Allow only a super restricted set of tags and attributes
+  //need to extract this to a helper function
+  let htmlifiedValue = sanitizeHtml(html, {
+    allowedTags: [ 'b','ul','ol','li', 'i', 'em', 'strong', 'a' ],
+    allowedAttributes: {
+      'a': [ 'href' ]
+    },
+  });
+
+  return htmlifiedValue;
+
+}
+
+//richTextEditor toolbar config
+const toolbarConfig = {
+  // Optionally specify the groups to display (displayed in the order listed).
+  display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'BLOCK_TYPE_DROPDOWN'],
+  INLINE_STYLE_BUTTONS: [
+    {label: 'Bold', style: 'BOLD', className: 'custom-css-class'},
+    {label: 'Italic', style: 'ITALIC'},
+    {label: 'Underline', style: 'UNDERLINE'}
+  ],
+  BLOCK_TYPE_DROPDOWN: [
+    {label: 'Normal', style: 'unstyled'},
+    {label: 'Heading Large', style: 'header-one'},
+    {label: 'Heading Medium', style: 'header-two'},
+    {label: 'Heading Small', style: 'header-three'}
+  ],
+  BLOCK_TYPE_BUTTONS: [
+    {label: 'UL', style: 'unordered-list-item'},
+    {label: 'OL', style: 'ordered-list-item'}
+  ]
+};
+
 
 export default App;
