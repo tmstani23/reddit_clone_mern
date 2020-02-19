@@ -226,7 +226,7 @@ class ShowSinglePost extends Component {
           <li>Created on: {this.props.post.date}</li>
           <li>Posted by: {this.props.post.name}</li>
         </ul>
-        <button onClick = {() => this.props.displaySinglePost(null)}> Close </button>
+        <button onClick = {() => this.props.displaySinglePost(null)}> Close Post</button>
         <button onClick = {this.renderDeleteComp}> Delete Post </button> 
       </div>
       <CreateCommentComponent updateComments={this.callCommentApi} token = {this.props.token} postId = {this.props.post._id} userId = {this.props.userId} />
@@ -272,10 +272,7 @@ class CreateCommentComponent extends Component {
   handleSubmit = (event) => {
     //Prevent default action
     event.preventDefault();
-    //save rich text editor dom elem 
-    var richTextCompRef = this.refs.richTextCompRef;
     
-
     //remove sanctioned html tags from textbox input html
     let htmlifiedValue = sanitizeBodyHtml(this.state.description._cache.html);
 
@@ -288,16 +285,10 @@ class CreateCommentComponent extends Component {
       postId: this.props.postId,
     }
       
-
     if(this.props.token === null || this.props.token === undefined) {
       this.setState({apiPostResponse: {errors: {error:"User not logged in"}}})
       return;
     }
-    
-    //reset the textbox body field to empty
-    //console.log(richTextCompRef);
-    //richTextCompRef.refs.editor.editor.innerText = " ";
-    setTextBoxToEmpty(richTextCompRef)
 
     // initialize data returned state to false:
     this.setState({dataReturned: false})
@@ -314,10 +305,15 @@ class CreateCommentComponent extends Component {
       .then(res => {
         console.log(res, "afterfetch state")
         
-        // update state with the returned data and set data returned flag to true
+        // update state with the returned comment data
         this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
       })
       .then(() => this.props.updateComments())
+      .then(() => {
+        this.setState({
+          description: RichTextEditor.createEmptyValue()
+        }) //Reset textbox editor body field to empty.
+      }) 
       .catch(err =>  console.log(err));
   }
 
@@ -342,9 +338,9 @@ class CreateCommentComponent extends Component {
   render () {
     
     return (
-      <div >
+      <div className="comment-form-div" >
           
-            <div className="comment-form-div">
+            
         
               <form onSubmit={this.handleSubmit}  method="post">
                 <h3>Create Comment:</h3>
@@ -361,7 +357,7 @@ class CreateCommentComponent extends Component {
               
               </form>
               
-            </div>
+            
           
         
         {this.state.apiPostResponse.errors !== undefined
@@ -462,9 +458,12 @@ class CommentListComponent extends Component {
           <div className="comment-body-div">
             <ul>
               <p className="inputHTML" dangerouslySetInnerHTML={{__html: item.description}}></p>
-              <li>Created on: {item.date}</li>
-              <li>Created by: {item.name}</li>
-              <li>Comment Id: {item._id}</li>
+              <div className="comment-timestamp-div">
+                <li>Created on: {item.date}</li>
+                <li>Created by: {item.name}</li>
+                <li>Comment Id: {item._id}</li>
+              </div>
+              
             </ul>
             <div className = "delete-comment-button-div">
               <button onClick={() => this.renderDeleteComment(item, true)}>Delete Comment</button>
@@ -490,8 +489,8 @@ class CommentListComponent extends Component {
       }
       {this.props.comments !== undefined && !this.deleteComment && this.props.comments.latestComments.length !== 0
           ? ([
-              <div key="comments1">
-                <h2>Comments:</h2>,
+              <div className="comment-list-div" key="comments1">
+                <h2 id="comment-list-h2">Comments:</h2>,
                 {this.renderCommentList()},
               </div>,
               <div className="comments-skip-div" key="comments2"> 
@@ -593,7 +592,7 @@ class DisplayPostsComponent extends Component {
           <div className="single-list-div">
             <ul onClick={() => this.props.displaySinglePost(true, item)}>
               
-              <h2>Title: {item.title}</h2>
+              <h2>{item.title}</h2>
               <div className="post-timestamp-div"> 
                 <li>Created on: {item.date}</li>
                 <li>Created by: {item.name}</li>
@@ -682,7 +681,7 @@ class UserRegisterComponent extends Component {
       // display register form or else success message and login form if registered
       <div className="register-div">
         <form className="register-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
-            <h3>Register Here</h3>
+            <h3>Register</h3>
             <input id="inputName" type="text" name="name" placeholder="login name"/>
             <input id="inputEmail" type="text" name="email" placeholder="email"/>
             <input id="inputPass1" type="text" name="password" placeholder="password"/>
@@ -776,7 +775,7 @@ class UserLoginComponent extends Component {
       // display register form or else success message and login form if registered
       <div className="login-div">
         <form className="login-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
-            <h3>Login Here:</h3>
+            <h3>Login</h3>
             <input id="inputEmail" type="text" name="email" placeholder="email"/>
             <input id="inputPass1" type="text" name="password" placeholder="password"/>
             <input id="inputPass2" type="text" name="password2" placeholder="enter password again"/>
@@ -803,7 +802,7 @@ class LogoutUser extends Component {
   render () {
     return (
       <div className="logout-div">
-        <h1>Username: {this.props.name}</h1>
+        <h1> {this.props.name}</h1>
         <button onClick = {this.logOut}>Logout</button>
       </div>
     )
@@ -842,8 +841,7 @@ class CreatePostComponent extends Component {
       console.log(this.state.apiPostResponse.errors)
       return;
     }
-    //save rich text editor dom elem 
-    var richTextCompRef = this.refs.richTextCompRefPost;
+    
     
     //remove sanctioned html tags from textbox input html
     let htmlifiedValue = sanitizeBodyHtml(this.state.description._cache.html);
@@ -864,10 +862,8 @@ class CreatePostComponent extends Component {
 
     }
 
-    //reset the textbox body field to empty
-    //console.log(richTextCompRef);
-    //richTextCompRef.refs.editor.editor.innerText = " ";
-    setTextBoxToEmpty(richTextCompRef)
+   
+    
 
     fetch('http://localhost:4000/api/users/create_post', {
       method: 'POST',
@@ -884,6 +880,9 @@ class CreatePostComponent extends Component {
         this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
       })
       .then(() => this.props.updatePosts())
+      .then(() => {
+        this.setState({description: RichTextEditor.createEmptyValue()});  //reset the textbox body field to empty
+      })
       .catch(err => console.log(err))
   }
 
@@ -1198,11 +1197,6 @@ class Loading extends React.Component {
 }
 
 // Helper Functions
-const setTextBoxToEmpty = (textboxDomElem) => {
-  let emptyTextBoxNode = textboxDomElem.refs.editor.editor.innerText = ' ';
-  return emptyTextBoxNode;
-}
-
 const sanitizeBodyHtml = (html) => {
   //save html input from description field of form to a variable
 //let dirtyHtmlifiedValue = this.state.description._cache.html;
@@ -1212,7 +1206,7 @@ const sanitizeBodyHtml = (html) => {
   // Allow only a super restricted set of tags and attributes
   //need to extract this to a helper function
   let htmlifiedValue = sanitizeHtml(html, {
-    allowedTags: [ 'b','ul','ol','li', 'i', 'em', 'strong', 'a' ],
+    allowedTags: [ 'h1', 'h2', 'h3','b','ul','ol','li','u', 'i', 'em', 'strong', 'a' ],
     allowedAttributes: {
       'a': [ 'href' ]
     },

@@ -18,7 +18,7 @@ h2 {
   color: rgb(156,149,79)
 }
 h3 {
-  color: rgb(156,149,79)
+  color: rgb(96,70,95);
 }
 li {
   color: rgb(219,219,219);
@@ -33,6 +33,7 @@ input {
   border-radius: 5%;
   color: rgb(219,219,219);
   max-width: 120px;
+  font-size: 75vb;
 }
 button {
   border: 1px solid rgb(156,149,79);
@@ -41,15 +42,20 @@ button {
   color: rgb(219,219,219);
   max-width: 150px;
   margin: 5px;
+  font-size: 75vb;
 }
 
-/* .post-div > p {
-  margin: 0 auto;
-  width: 75%;
-  border: 1px solid black;
-  text-align: left;
-} */
 
+.comment-list-div {
+  border: 1px solid rgb(91,93,114);
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+.comment-list-div:hover{
+  border: 1px solid rgb(219,219,219);
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
 
 .single-comment-div {
   border-bottom: 1px solid rgb(91,93,114);
@@ -60,9 +66,9 @@ button {
   align-items: top;
   padding: 10px;
   max-height: 300px;
-  width: 100%;
+  width: 95%;
   overflow: auto;
-  margin-left: 5%;
+  margin-left: 10px;
   
 }
 
@@ -76,6 +82,35 @@ button {
   height: 20px;
   width: 150px;
 }
+.delete-comment-div {
+  position: fixed;
+  width: 500px;
+  height: 200px;
+  top: 50%;
+  left: 50%;
+  text-align: center;
+  margin-top: -100px; 
+  margin-left: -250px; 
+  background: black;
+  color: lightgray;
+  overflow: auto;
+}
+.comments-skip-div {
+  text-align: center;
+}
+.comment-timestamp-div {
+  display:flex;
+  flex-direction: row;
+  text-align: left;
+  align-items: center;
+  margin: 20px;
+  font-size: 10px;
+}
+#comment-list-h2 {
+  text-align:left;
+  margin: 10px;
+}
+
 .single-list-div > ul {
   float: left;
 }
@@ -119,14 +154,13 @@ button {
 
 
 .comment-form-div {
-  
+  display: flex;
+  flex-direction: column;
   float: left;
-  margin-top: 10px;
+  margin: 10px;
   text-align: left;
-  border: 1px solid rgb(91,93,114);
-  border-radius: 5px;
-  padding: 20px;
-  
+  padding: 10px;
+  max-width: 75%;
 }
 .comment-form-div:hover {
   border: 1px solid rgb(219,219,219);
@@ -139,7 +173,6 @@ button {
 }
 
 .commentBox {
-  
   height: 200px;
   width: 600px;
   float: left;
@@ -230,6 +263,7 @@ button {
   min-width: 500px;
   padding: 10px;
   border: 1px solid rgb(91,93,114);
+  border-radius: 5px;
   text-align: left;
 }
 .post-body-div:hover {
@@ -291,18 +325,7 @@ button {
   min-width: 600px;
   
 }
-.delete-comment-div {
-  position: fixed;
-  width: 500px;
-  height: 200px;
-  top: 50%;
-  left: 50%;
-  margin-top: -100px; /* Negative half of height. */
-  margin-left: -250px; /* Negative half of width. */
-  background: black;
-  color: lightgray;
-  overflow: auto;
-}
+
 
 .container {
   text-align: center;
