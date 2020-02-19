@@ -1,6 +1,7 @@
-
-import React, { Component } from 'react';
 import './App.css';
+import React, {Component, PropTypes} from 'react';
+import RichTextEditor from 'react-rte';
+var sanitizeHtml = require('sanitize-html');
 
 
 
@@ -101,7 +102,7 @@ class App extends Component {
     return (
       
       <div className="container">
-          <React.StrictMode>
+          
           <div className="dynamic-comps">
           
           
@@ -144,7 +145,7 @@ class App extends Component {
              
             
           </div>
-        </ React.StrictMode> 
+        
       </div>
      
     )
@@ -219,13 +220,13 @@ class ShowSinglePost extends Component {
       <div className="post-body-div">
         <h2>{this.props.post.title}</h2>
         
-          <p>Body: {this.props.post.description}</p>
+          <p className="inputHTML" dangerouslySetInnerHTML={{__html: this.props.post.description}}></p>
         
         <ul>
-          <li>{this.props.post.date}</li>
+          <li>Created on: {this.props.post.date}</li>
           <li>Posted by: {this.props.post.name}</li>
         </ul>
-        <button onClick = {() => this.props.displaySinglePost(null)}> Close </button>
+        <button onClick = {() => this.props.displaySinglePost(null)}> Close Post</button>
         <button onClick = {this.renderDeleteComp}> Delete Post </button> 
       </div>
       <CreateCommentComponent updateComments={this.callCommentApi} token = {this.props.token} postId = {this.props.post._id} userId = {this.props.userId} />
@@ -264,26 +265,31 @@ class CreateCommentComponent extends Component {
   state = {
     dataReturned: null,
     displayCommentForm: false,
-    
+    description: RichTextEditor.createEmptyValue(),
     apiPostResponse: [],
   }
   //If handleSubmit was called by user clicking submit button in form
   handleSubmit = (event) => {
+    //Prevent default action
+    event.preventDefault();
     
+    //remove sanctioned html tags from textbox input html
+    let htmlifiedValue = sanitizeBodyHtml(this.state.description._cache.html);
+
+    console.log(htmlifiedValue, "htmlified value in handlesubmit method")
+
     let bodyObj = {
       userId: this.props.userId,
       token: this.props.token,
-      description: this.state.description,
+      description: htmlifiedValue,
       postId: this.props.postId,
     }
-      //Prevent default action
-    event.preventDefault();
-
+      
     if(this.props.token === null || this.props.token === undefined) {
       this.setState({apiPostResponse: {errors: {error:"User not logged in"}}})
       return;
     }
-  
+
     // initialize data returned state to false:
     this.setState({dataReturned: false})
     console.log(JSON.stringify(this.state), "beforefetch state")
@@ -299,39 +305,59 @@ class CreateCommentComponent extends Component {
       .then(res => {
         console.log(res, "afterfetch state")
         
-        // update state with the returned data and set data returned flag to true
+        // update state with the returned comment data
         this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
       })
       .then(() => this.props.updateComments())
+      .then(() => {
+        this.setState({
+          description: RichTextEditor.createEmptyValue()
+        }) //Reset textbox editor body field to empty.
+      }) 
       .catch(err =>  console.log(err));
   }
 
  
 
-  handleChange = (event) => {
-    const target = event.target;
-    const value = target.value;
-    const name = target.name;
-
+  updateStateWithDescription = (value) => {
+    // const target = event.target;
+    // const value = target.value;
+    // const name = target.name;
+    
+    //Update the input description value to html
+    value.toString('html')
+    
     this.setState({
-      [name]: value
+      // [name]: value
+      description: value,
     });
+    
     
   }
   
   render () {
+    
     return (
-      <div className="comment-form-div">
+      <div className="comment-form-div" >
+          
+            
         
-            <div >
+              <form onSubmit={this.handleSubmit}  method="post">
+                <h3>Create Comment:</h3>
+                <RichTextEditor
+                  value={this.state.description}
+                  onChange={this.updateStateWithDescription}
+                  className="commentBox"
+                  ref="richTextCompRef"
+                  toolbarConfig={toolbarConfig}
+                  
+                />
+               <input onSubmit={this.handleSubmit} className ="submit-input" type="submit" name="submitButton" value="Submit"/>
+                {/* <textarea className="commentBox" id="inputBody" type="text" name="description" placeholder="What are your thoughts?"/> */}
               
-              <form onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
-              <h3>Create Comment:</h3>
-              <textarea className="commentBox" id="inputBody" type="text" name="description" placeholder="What are your thoughts?"/>
-              <input className ="submit-input" type="submit" name="submitButton" value="Submit"/>
               </form>
               
-            </div>
+            
           
         
         {this.state.apiPostResponse.errors !== undefined
@@ -421,24 +447,29 @@ class CommentListComponent extends Component {
     
     let commentListArr = this.props.comments.latestComments;
     return commentListArr.map((item, index) => {
+      
       return (
         <div className="single-comment-div" key={index}>
           <div className="comment-count-div">
-            <button onClick={() => this.addCount(item._id, 1, this.props.userId)}>Add to Count</button>
+            <button onClick={() => this.addCount(item._id, 1, this.props.userId)}>Upvote</button>
             <h3>Count: {item.count}</h3>
-            <button onClick={() => this.addCount(item._id, -1, this.props.userId)}>Subtract from Count</button>
+            <button onClick={() => this.addCount(item._id, -1, this.props.userId)}>Downvote</button>
           </div>
-          <div className="comment-div">
+          <div className="comment-body-div">
             <ul>
-              <p>Body: {item.description}</p>
-              <li>Date: {item.date}</li>
-              <li>Created by: {item.name}</li>
-              <li>Comment Id: {item._id}</li>
+              <p className="inputHTML" dangerouslySetInnerHTML={{__html: item.description}}></p>
+              <div className="comment-timestamp-div">
+                <li>Created on: {item.date}</li>
+                <li>Created by: {item.name}</li>
+                <li>Comment Id: {item._id}</li>
+              </div>
+              
             </ul>
+            <div className = "delete-comment-button-div">
+              <button onClick={() => this.renderDeleteComment(item, true)}>Delete Comment</button>
+            </div>
           </div>
-          <div className = "delete-comment-button-div">
-            <button onClick={() => this.renderDeleteComment(item, true)}>Delete Comment</button>
-          </div>
+          
           
         </div>
       )
@@ -451,14 +482,17 @@ class CommentListComponent extends Component {
     
     return (
     <div className="comments-comp">
-      <h2>Comments:</h2>
+      
       {this.state.loginError !== undefined
-        ? <h3>{this.state.loginError}</h3>
+        ? <h3 className="render-error">{this.state.loginError}</h3>
         : null
       }
-      {this.props.comments !== undefined && !this.deleteComment 
+      {this.props.comments !== undefined && !this.deleteComment && this.props.comments.latestComments.length !== 0
           ? ([
-              <div key="comments1">{this.renderCommentList()}</div>,
+              <div className="comment-list-div" key="comments1">
+                <h2 id="comment-list-h2">Comments:</h2>,
+                {this.renderCommentList()},
+              </div>,
               <div className="comments-skip-div" key="comments2"> 
                 <button onClick = {() => this.props.calculateSkip (-10)}>Previous Results</button>
                 <button onClick = {() => this.props.calculateSkip (10)}>Next Results</button>
@@ -551,16 +585,16 @@ class DisplayPostsComponent extends Component {
       return (
         <div className="single-post-div" key={index}>
           <div className="count-div">
-            <button onClick={() => this.addCount(item._id, 1, this.props.currentUserId)}>Add to Count</button>
+            <button onClick={() => this.addCount(item._id, 1, this.props.currentUserId)}>Upvote</button>
             <h3>Count: {item.count}</h3>
-            <button onClick={() => this.addCount(item._id, -1, this.props.currentUserId)}>Subtract from Count</button>
+            <button onClick={() => this.addCount(item._id, -1, this.props.currentUserId)}>Downvote</button>
           </div>
           <div className="single-list-div">
             <ul onClick={() => this.props.displaySinglePost(true, item)}>
               
-              <h2>Title: {item.title}</h2>
+              <h2>{item.title}</h2>
               <div className="post-timestamp-div"> 
-                <li>Date: {item.date}</li>
+                <li>Created on: {item.date}</li>
                 <li>Created by: {item.name}</li>
                 <li>Post Id: {item._id}</li>
               </div>
@@ -574,11 +608,10 @@ class DisplayPostsComponent extends Component {
   
   render() {
     
-    
     return (
-      <div className="posts-comp">
+      <div className='posts-comp'>
       {this.state.loginError !== undefined
-        ? <h3>{this.state.loginError}</h3>
+        ? <h3 className="render-error">{this.state.loginError}</h3>
         : ([
             <div className="post-list-div" key="posts1">{this.renderPostList()}</div>, 
             <div  className="posts-skip-div" key="posts2"> 
@@ -648,7 +681,7 @@ class UserRegisterComponent extends Component {
       // display register form or else success message and login form if registered
       <div className="register-div">
         <form className="register-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
-            <h3>Register Here</h3>
+            <h3>Register</h3>
             <input id="inputName" type="text" name="name" placeholder="login name"/>
             <input id="inputEmail" type="text" name="email" placeholder="email"/>
             <input id="inputPass1" type="text" name="password" placeholder="password"/>
@@ -742,7 +775,7 @@ class UserLoginComponent extends Component {
       // display register form or else success message and login form if registered
       <div className="login-div">
         <form className="login-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
-            <h3>Login Here:</h3>
+            <h3>Login</h3>
             <input id="inputEmail" type="text" name="email" placeholder="email"/>
             <input id="inputPass1" type="text" name="password" placeholder="password"/>
             <input id="inputPass2" type="text" name="password2" placeholder="enter password again"/>
@@ -769,7 +802,7 @@ class LogoutUser extends Component {
   render () {
     return (
       <div className="logout-div">
-        <h1>Username: {this.props.name}</h1>
+        <h1> {this.props.name}</h1>
         <button onClick = {this.logOut}>Logout</button>
       </div>
     )
@@ -782,6 +815,7 @@ class CreatePostComponent extends Component {
   state = {
     uid: this.props.uid,
     token: this.props.token,
+    description: RichTextEditor.createEmptyValue(),
     dataReturned: null,
     apiPostResponse: []
   }
@@ -807,17 +841,36 @@ class CreatePostComponent extends Component {
       console.log(this.state.apiPostResponse.errors)
       return;
     }
+    
+    
+    //remove sanctioned html tags from textbox input html
+    let htmlifiedValue = sanitizeBodyHtml(this.state.description._cache.html);
+    //let dirtyHtmlifiedValue = html._cache.html;
+    
+    
   
-    // initialize data returned state to false:
-    this.setState({dataReturned: false})
+    // initialize data returned state to false and update description with sanitized value
+    console.log(htmlifiedValue, 'htmlified value in handleSubmit')
+    this.setState({dataReturned: false});
     console.log(JSON.stringify(this.state), "beforefetch state")
+
+    let bodyObj = {
+      uid: this.state.uid,
+      title: this.state.title,
+      token: this.state.token,
+      description: htmlifiedValue,
+
+    }
+
+   
+    
 
     fetch('http://localhost:4000/api/users/create_post', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
       }, 
-      body: JSON.stringify(this.state),
+      body: JSON.stringify(bodyObj),
     })
       .then(res => res.json())
       .then(res => {
@@ -827,10 +880,13 @@ class CreatePostComponent extends Component {
         this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
       })
       .then(() => this.props.updatePosts())
+      .then(() => {
+        this.setState({description: RichTextEditor.createEmptyValue()});  //reset the textbox body field to empty
+      })
       .catch(err => console.log(err))
   }
 
-  handleChange = (event) => {
+  handleTitleChange = (event) => {
     const target = event.target;
     const value = target.value;
     const name = target.name;
@@ -840,15 +896,40 @@ class CreatePostComponent extends Component {
     });
     
   }
+  updateStateWithDescription = (value) => {
+    // const target = event.target;
+    // const value = target.value;
+    // const name = target.name;
+    
+    //Update the input description value to html
+    value.toString('html');
+    
+    this.setState({
+      // [name]: value
+      description: value,
+    });
+    
+    
+  }
 
   render() {
     return (
       // display register form or else success message and login form if registered
-      <div>
-        <form className="post-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
+      <div className="post-form">
+        <form  onSubmit={this.handleSubmit} method="post">
+            
             <h3>Create Post:</h3>
-            <input id="inputTitle" type="text" name="title" placeholder="Title"/>
-            <textarea id="inputBody" type="text" name="description" placeholder="Text"/>
+            
+            <input onChange={this.handleTitleChange} id="inputTitle" type="text" name="title" placeholder="Title"/>
+            {/* <textarea id="inputBody" type="text" name="description" placeholder="Text"/> */}
+            <RichTextEditor
+                  value={this.state.description}
+                  onChange={this.updateStateWithDescription}
+                  className="commentBox"
+                  ref="richTextCompRefPost"
+                  toolbarConfig={toolbarConfig}
+                  
+            />
             <input className ="submit-input" type="submit" name="submitButton" value="Submit"/>
         </form>
         {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
@@ -856,7 +937,7 @@ class CreatePostComponent extends Component {
               <h1>Post Created</h1>
               <ul>
               <li><strong>Post Title:</strong>  {this.state.apiPostResponse.title}</li>
-                <li><strong>Post Description:</strong>  {this.state.apiPostResponse.newPost.description}</li>
+                <li><strong>Post Description: {this.state.apiPostResponse.newPost.description}</strong></li>
                 <li><strong>Post Id:</strong>  {this.state.apiPostResponse.postId}</li>
                 <li><strong>Post Date:</strong>  {this.state.apiPostResponse.postDate}</li>
                 <li><strong>Created By:</strong>  {this.state.apiPostResponse.name}</li>
@@ -1081,7 +1162,7 @@ function RenderErrors(props) {
   //return the error list with a heading as jsx
   return (
     <div>
-      <h2>Errors with input:</h2>
+      <h2 className="render-error">Errors with input:</h2>
       {errorList}
     </div>
   )
@@ -1114,5 +1195,47 @@ class Loading extends React.Component {
       )
   }
 }
+
+// Helper Functions
+const sanitizeBodyHtml = (html) => {
+  //save html input from description field of form to a variable
+//let dirtyHtmlifiedValue = this.state.description._cache.html;
+  
+
+  //Sanitize the html input to allow only certain tags.  Content in between tags is left as is
+  // Allow only a super restricted set of tags and attributes
+  //need to extract this to a helper function
+  let htmlifiedValue = sanitizeHtml(html, {
+    allowedTags: [ 'h1', 'h2', 'h3','b','ul','ol','li','u', 'i', 'em', 'strong', 'a' ],
+    allowedAttributes: {
+      'a': [ 'href' ]
+    },
+  });
+
+  return htmlifiedValue;
+
+}
+
+//richTextEditor toolbar config
+const toolbarConfig = {
+  // Optionally specify the groups to display (displayed in the order listed).
+  display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'BLOCK_TYPE_DROPDOWN'],
+  INLINE_STYLE_BUTTONS: [
+    {label: 'Bold', style: 'BOLD', className: 'custom-css-class'},
+    {label: 'Italic', style: 'ITALIC'},
+    {label: 'Underline', style: 'UNDERLINE'}
+  ],
+  BLOCK_TYPE_DROPDOWN: [
+    {label: 'Normal', style: 'unstyled'},
+    {label: 'Heading Large', style: 'header-one'},
+    {label: 'Heading Medium', style: 'header-two'},
+    {label: 'Heading Small', style: 'header-three'}
+  ],
+  BLOCK_TYPE_BUTTONS: [
+    {label: 'UL', style: 'unordered-list-item'},
+    {label: 'OL', style: 'ordered-list-item'}
+  ]
+};
+
 
 export default App;

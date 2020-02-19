@@ -18,7 +18,7 @@ h2 {
   color: rgb(156,149,79)
 }
 h3 {
-  color: rgb(156,149,79)
+  color: rgb(96,70,95);
 }
 li {
   color: rgb(219,219,219);
@@ -26,26 +26,36 @@ li {
 }
 
 input {
-  margin: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
   border: 1px solid rgb(156,149,79);
   background-color: rgb(91,93,114);
   border-radius: 5%;
-  color: rgb(219,219,219)
+  color: rgb(219,219,219);
+  max-width: 120px;
+  font-size: 75vb;
 }
 button {
   border: 1px solid rgb(156,149,79);
   background-color: rgb(91,93,114);
   border-radius: 5%;
-  color: rgb(219,219,219)
+  color: rgb(219,219,219);
+  max-width: 150px;
+  margin: 5px;
+  font-size: 75vb;
 }
 
-/* .post-div > p {
-  margin: 0 auto;
-  width: 75%;
-  border: 1px solid black;
-  text-align: left;
-} */
 
+.comment-list-div {
+  border: 1px solid rgb(91,93,114);
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+.comment-list-div:hover{
+  border: 1px solid rgb(219,219,219);
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
 
 .single-comment-div {
   border-bottom: 1px solid rgb(91,93,114);
@@ -55,24 +65,52 @@ button {
   text-align: left;
   align-items: top;
   padding: 10px;
-  max-height: 575px;
-  width: 100%;
+  max-height: 300px;
+  width: 95%;
   overflow: auto;
-  margin-left: 15%;
+  margin-left: 10px;
   
 }
 
 .delete-comment-button-div {
   display: flex;
   flex-direction: column;
-  align-items: left;
-  margin-top: 100px;
-  padding: 10px;
+  align-items: right;
+  
 }
 .delete-comment-button-div > button {
   height: 20px;
   width: 150px;
 }
+.delete-comment-div {
+  position: fixed;
+  width: 500px;
+  height: 200px;
+  top: 50%;
+  left: 50%;
+  text-align: center;
+  margin-top: -100px; 
+  margin-left: -250px; 
+  background: black;
+  color: lightgray;
+  overflow: auto;
+}
+.comments-skip-div {
+  text-align: center;
+}
+.comment-timestamp-div {
+  display:flex;
+  flex-direction: row;
+  text-align: left;
+  align-items: center;
+  margin: 20px;
+  font-size: 10px;
+}
+#comment-list-h2 {
+  text-align:left;
+  margin: 10px;
+}
+
 .single-list-div > ul {
   float: left;
 }
@@ -85,7 +123,6 @@ button {
   height: 100px;
   padding: 10px;
   text-align: left;
-  
 }
 .single-post-div > .count-div {
   display: flex;
@@ -117,18 +154,29 @@ button {
 
 
 .comment-form-div {
+  display: flex;
+  flex-direction: column;
   float: left;
-  margin: 20px;
+  margin: 10px;
   text-align: left;
-  border: 1px solid rgb(91,93,114);
+  padding: 10px;
+  max-width: 75%;
+}
+.comment-form-div:hover {
+  border: 1px solid rgb(219,219,219);
   border-radius: 5px;
-  padding: 20px;
+}
+.comment-form-div > form {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
 }
 
 .commentBox {
   height: 200px;
-  width: 500px;
-  margin: 0 auto;
+  width: 600px;
+  float: left;
+  overflow: auto;
   border: 1px solid black;
 }
 .primary-banner {
@@ -206,6 +254,8 @@ button {
 }
 .post-div {
   text-align: left;
+  display:flex;
+  flex-direction: column;
 }
 
 .post-body-div {
@@ -213,18 +263,43 @@ button {
   min-width: 500px;
   padding: 10px;
   border: 1px solid rgb(91,93,114);
+  border-radius: 5px;
   text-align: left;
 }
-
-.post-form {
+.post-body-div:hover {
+  border: 1px solid rgb(219,219,219);
+  border-radius: 5px;
+}
+.post-body-div > ul {
+  display: flex;
+  flex-direction: row;
+  font-size: 8px;
+}
+.post-form{
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  padding: 20px;
+  align-items: left;
+  
+  border: 1px solid rgb(91,93,114);
+}
+.post-form > form {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  align-items: left;
+  text-align: left;
+  max-width: 200px;
+  
+}
+.post-form > form > textarea {
+  min-height: 200px;
+  min-width: 500px;
 }
 .posts-comp {
   border: 1px solid rgb(91,93,114);
   border-radius: 5px;
+  margin-bottom: 20px;
 }
 .posts-comp:hover {
   border: 1px solid rgb(219,219,219);
@@ -250,18 +325,7 @@ button {
   min-width: 600px;
   
 }
-.delete-comment-div {
-  position: fixed;
-  width: 500px;
-  height: 200px;
-  top: 50%;
-  left: 50%;
-  margin-top: -100px; /* Negative half of height. */
-  margin-left: -250px; /* Negative half of width. */
-  background: black;
-  color: lightgray;
-  overflow: auto;
-}
+
 
 .container {
   text-align: center;
@@ -281,3 +345,6 @@ button {
   overflow-wrap: break-word;
 }
 
+.render-error {
+  color: red;
+}
