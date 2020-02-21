@@ -75,7 +75,7 @@ class App extends Component {
       currentUserErrors: errors,
     })
     console.log(inputToken, userId, userName, errors)
-    console.log(this.state.currentUserErrors.errors, "errors in updateToken")
+    //console.log(this.state.currentUserErrors.errors, "errors in updateToken")
     //console.log(`token added in main state ${inputToken}, userId: ${userId}, username: ${userName}`)
   }
 
@@ -979,10 +979,11 @@ class DeletePostComp extends Component {
         inputPost: this.props.post
       })
     }
+    
   }
-
+  //If handleSubmit was called by user clicking submit button in form
   handleSubmit = (event) => {
-    //If handleSubmit was called by user clicking submit button in form
+    
     
       //Prevent default action
     event.preventDefault();
