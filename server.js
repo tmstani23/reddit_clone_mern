@@ -16,7 +16,7 @@ const path = require('path');
 //Connect to MongoDB
 mongoose
   .connect(
-    testDB,  
+    db,  
     { useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true 

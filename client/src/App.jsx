@@ -48,7 +48,7 @@ class App extends Component {
     this.setState({dataReturned: false});
     console.log(JSON.stringify(this.state), "beforefetch state");
 
-    fetch('http://localhost:4000/api/users/get_posts', {
+    fetch('/api/users/get_posts', {
       method: 'POST',
       headers: {
       'Content-type': 'application/json'
@@ -207,7 +207,7 @@ class ShowSinglePost extends Component {
     }
     console.log(JSON.stringify(bodyObj), "beforefetch state");
 
-    fetch('http://localhost:4000/api/users/get_comments', {
+    fetch('/api/users/get_comments', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -304,7 +304,7 @@ class CreateCommentComponent extends Component {
     this.setState({dataReturned: false})
     console.log(JSON.stringify(this.bodyObj), "beforefetch state")
 
-    fetch('http://localhost:4000/api/users/create_comment', {
+    fetch('/api/users/create_comment', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -414,7 +414,7 @@ class CommentListComponent extends Component {
       
       
   
-      fetch("http://localhost:4000/api/users/comment_count", {
+      fetch("/api/users/comment_count", {
         method: 'POST',
         headers: {
         'Content-type': 'application/json'
@@ -546,7 +546,7 @@ class DisplayPostsComponent extends Component {
       
       
   
-      fetch("http://localhost:4000/api/users/add_count", {
+      fetch("/api/users/add_count", {
         method: 'POST',
         headers: {
         'Content-type': 'application/json'
@@ -658,7 +658,7 @@ class UserRegisterComponent extends Component {
     this.setState({dataReturned: false})
     console.log(JSON.stringify(this.state), "beforefetch state")
 
-    fetch('http://localhost:4000/api/users/register', {
+    fetch('/api/users/register', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -691,7 +691,7 @@ class UserRegisterComponent extends Component {
       // display register form or else success message and login form if registered
       <div className="register-div">
         <form className="register-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
-            <h3>Register</h3>
+            <h2>Register</h2>
             <input id="inputName" type="text" name="name" placeholder="login name"/>
             <input id="inputEmail" type="text" name="email" placeholder="email"/>
             <input id="inputPass1" type="text" name="password" placeholder="password"/>
@@ -747,7 +747,7 @@ class UserLoginComponent extends Component {
     this.setState({dataReturned: false})
     console.log(JSON.stringify(this.state), "beforefetch state")
 
-    fetch('http://localhost:4000/api/users/login', {
+    fetch('/api/users/login', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -785,7 +785,7 @@ class UserLoginComponent extends Component {
       // display register form or else success message and login form if registered
       <div className="login-div">
         <form className="login-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
-            <h3>Login</h3>
+            <h2>Login</h2>
             <input id="inputEmail" type="text" name="email" placeholder="email"/>
             <input id="inputPass1" type="text" name="password" placeholder="password"/>
             <input id="inputPass2" type="text" name="password2" placeholder="enter password again"/>
@@ -887,7 +887,7 @@ class CreatePostComponent extends Component {
    
     
 
-    fetch('http://localhost:4000/api/users/create_post', {
+    fetch('/api/users/create_post', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -1020,7 +1020,7 @@ class DeletePostComp extends Component {
     this.setState({dataReturned: false})
     console.log(JSON.stringify(this.state), "beforefetch state")
 
-    fetch('http://localhost:4000/api/users/delete_post', {
+    fetch('/api/users/delete_post', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -1109,7 +1109,7 @@ class DeleteCommentComp extends Component {
       currentUserId: this.props.currentUserId
     }
 
-    fetch('http://localhost:4000/api/users/delete_comment', {
+    fetch('/api/users/delete_comment', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
