@@ -17,7 +17,7 @@ const path = require('path');
 
 mongoose
   .connect(
-    db,  
+    process.env.DATABASE_URL,  
     { useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true 
