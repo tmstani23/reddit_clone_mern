@@ -15,6 +15,8 @@ const path = require('path');
 //Initialize mongoose connection with cloud db server
 //Connect to MongoDB
 
+console.log(process.env.DATABASE_URL)
+
 mongoose
   .connect(
     process.env.DATABASE_URL,  
