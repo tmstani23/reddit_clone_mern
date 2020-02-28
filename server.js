@@ -19,7 +19,7 @@ console.log(process.env.DATABASE_URL)
 
 mongoose
   .connect(
-    process.env.DATABASE_URL,  
+    "mongodb://tmstani23:LemonGinger23@ds036967.mlab.com:36967/reddit-clone-db",  
     { useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true 
