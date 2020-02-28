@@ -14,6 +14,7 @@ const path = require('path');
 
 //Initialize mongoose connection with cloud db server
 //Connect to MongoDB
+
 mongoose
   .connect(
     db,  
