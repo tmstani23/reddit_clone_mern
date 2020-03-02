@@ -38,7 +38,7 @@ class App extends Component {
     }
     //Update skip value in state and refresh the post list
     await this.setState({skip: skip});
-    console.log(totalPostResults, skip, "total post results, skip in calcSkip func");
+    //console.log(totalPostResults, skip, "total post results, skip in calcSkip func");
     await this.callApi();
     
   }
@@ -46,7 +46,7 @@ class App extends Component {
   callApi = () => {
     // initialize data returned state to false:
     this.setState({dataReturned: false});
-    console.log(JSON.stringify(this.state), "beforefetch state");
+    //console.log(JSON.stringify(this.state), "beforefetch state");
 
     fetch('/api/users/get_posts', {
       method: 'POST',
@@ -62,7 +62,7 @@ class App extends Component {
           apiPostResponse: res,
           dataReturned: !this.state.dataReturned,
         })
-        console.log(JSON.stringify(this.state), "afterfetch state")
+        //console.log(JSON.stringify(this.state), "afterfetch state")
         
       })
       .catch(err => console.log(err))
@@ -70,21 +70,13 @@ class App extends Component {
 
   saveLoginResponseToAppState = (loginResponse) => {
     
-
-    // this.setState({
-    //   token: inputToken,
-    //   userId: userId,
-    //   currentUser: userName,
-    //   loginResponse: loginResponse,
-      
-    // })
     this.setState({
       token: loginResponse.token,
       userId: loginResponse.userId,
       currentUser: loginResponse.userName,
       loginResponse: loginResponse,
     })
-    console.log(loginResponse.token, loginResponse.userId, loginResponse.userName, loginResponse, " vars in update token comp")
+    //console.log(loginResponse.token, loginResponse.userId, loginResponse.userName, loginResponse, " vars in update token comp")
     //console.log(this.state.loginResponse.errors, "errors in updateToken")
     //console.log(`token added in main state ${inputToken}, userId: ${userId}, username: ${userName}`)
   }
@@ -101,7 +93,7 @@ class App extends Component {
   }
   createNewPost = async () => {
     let status = !this.state.createNewPost
-    console.log(status)
+    //console.log(status)
     await this.setState({
       createNewPost: status
     })
@@ -178,7 +170,7 @@ class ShowSinglePost extends Component {
   calculateSkip = async (skipAmount) => {
     let skip = this.state.commentSkip += skipAmount;
     const totalPostResults = this.state.apiCommentResponse.totalResults;
-    console.log(skipAmount, totalPostResults, "skipAmount, totalPostResults")
+    //console.log(skipAmount, totalPostResults, "skipAmount, totalPostResults")
     //If last few posts shown
     if(skip >= totalPostResults) {
       //Display remaining results
@@ -190,7 +182,7 @@ class ShowSinglePost extends Component {
     }
     //Update skip value in state and refresh the post list
     await this.setState({commentSkip: skip});
-    console.log(totalPostResults, skip, "total post results, skip in calcSkip func");
+    //console.log(totalPostResults, skip, "total post results, skip in calcSkip func");
     await this.callCommentApi();
     
   }
@@ -205,7 +197,7 @@ class ShowSinglePost extends Component {
       postId: this.props.post._id,
       skip: this.state.commentSkip,
     }
-    console.log(JSON.stringify(bodyObj), "beforefetch state");
+    //console.log(JSON.stringify(bodyObj), "beforefetch state");
 
     fetch('/api/users/get_comments', {
       method: 'POST',
@@ -218,7 +210,7 @@ class ShowSinglePost extends Component {
       .then(res => {
         // update state with the returned data and set data returned flag to true
         this.setState({apiCommentResponse: res, dataReturned: !this.state.dataReturned})
-        console.log(JSON.stringify(this.state), "afterfetch state")
+        //console.log(JSON.stringify(this.state), "afterfetch state")
         
       })
       .catch(err => console.log(err))
@@ -286,7 +278,7 @@ class CreateCommentComponent extends Component {
     //remove sanctioned html tags from textbox input html
     let htmlifiedValue = sanitizeBodyHtml(this.state.description._cache.html);
 
-    console.log(htmlifiedValue, "htmlified value in handlesubmit method")
+    //console.log(htmlifiedValue, "htmlified value in handlesubmit method")
 
     let bodyObj = {
       userId: this.props.userId,
@@ -302,7 +294,7 @@ class CreateCommentComponent extends Component {
 
     // initialize data returned state to false:
     this.setState({dataReturned: false})
-    console.log(JSON.stringify(this.bodyObj), "beforefetch state")
+    //console.log(JSON.stringify(this.bodyObj), "beforefetch state")
 
     fetch('/api/users/create_comment', {
       method: 'POST',
@@ -313,7 +305,7 @@ class CreateCommentComponent extends Component {
     })
       .then(res => res.json())
       .then(res => {
-        console.log(res, "afterfetch state")
+        //console.log(res, "afterfetch state")
         
         // update state with the returned comment data
         this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
@@ -410,7 +402,7 @@ class CommentListComponent extends Component {
         userId: uid
       })
         
-      console.log(JSON.stringify(this.state), "beforefetch state");
+      //console.log(JSON.stringify(this.state), "beforefetch state");
       
       
   
@@ -425,7 +417,7 @@ class CommentListComponent extends Component {
         .then(res => {
           // update state with the returned data and set data returned flag to true
           this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
-          console.log(JSON.stringify(this.state), "afterfetch state")
+          //console.log(JSON.stringify(this.state), "afterfetch state")
           
         })
         .then(() => this.props.updateComments())
@@ -542,7 +534,7 @@ class DisplayPostsComponent extends Component {
         uid: uid
       })
         
-      console.log(JSON.stringify(this.state), "beforefetch state");
+      //console.log(JSON.stringify(this.state), "beforefetch state");
       
       
   
@@ -557,7 +549,7 @@ class DisplayPostsComponent extends Component {
         .then(res => {
           // update state with the returned data and set data returned flag to true
           this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
-          console.log(JSON.stringify(this.state), "afterfetch state")
+          //console.log(JSON.stringify(this.state), "afterfetch state")
           
         })
         .then(() => this.props.updatePosts())
@@ -656,7 +648,7 @@ class UserRegisterComponent extends Component {
   
     // initialize data returned state to false:
     this.setState({dataReturned: false})
-    console.log(JSON.stringify(this.state), "beforefetch state")
+    //console.log(JSON.stringify(this.state), "beforefetch state")
 
     fetch('/api/users/register', {
       method: 'POST',
@@ -667,7 +659,7 @@ class UserRegisterComponent extends Component {
     })
       .then(res => res.json())
       .then(res => {
-        console.log(res, "afterfetch state")
+        //console.log(res, "afterfetch state")
         
         // update state with the returned data and set data returned flag to true
         this.setState({apiLoginResponse: res, dataReturned: !this.state.dataReturned})
@@ -745,7 +737,7 @@ class UserLoginComponent extends Component {
   
     // initialize data returned state to false:
     this.setState({dataReturned: false})
-    console.log(JSON.stringify(this.state), "beforefetch state")
+    //console.log(JSON.stringify(this.state), "beforefetch state")
 
     fetch('/api/users/login', {
       method: 'POST',
@@ -756,7 +748,7 @@ class UserLoginComponent extends Component {
     })
       .then(res => res.json())
       .then(res => {
-        console.log(res, "afterfetch state")
+        //console.log(res, "afterfetch state")
         
         // update state with the returned data and set data returned flag to true
         this.setState({apiLoginResponse: res, dataReturned: !this.state.dataReturned})
@@ -860,7 +852,7 @@ class CreatePostComponent extends Component {
 
     if(this.state.token == null) {
       this.setState({apiPostResponse: {errors: {error:"User not logged in"}}})
-      console.log(this.state.apiPostResponse.errors)
+      //console.log(this.state.apiPostResponse.errors)
       return;
     }
     
@@ -872,9 +864,9 @@ class CreatePostComponent extends Component {
     
   
     // initialize data returned state to false and update description with sanitized value
-    console.log(htmlifiedValue, 'htmlified value in handleSubmit')
+    //console.log(htmlifiedValue, 'htmlified value in handleSubmit')
     this.setState({dataReturned: false});
-    console.log(JSON.stringify(this.state), "beforefetch state")
+    //console.log(JSON.stringify(this.state), "beforefetch state")
 
     let bodyObj = {
       uid: this.state.uid,
@@ -896,7 +888,7 @@ class CreatePostComponent extends Component {
     })
       .then(res => res.json())
       .then(res => {
-        console.log(res, "afterfetch state")
+        //console.log(res, "afterfetch state")
         
         // update state with the returned data and set data returned flag to true
         this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
@@ -1012,13 +1004,13 @@ class DeletePostComp extends Component {
 
     if(this.state.token === null || this.state.token === undefined) {
       this.setState({apiPostResponse: {errors: {error:"User not logged in"}}})
-      console.log(this.state.apiPostResponse.errors)
+      //console.log(this.state.apiPostResponse.errors)
       return;
     }
   
     // initialize data returned state to false:
     this.setState({dataReturned: false})
-    console.log(JSON.stringify(this.state), "beforefetch state")
+    //console.log(JSON.stringify(this.state), "beforefetch state")
 
     fetch('/api/users/delete_post', {
       method: 'POST',
@@ -1029,7 +1021,7 @@ class DeletePostComp extends Component {
     })
       .then(res => res.json())
       .then(res => {
-        console.log(res, "afterfetch state")
+        //console.log(res, "afterfetch state")
         
         // update state with the returned data and set data returned flag to true
         this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
@@ -1100,7 +1092,7 @@ class DeleteCommentComp extends Component {
   
     // initialize data returned state to false:
     this.setState({dataReturned: false})
-    console.log(JSON.stringify(this.state), "beforefetch state")
+    //console.log(JSON.stringify(this.state), "beforefetch state")
 
     let bodyObj = {
       commentUserId: this.props.comment.uid,
@@ -1118,7 +1110,7 @@ class DeleteCommentComp extends Component {
     })
       .then(res => res.json())
       .then(res => {
-        console.log(res, "afterfetch state")
+        //console.log(res, "afterfetch state")
         
         // update state with the returned data and set data returned flag to true
         this.setState({apiPostResponse: res, dataReturned: !this.state.dataReturned})
