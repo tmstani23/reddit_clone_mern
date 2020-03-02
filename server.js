@@ -15,7 +15,7 @@ const path = require('path');
 //Initialize mongoose connection with cloud db server
 //Connect to MongoDB
 
-mongoose.connect(process.env.DATABASE_URL || testDB, { useNewUrlParser: true }, function(err) {
+mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true }, function(err) {
   
   if(err) {
     console.log(err);
@@ -24,7 +24,6 @@ mongoose.connect(process.env.DATABASE_URL || testDB, { useNewUrlParser: true }, 
   //Log if connection was established or not
   console.log(mongoose.connection.readyState, "Mongo DB connection established");
 });
-
 
 //Clear database of all connections and reset
 //clearDatabase(testDB)
@@ -57,7 +56,7 @@ app.use(passport.initialize());
 require("./config/passport.js")(passport);
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../client')));
+app.use(express.static(path.join(__dirname, 'client/build')));
 
 //Routes
 app.use("/", users);
