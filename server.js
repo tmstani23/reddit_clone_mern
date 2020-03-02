@@ -56,7 +56,7 @@ app.use(passport.initialize());
 require("./config/passport.js")(passport);
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../client')));
+app.use(express.static(path.join(__dirname, 'client/build')));
 
 //Routes
 app.use("/", users);
