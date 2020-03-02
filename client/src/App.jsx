@@ -1,7 +1,8 @@
 import './App.css';
-import React, {Component, PropTypes} from 'react';
+import React, {Component} from 'react';
 import RichTextEditor from 'react-rte';
 var sanitizeHtml = require('sanitize-html');
+require('dotenv').config();
 
 
 
@@ -19,6 +20,7 @@ class App extends Component {
 
   componentDidMount(){
     this.callApi()
+
   }
 
   calculateSkip = async (skipAmount) => {
@@ -46,7 +48,7 @@ class App extends Component {
     this.setState({dataReturned: false});
     console.log(JSON.stringify(this.state), "beforefetch state");
 
-    fetch('http://localhost:4000/api/users/get_posts', {
+    fetch('/api/users/get_posts', {
       method: 'POST',
       headers: {
       'Content-type': 'application/json'
@@ -66,16 +68,24 @@ class App extends Component {
       .catch(err => console.log(err))
   }
 
-  updateToken = (inputToken, userId, userName, errors) => {
+  saveLoginResponseToAppState = (loginResponse) => {
     
+
+    // this.setState({
+    //   token: inputToken,
+    //   userId: userId,
+    //   currentUser: userName,
+    //   loginResponse: loginResponse,
+      
+    // })
     this.setState({
-      token: inputToken,
-      userId: userId,
-      currentUser: userName,
-      currentUserErrors: errors,
+      token: loginResponse.token,
+      userId: loginResponse.userId,
+      currentUser: loginResponse.userName,
+      loginResponse: loginResponse,
     })
-    console.log(inputToken, userId, userName, errors)
-    console.log(this.state.currentUserErrors.errors, "errors in updateToken")
+    console.log(loginResponse.token, loginResponse.userId, loginResponse.userName, loginResponse, " vars in update token comp")
+    //console.log(this.state.loginResponse.errors, "errors in updateToken")
     //console.log(`token added in main state ${inputToken}, userId: ${userId}, username: ${userName}`)
   }
 
@@ -132,10 +142,10 @@ class App extends Component {
           <div className="login-reg-div" >
             
             {this.state.token === undefined && this.state.currentUser === undefined
-              ? [<UserRegisterComponent key="reg1" />, <UserLoginComponent key="reg2" className="login-comp" updateToken = {this.updateToken}/>]
-              : (this.state.currentUserErrors.errors === undefined
-                  ? <LogoutUser updateToken = {this.updateToken} name={this.state.currentUser}/>
-                  : <RenderErrors errors = {this.state.currentUserErrors.errors} />
+              ? [<UserRegisterComponent key="reg1" />, <UserLoginComponent key="reg2" className="login-comp" updateToken = {this.saveLoginResponseToAppState}/>]
+              : (this.state.loginResponse.errors === undefined
+                  ? <LogoutUser isSuperUser = {this.state.loginResponse.isSuperUser} updateToken = {this.saveLoginResponseToAppState} name={this.state.currentUser}/>
+                  : <RenderErrors errors = {this.state.loginResponse.errors} />
                 )
             }
             {this.state.dataReturned === true && this.state.apiPostResponse.errors === undefined && this.state.createNewPost === false
@@ -197,7 +207,7 @@ class ShowSinglePost extends Component {
     }
     console.log(JSON.stringify(bodyObj), "beforefetch state");
 
-    fetch('http://localhost:4000/api/users/get_comments', {
+    fetch('/api/users/get_comments', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -292,9 +302,9 @@ class CreateCommentComponent extends Component {
 
     // initialize data returned state to false:
     this.setState({dataReturned: false})
-    console.log(JSON.stringify(this.state), "beforefetch state")
+    console.log(JSON.stringify(this.bodyObj), "beforefetch state")
 
-    fetch('http://localhost:4000/api/users/create_comment', {
+    fetch('/api/users/create_comment', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -404,7 +414,7 @@ class CommentListComponent extends Component {
       
       
   
-      fetch("http://localhost:4000/api/users/comment_count", {
+      fetch("/api/users/comment_count", {
         method: 'POST',
         headers: {
         'Content-type': 'application/json'
@@ -501,7 +511,7 @@ class CommentListComponent extends Component {
           : null
       }
       {this.state.deleteComment === true 
-        ? <DeleteCommentComp updateComments = {this.props.updateComments} comment = {this.state.comment} renderDeleteComment = {this.renderDeleteComment} token = {this.props.token} />
+        ? <DeleteCommentComp updateComments = {this.props.updateComments} comment = {this.state.comment} renderDeleteComment = {this.renderDeleteComment} currentUserId = {this.props.userId} token = {this.props.token} />
         : null
       }
     </div>   
@@ -536,7 +546,7 @@ class DisplayPostsComponent extends Component {
       
       
   
-      fetch("http://localhost:4000/api/users/add_count", {
+      fetch("/api/users/add_count", {
         method: 'POST',
         headers: {
         'Content-type': 'application/json'
@@ -648,7 +658,7 @@ class UserRegisterComponent extends Component {
     this.setState({dataReturned: false})
     console.log(JSON.stringify(this.state), "beforefetch state")
 
-    fetch('http://localhost:4000/api/users/register', {
+    fetch('/api/users/register', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -681,7 +691,7 @@ class UserRegisterComponent extends Component {
       // display register form or else success message and login form if registered
       <div className="register-div">
         <form className="register-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
-            <h3>Register</h3>
+            <h2>Register</h2>
             <input id="inputName" type="text" name="name" placeholder="login name"/>
             <input id="inputEmail" type="text" name="email" placeholder="email"/>
             <input id="inputPass1" type="text" name="password" placeholder="password"/>
@@ -737,7 +747,7 @@ class UserLoginComponent extends Component {
     this.setState({dataReturned: false})
     console.log(JSON.stringify(this.state), "beforefetch state")
 
-    fetch('http://localhost:4000/api/users/login', {
+    fetch('/api/users/login', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -753,7 +763,7 @@ class UserLoginComponent extends Component {
         
       })
       .then(() => {
-        this.props.updateToken(this.state.apiLoginResponse.token, this.state.apiLoginResponse.userId, this.state.apiLoginResponse.userName, this.state.apiLoginResponse)
+        this.props.updateToken(this.state.apiLoginResponse)
       })
       .catch(err => console.log(err))
   }
@@ -775,7 +785,7 @@ class UserLoginComponent extends Component {
       // display register form or else success message and login form if registered
       <div className="login-div">
         <form className="login-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
-            <h3>Login</h3>
+            <h2>Login</h2>
             <input id="inputEmail" type="text" name="email" placeholder="email"/>
             <input id="inputPass1" type="text" name="password" placeholder="password"/>
             <input id="inputPass2" type="text" name="password2" placeholder="enter password again"/>
@@ -797,14 +807,26 @@ class UserLoginComponent extends Component {
 class LogoutUser extends Component {
 
   logOut = () => {
-    this.props.updateToken(undefined, null, undefined, {errors: undefined})
+    this.props.updateToken({errors: undefined})
   }
   render () {
+    //console.log(this.props.isSuperUser, "superuser state in logout comp")
     return (
+       
       <div className="logout-div">
-        <h1> {this.props.name}</h1>
-        <button onClick = {this.logOut}>Logout</button>
+        {this.props.isSuperUser === true && this.props.isSuperUser !== undefined
+          ? <div>
+              <h1> {this.props.name} (SuperUser)</h1>
+              <button onClick = {this.logOut}>Logout</button>
+            </div>
+          : <div>
+              <h1> {this.props.name}</h1>
+              <button onClick = {this.logOut}>Logout</button>
+            </div>
+          
+        }
       </div>
+
     )
   }    
  
@@ -865,7 +887,7 @@ class CreatePostComponent extends Component {
    
     
 
-    fetch('http://localhost:4000/api/users/create_post', {
+    fetch('/api/users/create_post', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -979,10 +1001,11 @@ class DeletePostComp extends Component {
         inputPost: this.props.post
       })
     }
+    
   }
-
+  //If handleSubmit was called by user clicking submit button in form
   handleSubmit = (event) => {
-    //If handleSubmit was called by user clicking submit button in form
+    
     
       //Prevent default action
     event.preventDefault();
@@ -997,7 +1020,7 @@ class DeletePostComp extends Component {
     this.setState({dataReturned: false})
     console.log(JSON.stringify(this.state), "beforefetch state")
 
-    fetch('http://localhost:4000/api/users/delete_post', {
+    fetch('/api/users/delete_post', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -1083,10 +1106,10 @@ class DeleteCommentComp extends Component {
       commentUserId: this.props.comment.uid,
       token: this.props.token,
       commentId: this.props.comment._id,
-
+      currentUserId: this.props.currentUserId
     }
 
-    fetch('http://localhost:4000/api/users/delete_comment', {
+    fetch('/api/users/delete_comment', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -1197,14 +1220,10 @@ class Loading extends React.Component {
 }
 
 // Helper Functions
-const sanitizeBodyHtml = (html) => {
-  //save html input from description field of form to a variable
-//let dirtyHtmlifiedValue = this.state.description._cache.html;
-  
 
-  //Sanitize the html input to allow only certain tags.  Content in between tags is left as is
-  // Allow only a super restricted set of tags and attributes
-  //need to extract this to a helper function
+//Sanitize the html input to allow only certain tags.  Content in between tags is left as is
+const sanitizeBodyHtml = (html) => {
+  
   let htmlifiedValue = sanitizeHtml(html, {
     allowedTags: [ 'h1', 'h2', 'h3','b','ul','ol','li','u', 'i', 'em', 'strong', 'a' ],
     allowedAttributes: {

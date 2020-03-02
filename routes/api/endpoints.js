@@ -77,6 +77,7 @@ router.post("/api/users/login", (req, res) => {
     //Form validation
     const {errors, isValid} = validateLoginInput(req.body);
     const secretOrKey = process.env.secretOrKey;
+    const superUserId = process.env.REACT_APP_SUPER_USER_ID;
     //Check validation
     if(!isValid) {
         return res.status(400).json({errors: errors});
@@ -84,6 +85,9 @@ router.post("/api/users/login", (req, res) => {
     //Extract email and pass from the login form fields
     const email = req.body.email;
     const password = req.body.password;
+    let isSuperUser = false;
+
+    console.log(superUserId, "superuserid in login endpoint")
 
     //Search for user in database by email
     User.findOne({email})
@@ -95,6 +99,12 @@ router.post("/api/users/login", (req, res) => {
                 })
             }
 
+            //Check if current logging in user is the superuser
+            superUserId === user.id 
+            //add superuser state to the user obj.
+            ?  isSuperUser = true 
+            : isSuperUser = false 
+  
             //Check password
             bcrypt.compare(password, user.password)
                 .then(isMatch => {
@@ -115,7 +125,8 @@ router.post("/api/users/login", (req, res) => {
                             }
                             
                         )
-
+                        
+                        
                         //update user object with new token
                         user.token = token;
                         //save user
@@ -127,7 +138,8 @@ router.post("/api/users/login", (req, res) => {
                                 userId: user.id,
                                 success: true,
                                 token: token,
-                                userName: user.name
+                                userName: user.name,
+                                isSuperUser: isSuperUser,
                             })
                         
                     }
@@ -518,9 +530,13 @@ router.post("/api/users/create_post", (req, res) => {
 //route for creating posts
 router.post("/api/users/delete_post", (req, res) => {
     //extract user post fields from request
+    const userId = req.body.userId; // current logged in user's id
     const postUid = req.body.postUserId;
     const inputToken = req.body.token;
     const postId = req.body.postId;
+    const superUserId = process.env.REACT_APP_SUPER_USER_ID;
+
+    console.log(superUserId, "superuser id");
 
     //Search User documents to see if input token matches current users token
         //return an error if user or token doesn't match
@@ -530,9 +546,8 @@ router.post("/api/users/delete_post", (req, res) => {
             return res.send({errors: {error: err.message}})
         }
 
-        //compare user token against inputToken
-        //if not a match
-        if (user.token != inputToken) {
+        //Throw error if logged in user doesn't match posts creator or isn't the super user
+        if (user.token != inputToken && userId !== superUserId) {
             //return error
             
             return res.send({errors: {error: "Cannot delete post you didn't create."}})
@@ -563,6 +578,8 @@ router.post("/api/users/delete_comment", (req, res) => {
     const commentUid = req.body.commentUserId;
     const inputToken = req.body.token;
     const commentId = req.body.commentId;
+    const currentUserId = req.body.currentUserId;
+    let superUserId = process.env.REACT_APP_SUPER_USER_ID;
 
     //Search User documents to see if input token matches current users token
         //return an error if user or token doesn't match
@@ -572,14 +589,14 @@ router.post("/api/users/delete_comment", (req, res) => {
             return res.send({errors: {error: err.message}})
         }
 
-        //compare user token against inputToken
-        //if not a match
-        if (user.token != inputToken) {
+        //Throw error if logged in user doesn't match posts creator or isn't the super user
+        if (user.token != inputToken && currentUserId !== superUserId) {
             //return error
             
             return res.send({errors: {error: "Cannot delete post you didn't create."}})
             
         }
+
         
         //Search for post by its id and delete from db
         Comment.deleteOne({_id: commentId}, (err, comment) => {

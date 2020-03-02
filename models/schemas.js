@@ -32,7 +32,6 @@ const PostSchema = new Schema ({
     title: {
         type: String,
         required: true,
-        unique: true,
     },
     name: {
         type: String
@@ -81,6 +80,7 @@ const UserSchema = new Schema ({
     email: {
         type: String,
         required: true,
+        unique: true,
     },
     password: {
         type: String,

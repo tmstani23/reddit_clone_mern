@@ -6,6 +6,7 @@ user system with login/logout
     read user
     delete user
     update user
+    super user with full privs
 
 post system
     create new post

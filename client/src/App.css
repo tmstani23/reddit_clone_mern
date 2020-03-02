@@ -28,7 +28,7 @@ li {
 input {
   margin-top: 5px;
   margin-bottom: 5px;
-  border: 1px solid rgb(156,149,79);
+  border: 1px solid rgb(96,70,95);
   background-color: rgb(91,93,114);
   border-radius: 5%;
   color: rgb(219,219,219);
@@ -36,7 +36,7 @@ input {
   font-size: 75vb;
 }
 button {
-  border: 1px solid rgb(156,149,79);
+  border: 1px solid rgb(96,70,95);
   background-color: rgb(91,93,114);
   border-radius: 5%;
   color: rgb(219,219,219);
@@ -279,7 +279,7 @@ button {
   display: flex;
   flex-direction: column;
   padding: 20px;
-  align-items: left;
+  align-items: center;
   
   border: 1px solid rgb(91,93,114);
 }

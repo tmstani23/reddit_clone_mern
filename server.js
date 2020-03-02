@@ -13,15 +13,18 @@ const users = require("./routes/api/endpoints.js");
 const path = require('path');
 
 //Initialize mongoose connection with cloud db server
-// Connect to MongoDB
-mongoose
-  .connect(
-    testDB,  
-    { useNewUrlParser: true,
-      useUnifiedTopology: true }
-  )
-  .then(() => console.log("MongoDB successfully connected"))
-  .catch(err => console.log(err));
+//Connect to MongoDB
+
+mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true }, function(err) {
+  
+  if(err) {
+    console.log(err);
+    
+  }
+  //Log if connection was established or not
+  console.log(mongoose.connection.readyState, "Mongo DB connection established");
+});
+
 
 //Clear database of all connections and reset
 //clearDatabase(testDB)
@@ -58,9 +61,6 @@ app.use(express.static(path.join(__dirname, '../client')));
 
 //Routes
 app.use("/", users);
-
-//root route
-//app.get('/', (req, res) => res.send('backend server working at root!'));
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
 
