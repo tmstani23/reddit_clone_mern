@@ -15,18 +15,15 @@ const path = require('path');
 //Initialize mongoose connection with cloud db server
 //Connect to MongoDB
 
-console.log(process.env.DATABASE_URL)
-
-mongoose
-  .connect(
-    process.env.DATABASE_URL,  
-    { 
-      useUnifiedTopology: true,
-      useCreateIndex: true, 
-    }
-  )
-  .then(() => console.log("MongoDB successfully connected"))
-  .catch(err => console.log(err));
+// mongoose.connect(process.env.DATABASE_URL || testDB, { useNewUrlParser: true }, function(err) {
+  
+//   if(err) {
+//     console.log(err);
+    
+//   }
+//   //Log if connection was established or not
+//   console.log(mongoose.connection.readyState, "Mongo DB connection established");
+// });
 
 
 //Clear database of all connections and reset
