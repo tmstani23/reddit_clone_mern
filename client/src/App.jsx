@@ -454,7 +454,7 @@ class CommentListComponent extends Component {
         <div className="single-comment-div" key={index}>
           <div className="comment-count-div">
             <button onClick={() => this.addCount(item._id, 1, this.props.userId)}>Upvote</button>
-            <h3>Count: {item.count}</h3>
+            <h3>{item.count}</h3>
             <button onClick={() => this.addCount(item._id, -1, this.props.userId)}>Downvote</button>
           </div>
           <div className="comment-body-div">
@@ -588,7 +588,7 @@ class DisplayPostsComponent extends Component {
         <div className="single-post-div" key={index}>
           <div className="count-div">
             <button onClick={() => this.addCount(item._id, 1, this.props.currentUserId)}>Upvote</button>
-            <h3>Count: {item.count}</h3>
+            <h3>{item.count}</h3>
             <button onClick={() => this.addCount(item._id, -1, this.props.currentUserId)}>Downvote</button>
           </div>
           <div className="single-list-div">
@@ -1047,8 +1047,11 @@ class DeletePostComp extends Component {
       // display register form or else success message and login form if registered
       <div>
         <form className="post-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
-            <h3>Do you want to delete this post?</h3>
-            <input className ="submit-input" type="submit" name="submitButton" value="Delete"/>
+            <div>
+              <h3>Do you want to delete this post?</h3>
+              <input className ="submit-input" type="submit" name="submitButton" value="Delete"/>
+            </div>
+            
         </form>
         <button onClick = {() => this.props.closeSinglePost(null)}>Close Window</button>
         {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
@@ -1217,7 +1220,7 @@ class Loading extends React.Component {
 const sanitizeBodyHtml = (html) => {
   
   let htmlifiedValue = sanitizeHtml(html, {
-    allowedTags: [ 'h1', 'h2', 'h3','b','ul','ol','li','u', 'i', 'em', 'strong', 'a' ],
+    allowedTags: [ 'br','h1', 'h2', 'h3','b','ul','ol','li','u', 'i', 'em', 'strong', 'a' ],
     allowedAttributes: {
       'a': [ 'href' ]
     },
