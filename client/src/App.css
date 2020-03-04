@@ -28,17 +28,17 @@ li {
 input {
   margin-top: 5px;
   margin-bottom: 5px;
-  border: 1px solid rgb(96,70,95);
+  border: 1px solid rgb(156,149,79);
   background-color: rgb(91,93,114);
-  border-radius: 5%;
+  border-radius: 5px;
   color: rgb(219,219,219);
-  max-width: 120px;
+  max-width: 140px;
   font-size: 75vb;
 }
 button {
-  border: 1px solid rgb(96,70,95);
+  border: 1px solid rgb(156,149,79);
   background-color: rgb(91,93,114);
-  border-radius: 5%;
+  border-radius: 5px;
   color: rgb(219,219,219);
   max-width: 150px;
   margin: 5px;
@@ -69,18 +69,17 @@ button {
   width: 95%;
   overflow: auto;
   margin-left: 10px;
-  
 }
 
-.delete-comment-button-div {
-  display: flex;
-  flex-direction: column;
-  align-items: right;
-  
+.comment-count-div > button {
+  width: 90px;
+}
+.comment-count-div > h3 {
+  text-align: center;
 }
 .delete-comment-button-div > button {
-  height: 20px;
   width: 150px;
+  margin-left: 100px;
 }
 .delete-comment-div {
   position: fixed;
@@ -121,17 +120,19 @@ button {
   justify-content: left;
   align-items: center;
   height: 100px;
-  padding: 10px;
   text-align: left;
+  padding: 10px;
 }
 .single-post-div > .count-div {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  max-height: 70%;
-  margin:10px;
+  padding: 0px;
   
+}
+.single-post-div > .count-div > button {
+  width: 90px;
 }
 
 .single-list-div {
@@ -196,7 +197,7 @@ button {
   grid-row-end: 3;
   display: flex;
   width: 60%;
-  height: 100%;
+  overflow: auto;
   flex-direction: column;
   margin: 0 auto;
   align-items: top;
@@ -217,16 +218,12 @@ button {
 }
 
 .login-reg-div > button {
-  width: 60%;
+  width: 40%;
   align-self: center;
   margin: 10px;
   border: 1px solid rgb(156,149,79);
-  border-radius: 2%;
+  border-radius: 5px;
   background-color: rgb(91,93,114);
-}
-.login-reg-div > button:hover {
-  border: 1px solid rgb(219,219,219);
-  border-radius: 2%;
 }
 .login-reg-div > div > button {
   width: 40%;
@@ -280,8 +277,14 @@ button {
   flex-direction: column;
   padding: 20px;
   align-items: left;
-  
-  border: 1px solid rgb(91,93,114);
+}
+.post-form > button {
+  margin-left: 0px;
+}
+.post-form > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .post-form > form {
   display: flex;
@@ -291,6 +294,9 @@ button {
   text-align: left;
   max-width: 200px;
   
+}
+.deletePosts-div {
+  border: 1px solid rgb(91,93,114);
 }
 .post-form > form > textarea {
   min-height: 200px;
@@ -305,11 +311,6 @@ button {
   border: 1px solid rgb(219,219,219);
   border-radius: 5px;
 }
-.register-div {
-  max-height: 300px;
-  
-}
-
 .register-form {
   display: flex;
   flex-direction: column;
@@ -317,15 +318,6 @@ button {
   align-items: center;
   padding: 10px;
 }
-.dynamic-comps {
-  grid-column-start: 1;
-  grid-column-end: 2;
-  grid-row-start: 1;
-  grid-row-end: 2;
-  min-width: 600px;
-  
-}
-
 
 .container {
   text-align: center;
@@ -333,15 +325,11 @@ button {
   grid-template-columns: 2fr 1fr;
   grid-template-rows: 200px 1fr 1fr;
   margin: 0 auto;
-  /* min-height: 800px; */
   max-width: 1400px;
   margin-bottom: 20px;
-  
-  
 }
 
 .container > div {
-  /* border: 1px solid black; */
   overflow-wrap: break-word;
 }
 
