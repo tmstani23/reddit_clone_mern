@@ -1218,7 +1218,7 @@ class Loading extends React.Component {
 
 //Sanitize the html input to allow only certain tags.  Content in between tags is left as is
 const sanitizeBodyHtml = (html) => {
-  
+  console.log(html);
   let htmlifiedValue = sanitizeHtml(html, {
     allowedTags: [ 'br','h1', 'h2', 'h3','b','ul','ol','li','u', 'i', 'em', 'strong', 'a' ],
     allowedAttributes: {
