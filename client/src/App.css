@@ -23,7 +23,7 @@ h3 {
 }
 li {
   color: rgb(219,219,219);
-  /* margin: 10px; */
+  margin: 10px;
 }
 
 input {
@@ -119,7 +119,7 @@ button {
   flex-direction: row;
   justify-content: left;
   align-items: center;
-  height: 100px;
+  min-height: 100px;
   text-align: left;
   padding: 10px;
 }
@@ -329,4 +329,72 @@ button {
 
 .render-error {
   color: red;
+}
+
+/* Styles for mobile and tablet */
+@media screen and (max-width: 760px) {
+  .container {
+    text-align: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 100% 1fr;
+    max-width: 90%;
+    margin: 0 auto;
+  }
+
+  .login-reg-div {
+  
+    grid-column-start: 0;
+    grid-column-end: 1;
+    grid-row-start: 1;
+    grid-row-end: 1;
+    
+  
+  }
+  .single-post-div {
+    flex-direction: column-reverse;
+
+  }
+  
+  .post-timestamp-div {
+    display: inline;
+    /* flex-direction: column; */
+    
+  }
+
+  .post-body-div {
+    min-height: 200px;
+    min-width: 100px;
+    max-width: 468px;
+    margin: 0px;
+  }
+  .inputHTML {
+    max-width: 100%;
+  }
+  .single-comment-div {
+    flex-direction: column-reverse;
+    margin: 10px; 
+  }
+  .comment-timestamp-div {
+    display: inline;
+  }
+
+  .comment-body-div {
+    display: flex;
+    margin-left: 0px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .comment-body-div > ul {
+    margin-left: 0px;
+    display: flex;
+    flex-direction: column;
+  }
+  .delete-comment-button-div > button {
+    margin-left: 0px;
+    
+  }
+
 }

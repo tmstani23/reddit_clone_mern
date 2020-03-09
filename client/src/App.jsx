@@ -1207,9 +1207,9 @@ class Loading extends React.Component {
   }
   render() {
       return (
-      <p>
+      <h3 className="loading-text">
           {this.state.text}
-      </p>
+      </h3>
       )
   }
 }
@@ -1230,7 +1230,7 @@ const sanitizeBodyHtml = (html) => {
 
 }
 
-//richTextEditor toolbar config
+//richTextEditor button configuration options
 const toolbarConfig = {
   // Optionally specify the groups to display (displayed in the order listed).
   display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'BLOCK_TYPE_DROPDOWN'],
