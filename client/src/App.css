@@ -37,7 +37,7 @@ input {
 }
 button {
   border: 1px solid rgb(156,149,79);
-  background-color: rgb(91,93,114);
+  background-color: rgb(96,70,95);
   border-radius: 5px;
   color: rgb(219,219,219);
   max-width: 150px;
@@ -66,13 +66,22 @@ button {
   align-items: center;
   padding: 10px;
   min-height: 200px;
-  width: 95%;
+  width: 90%;
   overflow: auto;
   margin-left: 10px;
+  margin: 0 auto;
+}
+
+.comment-count-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .comment-count-div > button {
   width: 90px;
+  
 }
 .comment-count-div > h3 {
   text-align: center;
@@ -90,9 +99,11 @@ button {
   text-align: center;
   margin-top: -100px; 
   margin-left: -250px; 
-  background: black;
+  background: rgb(91,93,114);
   color: lightgray;
   overflow: auto;
+  border: 1px solid rgb(219,219,219);
+  border-radius: 3px;
 }
 .comments-skip-div {
   text-align: center;
@@ -204,6 +215,7 @@ button {
   padding: 20px;
   border: 1px solid rgb(91,93,114);
   border-radius: 5px;
+  margin-bottom: 10px;
 }
 .login-reg-div:hover{
   border: 1px solid rgb(219,219,219);
@@ -272,7 +284,7 @@ button {
   flex-direction: row;
   font-size: 8px;
 }
-.post-form{
+/* .post-form{
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -294,7 +306,7 @@ button {
   text-align: left;
   
   
-}
+} */
 .posts-comp {
   border: 1px solid rgb(91,93,114);
   border-radius: 5px;
@@ -331,6 +343,10 @@ button {
   color: red;
 }
 
+.submit-input {
+  background: rgb(96,70,95);
+}
+
 /* Styles for mobile and tablet */
 @media screen and (max-width: 760px) {
   .container {
@@ -365,36 +381,65 @@ button {
   .post-body-div {
     min-height: 200px;
     min-width: 100px;
-    max-width: 468px;
+    max-width: 350px;
     margin: 0px;
+    overflow: auto;
   }
   .inputHTML {
     max-width: 100%;
+    
+    padding: 10px;
+    
   }
   .single-comment-div {
     flex-direction: column-reverse;
-    margin: 10px; 
+    width: 90%;
+    margin: 10px;
   }
   .comment-timestamp-div {
     display: inline;
+    
   }
 
   .comment-body-div {
     display: flex;
-    margin-left: 0px;
     flex-direction: column;
+    max-width: 300px;
+    
+    text-align: left;
+    /* margin-right: 20px; */
     align-items: center;
-    justify-content: center;
-    text-align: center;
   }
   .comment-body-div > ul {
     margin-left: 0px;
+    width: 280px;
+    max-height: 600px;
+    overflow: auto;
     display: flex;
     flex-direction: column;
+    padding: 20px;
+  }
+  .commentBox {
+    height: 150px;
   }
   .delete-comment-button-div > button {
     margin-left: 0px;
     
+  }
+  .delete-comment-div {
+    position: fixed;
+    width: 500px;
+    height: 250px;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    margin-top: -100px; 
+    margin-left: -250px; 
+    background: rgb(91,93,114);
+    color: lightgray;
+    overflow: auto;
+    border: 1px solid rgb(219,219,219);
+    border-radius: 3px;
   }
 
 }
