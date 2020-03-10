@@ -284,7 +284,7 @@ button {
   flex-direction: row;
   font-size: 8px;
 }
-/* .post-form{
+.post-form{
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -306,7 +306,7 @@ button {
   text-align: left;
   
   
-} */
+}
 .posts-comp {
   border: 1px solid rgb(91,93,114);
   border-radius: 5px;
