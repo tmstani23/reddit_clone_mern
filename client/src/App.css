@@ -6,7 +6,8 @@ gold: (156,149,79)
 light grey: (219,219,219)
 */
 p {
-  color: rgb(219,219,219)
+  color: rgb(219,219,219);
+  font-size: 10px;
 }
 body {
   background-color: rgb(45,45,45);
@@ -33,16 +34,15 @@ input {
   border-radius: 5px;
   color: rgb(219,219,219);
   max-width: 140px;
-  font-size: 75vb;
 }
 button {
   border: 1px solid rgb(156,149,79);
-  background-color: rgb(91,93,114);
+  background-color: rgb(96,70,95);
   border-radius: 5px;
   color: rgb(219,219,219);
   max-width: 150px;
   margin: 5px;
-  font-size: 75vb;
+  
 }
 
 
@@ -63,16 +63,25 @@ button {
   flex-direction: row;
   justify-content: left;
   text-align: left;
-  align-items: top;
+  align-items: center;
   padding: 10px;
-  max-height: 300px;
-  width: 95%;
+  min-height: 200px;
+  width: 90%;
   overflow: auto;
   margin-left: 10px;
+  margin: 0 auto;
+}
+
+.comment-count-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .comment-count-div > button {
   width: 90px;
+  
 }
 .comment-count-div > h3 {
   text-align: center;
@@ -90,9 +99,11 @@ button {
   text-align: center;
   margin-top: -100px; 
   margin-left: -250px; 
-  background: black;
+  background: rgb(91,93,114);
   color: lightgray;
   overflow: auto;
+  border: 1px solid rgb(219,219,219);
+  border-radius: 3px;
 }
 .comments-skip-div {
   text-align: center;
@@ -103,7 +114,7 @@ button {
   text-align: left;
   align-items: center;
   margin: 20px;
-  font-size: 10px;
+  font-size: 8px;
 }
 #comment-list-h2 {
   text-align:left;
@@ -119,7 +130,7 @@ button {
   flex-direction: row;
   justify-content: left;
   align-items: center;
-  height: 100px;
+  min-height: 100px;
   text-align: left;
   padding: 10px;
 }
@@ -161,7 +172,7 @@ button {
   margin: 10px;
   text-align: left;
   padding: 10px;
-  max-width: 75%;
+  width: 75%;
 }
 .comment-form-div:hover {
   border: 1px solid rgb(219,219,219);
@@ -171,11 +182,11 @@ button {
   display: flex;
   flex-direction: column;
   justify-content: left;
+  
 }
 
 .commentBox {
-  height: 200px;
-  width: 600px;
+  height: 300px;
   float: left;
   overflow: auto;
   border: 1px solid black;
@@ -204,6 +215,7 @@ button {
   padding: 20px;
   border: 1px solid rgb(91,93,114);
   border-radius: 5px;
+  margin-bottom: 10px;
 }
 .login-reg-div:hover{
   border: 1px solid rgb(219,219,219);
@@ -272,7 +284,7 @@ button {
   flex-direction: row;
   font-size: 8px;
 }
-.post-form{
+/* .post-form{
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -292,16 +304,9 @@ button {
   justify-content: left;
   align-items: left;
   text-align: left;
-  max-width: 200px;
   
-}
-.deletePosts-div {
-  border: 1px solid rgb(91,93,114);
-}
-.post-form > form > textarea {
-  min-height: 200px;
-  min-width: 500px;
-}
+  
+} */
 .posts-comp {
   border: 1px solid rgb(91,93,114);
   border-radius: 5px;
@@ -331,8 +336,110 @@ button {
 
 .container > div {
   overflow-wrap: break-word;
+  
 }
 
 .render-error {
   color: red;
+}
+
+.submit-input {
+  background: rgb(96,70,95);
+}
+
+/* Styles for mobile and tablet */
+@media screen and (max-width: 760px) {
+  .container {
+    text-align: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 100% 1fr;
+    max-width: 90%;
+    margin: 0 auto;
+  }
+
+  .login-reg-div {
+  
+    grid-column-start: 0;
+    grid-column-end: 1;
+    grid-row-start: 1;
+    grid-row-end: 1;
+    
+  
+  }
+  .single-post-div {
+    flex-direction: column-reverse;
+
+  }
+  
+  .post-timestamp-div {
+    display: inline;
+    /* flex-direction: column; */
+    
+  }
+
+  .post-body-div {
+    min-height: 200px;
+    min-width: 100px;
+    max-width: 350px;
+    margin: 0px;
+    overflow: auto;
+  }
+  .inputHTML {
+    max-width: 100%;
+    
+    padding: 10px;
+    
+  }
+  .single-comment-div {
+    flex-direction: column-reverse;
+    width: 90%;
+    margin: 10px;
+  }
+  .comment-timestamp-div {
+    display: inline;
+    
+  }
+
+  .comment-body-div {
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+    
+    text-align: left;
+    /* margin-right: 20px; */
+    align-items: center;
+  }
+  .comment-body-div > ul {
+    margin-left: 0px;
+    width: 280px;
+    max-height: 600px;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+  .commentBox {
+    height: 150px;
+  }
+  .delete-comment-button-div > button {
+    margin-left: 0px;
+    
+  }
+  .delete-comment-div {
+    position: fixed;
+    width: 500px;
+    height: 250px;
+    top: 50%;
+    left: 50%;
+    text-align: center;
+    margin-top: -100px; 
+    margin-left: -250px; 
+    background: rgb(91,93,114);
+    color: lightgray;
+    overflow: auto;
+    border: 1px solid rgb(219,219,219);
+    border-radius: 3px;
+  }
+
 }

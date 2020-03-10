@@ -454,7 +454,7 @@ class CommentListComponent extends Component {
         <div className="single-comment-div" key={index}>
           <div className="comment-count-div">
             <button onClick={() => this.addCount(item._id, 1, this.props.userId)}>Upvote</button>
-            <h3>{item.count}</h3>
+            <p>{item.count}</p>
             <button onClick={() => this.addCount(item._id, -1, this.props.userId)}>Downvote</button>
           </div>
           <div className="comment-body-div">
@@ -500,7 +500,7 @@ class CommentListComponent extends Component {
                 <button onClick = {() => this.props.calculateSkip (10)}>Next Results</button>
               </div>  
             ])
-          : null
+          : <p>No comments created yet.</p>
       }
       {this.state.deleteComment === true 
         ? <DeleteCommentComp updateComments = {this.props.updateComments} comment = {this.state.comment} renderDeleteComment = {this.renderDeleteComment} currentUserId = {this.props.userId} token = {this.props.token} />
@@ -588,7 +588,7 @@ class DisplayPostsComponent extends Component {
         <div className="single-post-div" key={index}>
           <div className="count-div">
             <button onClick={() => this.addCount(item._id, 1, this.props.currentUserId)}>Upvote</button>
-            <h3>{item.count}</h3>
+            <p>{item.count}</p>
             <button onClick={() => this.addCount(item._id, -1, this.props.currentUserId)}>Downvote</button>
           </div>
           <div className="single-list-div">
@@ -1046,14 +1046,15 @@ class DeletePostComp extends Component {
     return (
       // display register form or else success message and login form if registered
       <div>
-        <form className="post-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
+        <form className="delete-comment-div" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
             <div>
-              <h3>Do you want to delete this post?</h3>
+              <h1>Do you want to delete this post?</h1>
               <input className ="submit-input" type="submit" name="submitButton" value="Delete"/>
+              <button className ="submit-input" onClick = {() => this.props.closeSinglePost(null)}>Close Window</button>
             </div>
             
         </form>
-        <button onClick = {() => this.props.closeSinglePost(null)}>Close Window</button>
+       
         {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
           ? <div>
               <h1>Post Deleted</h1>
@@ -1139,10 +1140,10 @@ class DeleteCommentComp extends Component {
       // display register form or else success message and login form if registered
       <div className="delete-comment-div">
         <form className="delete-comment-form" onSubmit={this.handleSubmit} onChange={this.handleChange} method="post">
-            <h3>Do you want to delete this comment?</h3>
+            <h1>Do you want to delete this comment?</h1>
             <input className ="submit-input" type="submit" name="submitButton" value="Delete"/>
         </form>
-        <button onClick = {() => this.props.renderDeleteComment(null, false)}>Close Window</button>
+        <button className ="submit-input" onClick = {() => this.props.renderDeleteComment(null, false)}>Close Window</button>
         {this.state.dataReturned===true && this.state.apiPostResponse.errors === undefined
           ? <div>
               <h1>Post Deleted</h1>
@@ -1207,9 +1208,9 @@ class Loading extends React.Component {
   }
   render() {
       return (
-      <p>
+      <h3 className="loading-text">
           {this.state.text}
-      </p>
+      </h3>
       )
   }
 }
@@ -1218,7 +1219,7 @@ class Loading extends React.Component {
 
 //Sanitize the html input to allow only certain tags.  Content in between tags is left as is
 const sanitizeBodyHtml = (html) => {
-  
+  console.log(html);
   let htmlifiedValue = sanitizeHtml(html, {
     allowedTags: [ 'br','h1', 'h2', 'h3','b','ul','ol','li','u', 'i', 'em', 'strong', 'a' ],
     allowedAttributes: {
@@ -1230,7 +1231,7 @@ const sanitizeBodyHtml = (html) => {
 
 }
 
-//richTextEditor toolbar config
+//richTextEditor button configuration options
 const toolbarConfig = {
   // Optionally specify the groups to display (displayed in the order listed).
   display: ['INLINE_STYLE_BUTTONS', 'BLOCK_TYPE_BUTTONS', 'BLOCK_TYPE_DROPDOWN'],
