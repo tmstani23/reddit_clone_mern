@@ -4,26 +4,37 @@ dark grey: (91,93,114)
 almost black (45,45,45)
 gold: (156,149,79)
 light grey: (219,219,219)
+
+fonts:
+font-family: 'Roboto Condensed', sans-serif;
+font-family: 'Montserrat', sans-serif;
 */
+
 p {
   color: rgb(219,219,219);
   font-size: 10px;
+  font-family: 'Montserrat', sans-serif;
 }
 body {
   background-color: rgb(45,45,45);
+  font-family: 'Montserrat', sans-serif;
 }
 h1 {
   color: rgb(219,219,219);
+  font-family: 'Roboto Condensed', sans-serif;
 }
 h2 {
-  color: rgb(156,149,79)
+  color: rgb(156,149,79);
+  font-family: 'Roboto Condensed', sans-serif;
 }
 h3 {
   color: rgb(96,70,95);
+  font-family: 'Roboto Condensed', sans-serif;
 }
 li {
   color: rgb(219,219,219);
   margin: 10px;
+  font-family: 'Montserrat', sans-serif;
 }
 
 input {
@@ -34,6 +45,7 @@ input {
   border-radius: 5px;
   color: rgb(219,219,219);
   max-width: 140px;
+  font-family: 'Montserrat', sans-serif;
 }
 button {
   border: 1px solid rgb(156,149,79);
@@ -42,6 +54,7 @@ button {
   color: rgb(219,219,219);
   max-width: 150px;
   margin: 5px;
+  font-family: 'Montserrat', sans-serif;
   
 }
 
@@ -63,7 +76,7 @@ button {
   flex-direction: row;
   justify-content: left;
   text-align: left;
-  align-items: center;
+  align-items: flex-start;
   padding: 10px;
   min-height: 200px;
   width: 90%;
@@ -131,6 +144,7 @@ button {
   justify-content: left;
   align-items: center;
   min-height: 100px;
+  height: 100px;
   text-align: left;
   padding: 10px;
 }
@@ -392,7 +406,8 @@ button {
     
   }
   .single-comment-div {
-    flex-direction: column-reverse;
+    flex-direction: column;
+    justify-content: flex-end;
     width: 90%;
     margin: 10px;
   }

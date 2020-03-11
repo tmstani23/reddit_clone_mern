@@ -88,7 +88,7 @@ class App extends Component {
       post: post
     })
 
-    console.log(this.state.post)
+    //console.log(this.state.post)
 
   }
   createNewPost = async () => {
@@ -325,16 +325,14 @@ class CreateCommentComponent extends Component {
     // const target = event.target;
     // const value = target.value;
     // const name = target.name;
-    
     //Update the input description value to html
     value.toString('html')
+    //console.log(value, 'value in updateState function');
     
     this.setState({
       // [name]: value
       description: value,
     });
-    
-    
   }
   
   render () {
@@ -463,7 +461,6 @@ class CommentListComponent extends Component {
               <div className="comment-timestamp-div">
                 <li>Created on: {item.date}</li>
                 <li>Created by: {item.name}</li>
-                <li>Comment Id: {item._id}</li>
               </div>
               
             </ul>
@@ -598,7 +595,6 @@ class DisplayPostsComponent extends Component {
               <div className="post-timestamp-div"> 
                 <li>Created on: {item.date}</li>
                 <li>Created by: {item.name}</li>
-                <li>Post Id: {item._id}</li>
               </div>
             </ul>
           </div>
@@ -952,7 +948,6 @@ class CreatePostComponent extends Component {
               <ul>
               <li><strong>Post Title:</strong>  {this.state.apiPostResponse.title}</li>
                 <li><strong>Post Description: {this.state.apiPostResponse.newPost.description}</strong></li>
-                <li><strong>Post Id:</strong>  {this.state.apiPostResponse.postId}</li>
                 <li><strong>Post Date:</strong>  {this.state.apiPostResponse.postDate}</li>
                 <li><strong>Created By:</strong>  {this.state.apiPostResponse.name}</li>
               </ul> 
@@ -1219,9 +1214,9 @@ class Loading extends React.Component {
 
 //Sanitize the html input to allow only certain tags.  Content in between tags is left as is
 const sanitizeBodyHtml = (html) => {
-  console.log(html);
+  //console.log(html);
   let htmlifiedValue = sanitizeHtml(html, {
-    allowedTags: [ 'br','h1', 'h2', 'h3','b','ul','ol','li','u', 'i', 'em', 'strong', 'a' ],
+    allowedTags: [ '\n','&nbsp','br','h1', 'h2', 'h3','b','ul','ol','li','u', 'i', 'em', 'strong', 'a' ],
     allowedAttributes: {
       'a': [ 'href' ]
     },
