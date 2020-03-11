@@ -24,6 +24,8 @@ Live Version: reddit-clone-mern.herokuapp.com
 6. I can see a display of the most recent 10 comments and respond to them.
 
 ### Screenshots
-![Alt text](https://raw.githubusercontent.com/tmstani23/exercise-now/master/ss1.jpg)
+![Alt text](https://raw.githubusercontent.com/tmstani23/reddit_clone_mern/master/imgs/comment_view.png)
+
+![Alt text](https://raw.githubusercontent.com/tmstani23/reddit_clone_mern/master/imgs/main_view.png)
 
 
