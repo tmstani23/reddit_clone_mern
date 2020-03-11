@@ -12,7 +12,7 @@ After installation in the root folder type npm start in terminal.  The backend s
 cd client to get into the client folder.
 Type npm start in the client folder and a new browser window should open with the app running.
 
-Live Version: reddit-clone-mern.herokuapp.com
+Live Version: http://not-reddit-slavi.herokuapp.com/
 
 ### User Stories
 
