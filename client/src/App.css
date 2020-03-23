@@ -144,7 +144,6 @@ button {
   justify-content: left;
   align-items: center;
   min-height: 100px;
-  height: 100px;
   text-align: left;
   padding: 10px;
 }
@@ -279,6 +278,8 @@ button {
   text-align: left;
   display:flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .post-body-div {
