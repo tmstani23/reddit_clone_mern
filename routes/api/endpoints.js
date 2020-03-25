@@ -85,9 +85,10 @@ router.post("/api/users/login", (req, res) => {
     //Extract email and pass from the login form fields
     const email = req.body.email;
     const password = req.body.password;
+    const userIp = req.ip;
     let isSuperUser = false;
-
-    console.log(superUserId, "superuserid in login endpoint")
+    console.log(userIp, "logged in users ip");
+    //console.log(superUserId, "superuserid in login endpoint")
 
     //Search for user in database by email
     User.findOne({email})
@@ -129,6 +130,8 @@ router.post("/api/users/login", (req, res) => {
                         
                         //update user object with new token
                         user.token = token;
+                        //add current user ip to user object in db collection
+                        user.ip = userIp;
                         //save user
                         user.save((err) => {
                             err ? console.log(err) : console.log("Success!  Token added to user", JSON.stringify(user));
@@ -140,6 +143,7 @@ router.post("/api/users/login", (req, res) => {
                                 token: token,
                                 userName: user.name,
                                 isSuperUser: isSuperUser,
+                                userIp: userIp
                             })
                         
                     }
@@ -162,7 +166,7 @@ router.post("/api/users/add_count", (req, res) => {
     const inputUid = req.body.uid;
     
 
-    console.log(inputCount, postId, inputUid, "count,postid,inputUid");
+    //console.log(inputCount, postId, inputUid, "count,postid,inputUid");
 
     Post.findById(postId, (err, post) => {
         let userCountArr = post.usersWhoCounted;
@@ -181,7 +185,7 @@ router.post("/api/users/add_count", (req, res) => {
         }
         //Make sure post count won't go negative
         if (post.count == 0 && inputCount < 0) {
-            console.log("trying to reduce count below zero")
+            //console.log("trying to reduce count below zero")
             return res.send({errors: {error: "trying to reduce count below zero"}})
         };
         
@@ -189,17 +193,17 @@ router.post("/api/users/add_count", (req, res) => {
         if(userHasCountedIndex !== -1) {
             let userHasCountedObj = userCountArr[userHasCountedIndex];
             //update flag to show user has already modified count
-            console.log("userId matches in usersWhoCountedArray", post.usersWhoCounted[userHasCountedIndex])
+            //console.log("userId matches in usersWhoCountedArray", post.usersWhoCounted[userHasCountedIndex])
             //console.log(userHasCountedObj.hasUpVoted, inputCount)
             //if user has already downvoted
             if(userHasCountedObj.userCount <= -1 && inputCount < 0)
             {
-                console.log("trying to downvote more than once");
+                //console.log("trying to downvote more than once");
                 return res.status(500).send({errors: {error: "trying to downvote more than once"}})
             }   
             //Bypass if user has already upvoted
             else if(userHasCountedObj.userCount >= 1 && inputCount > 0) {
-                console.log("user already upvoted");
+                //console.log("user already upvoted");
                 return res.status(500).send({errors: {error: "trying to upvote more than once"}})
                 
             }
@@ -239,7 +243,7 @@ router.post("/api/users/add_count", (req, res) => {
                 return res.send({errors: {error: err.message}})
             }
             else {
-                console.log(post.usersWhoCounted, "userswhocountedArr");
+                //console.log(post.usersWhoCounted, "userswhocountedArr");
                 return res.send({
                     count: post.count,
                     postId: post._id
@@ -258,7 +262,7 @@ router.post("/api/users/comment_count", (req, res) => {
     const inputUid = req.body.userId;
     
 
-    console.log(inputCount, commentId, inputUid, "count,commentid,inputUid");
+    //console.log(inputCount, commentId, inputUid, "count,commentid,inputUid");
 
     Comment.findById(commentId, (err, comment) => {
         let userCountArr = comment.usersWhoCounted;
@@ -277,7 +281,7 @@ router.post("/api/users/comment_count", (req, res) => {
         }
         //Make sure post count won't go negative
         if (comment.count == 0 && inputCount < 0) {
-            console.log("trying to reduce count below zero")
+            //console.log("trying to reduce count below zero")
             return res.send({errors: {error: "trying to reduce count below zero"}})
         };
         
@@ -285,17 +289,17 @@ router.post("/api/users/comment_count", (req, res) => {
         if(userHasCountedIndex !== -1) {
             let userHasCountedObj = userCountArr[userHasCountedIndex];
             //update flag to show user has already modified count
-            console.log("userId matches in usersWhoCountedArray", comment.usersWhoCounted[userHasCountedIndex])
+            //console.log("userId matches in usersWhoCountedArray", comment.usersWhoCounted[userHasCountedIndex])
             //console.log(userHasCountedObj.hasUpVoted, inputCount)
             //if user has already downvoted
             if(userHasCountedObj.userCount <= -1 && inputCount < 0)
             {
-                console.log("trying to downvote more than once");
+                //console.log("trying to downvote more than once");
                 return res.status(500).send({errors: {error: "trying to downvote more than once"}})
             }   
             //Bypass if user has already upvoted
             else if(userHasCountedObj.userCount >= 1 && inputCount > 0) {
-                console.log("user already upvoted");
+                //console.log("user already upvoted");
                 return res.status(500).send({errors: {error: "trying to upvote more than once"}})
                 
             }
@@ -335,7 +339,7 @@ router.post("/api/users/comment_count", (req, res) => {
                 return res.send({errors: {error: err.message}})
             }
             else {
-                console.log(comment.usersWhoCounted, "userswhocountedArr");
+                //console.log(comment.usersWhoCounted, "userswhocountedArr");
                 return res.send({
                     count: comment.count,
                     commentId: comment._id
@@ -362,7 +366,7 @@ router.post("/api/users/create_comment", (req, res) => {
             console.log(err);
             return res.send({errors: {error: err.message}})
         }
-        console.log(JSON.stringify(user), "user obj in create_comment endpoint");
+        //console.log(JSON.stringify(user), "user obj in create_comment endpoint");
         //compare user token against inputToken
         //if not a match
         if (user.token != inputToken) {
@@ -536,7 +540,7 @@ router.post("/api/users/delete_post", (req, res) => {
     const postId = req.body.postId;
     const superUserId = process.env.REACT_APP_SUPER_USER_ID;
 
-    console.log(superUserId, "superuser id");
+    //console.log(superUserId, "superuser id");
 
     //Search User documents to see if input token matches current users token
         //return an error if user or token doesn't match

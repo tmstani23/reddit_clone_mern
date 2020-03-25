@@ -744,7 +744,7 @@ class UserLoginComponent extends Component {
     })
       .then(res => res.json())
       .then(res => {
-        //console.log(res, "afterfetch state")
+        //console.logconsole.log(res, "afterfetch state");
         
         // update state with the returned data and set data returned flag to true
         this.setState({apiLoginResponse: res, dataReturned: !this.state.dataReturned})

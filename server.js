@@ -37,6 +37,9 @@ value = moment(this[key]).format('MMMM Do YYYY, h:mm:ss a');
   return value;
 });
 
+//Allow all proxy types
+app.set('trust proxy', true);
+
 // Bodyparser middleware
 app.use(
   bodyParser.urlencoded({

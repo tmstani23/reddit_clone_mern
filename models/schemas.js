@@ -93,6 +93,9 @@ const UserSchema = new Schema ({
     token: {
         type: String
     },
+    ip: {
+        type: String
+    },
     posts: [PostSchema]
 })
 
