@@ -726,11 +726,8 @@ class UserLoginComponent extends Component {
   
   handleSubmit = (event) => {
     //If handleSubmit was called by user clicking submit button in form
-    
       //Prevent default action
     event.preventDefault();
-      
-  
     // initialize data returned state to false:
     this.setState({dataReturned: false})
     //console.log(JSON.stringify(this.state), "beforefetch state")
@@ -990,9 +987,33 @@ class DeletePostComp extends Component {
     }
     
   }
+
+  // Add listeners immediately after the component is mounted.
+  componentDidMount() {
+    window.addEventListener('keyup', this.handleKeyUp, false);
+  }
+
+  // Remove listeners immediately before a component is unmounted and destroyed.
+  componentWillUnmount() {
+    window.removeEventListener('keyup', this.handleKeyUp, false);
+  }
+
+  // Handle the escape key press event.
+  handleKeyUp = (e) => {
+    
+    const keys = {
+      27: () => {
+        e.preventDefault();
+        this.props.closeSinglePost(null)
+        window.removeEventListener('keyup', this.handleKeyUp, false);
+      },
+    };
+
+    if (keys[e.keyCode]) { keys[e.keyCode](); }
+  }
+
   //If handleSubmit was called by user clicking submit button in form
   handleSubmit = (event) => {
-    
     
       //Prevent default action
     event.preventDefault();
@@ -1024,6 +1045,8 @@ class DeletePostComp extends Component {
       .then(() => this.props.updatePosts())
       .catch(err => console.log(err))
   }
+
+   
 
   handleChange = (event) => {
     const target = event.target;
@@ -1075,6 +1098,30 @@ class DeleteCommentComp extends Component {
   state = {
     dataReturned: false,
     apiPostResponse: [],
+  }
+
+  // Add listeners immediately after the component is mounted.
+  componentDidMount() {
+    window.addEventListener('keyup', this.handleKeyUp, false);
+  }
+
+  // Remove listeners immediately before a component is unmounted and destroyed.
+  componentWillUnmount() {
+    window.removeEventListener('keyup', this.handleKeyUp, false);
+  }
+
+  // Handle the escape key press event.
+  handleKeyUp = (e) => {
+    
+    const keys = {
+      27: () => {
+        e.preventDefault();
+        this.props.renderDeleteComment(null, false);
+        window.removeEventListener('keyup', this.handleKeyUp, false);
+      },
+    };
+
+    if (keys[e.keyCode]) { keys[e.keyCode](); }
   }
 
   handleSubmit = (event) => {
