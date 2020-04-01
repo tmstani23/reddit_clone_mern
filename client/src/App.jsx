@@ -683,7 +683,7 @@ class UserRegisterComponent extends Component {
             <input id="inputName" type="text" name="name" placeholder="login name"/>
             <input id="inputEmail" type="text" name="email" placeholder="email"/>
             <input id="inputPass1" type="text" name="password" placeholder="password"/>
-            <input id="inputPass2" type="text" name="password2" placeholder="enter password again"/>
+            <input id="inputPass2" type="text" name="password2" placeholder="re-enter password"/>
             <input className ="submit-input" type="submit" name="submitButton" value="Submit"/>
         </form>
           
@@ -773,7 +773,7 @@ class UserLoginComponent extends Component {
             <h2>Login</h2>
             <input id="inputEmail" type="text" name="email" placeholder="email"/>
             <input id="inputPass1" type="text" name="password" placeholder="password"/>
-            <input id="inputPass2" type="text" name="password2" placeholder="enter password again"/>
+           
             <input className ="submit-input" type="submit" name="submitButton" value="Submit"/>
           </form>
           {this.state.apiLoginResponse.errors !== undefined

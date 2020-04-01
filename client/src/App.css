@@ -16,7 +16,7 @@ p {
   font-family: 'Montserrat', sans-serif;
 }
 body {
-  background-color: rgb(45,45,45);
+  background-color: rgb(0,0,0);
   font-family: 'Montserrat', sans-serif;
 }
 h1 {
@@ -64,11 +64,6 @@ button {
   border-radius: 5px;
   margin-bottom: 20px;
 }
-.comment-list-div:hover{
-  border: 1px solid rgb(219,219,219);
-  border-radius: 5px;
-  margin-bottom: 20px;
-}
 
 .single-comment-div {
   border-bottom: 1px solid rgb(91,93,114);
@@ -79,10 +74,12 @@ button {
   align-items: flex-start;
   padding: 10px;
   min-height: 200px;
-  width: 90%;
   overflow: auto;
   margin-left: 10px;
   margin: 0 auto;
+}
+.single-comment-div:hover {
+  border: 1px solid white;
 }
 
 .comment-count-div {
@@ -147,6 +144,10 @@ button {
   text-align: left;
   padding: 10px;
 }
+.single-post-div:hover {
+  border: 1px solid white;
+}
+
 .single-post-div > .count-div {
   display: flex;
   flex-direction: column;
@@ -290,10 +291,10 @@ button {
   border-radius: 5px;
   text-align: left;
 }
-.post-body-div:hover {
+/* .post-body-div:hover {
   border: 1px solid rgb(219,219,219);
   border-radius: 5px;
-}
+} */
 .post-body-div > ul {
   display: flex;
   flex-direction: row;
