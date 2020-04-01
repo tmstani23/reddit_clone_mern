@@ -80,6 +80,7 @@ button {
 }
 .single-comment-div:hover {
   border: 1px solid white;
+  border-radius: 5px;
 }
 
 .comment-count-div {
@@ -146,6 +147,7 @@ button {
 }
 .single-post-div:hover {
   border: 1px solid white;
+  border-radius: 5px;
 }
 
 .single-post-div > .count-div {
@@ -291,10 +293,6 @@ button {
   border-radius: 5px;
   text-align: left;
 }
-/* .post-body-div:hover {
-  border: 1px solid rgb(219,219,219);
-  border-radius: 5px;
-} */
 .post-body-div > ul {
   display: flex;
   flex-direction: row;
@@ -327,10 +325,6 @@ button {
   border: 1px solid rgb(91,93,114);
   border-radius: 5px;
   margin-bottom: 20px;
-}
-.posts-comp:hover {
-  border: 1px solid rgb(219,219,219);
-  border-radius: 5px;
 }
 .register-form {
   display: flex;
