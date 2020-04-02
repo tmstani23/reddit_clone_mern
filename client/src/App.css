@@ -282,7 +282,7 @@ button {
   display:flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .post-body-div {
@@ -363,7 +363,7 @@ button {
     text-align: center;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 100% 1fr;
+    grid-template-rows: 1fr 1fr;
     max-width: 90%;
     margin: 0 auto;
   }
