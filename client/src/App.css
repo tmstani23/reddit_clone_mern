@@ -363,7 +363,7 @@ button {
     text-align: center;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: 1fr;
     max-width: 90%;
     margin: 0 auto;
   }
@@ -372,7 +372,7 @@ button {
   
     grid-column-start: 0;
     grid-column-end: 1;
-    grid-row-start: 1;
+    grid-row-start: 0;
     grid-row-end: 1;
     
   
