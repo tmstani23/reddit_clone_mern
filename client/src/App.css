@@ -207,6 +207,10 @@ button {
   overflow: auto;
   border: 1px solid black;
 }
+/* custom class for RE comment/post input box */
+.RichTextEditor__editor___1QqIU {
+  height: 100%;
+}
 .primary-banner {
   text-align: center;
   margin: 0 auto;
