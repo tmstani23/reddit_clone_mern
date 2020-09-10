@@ -48,7 +48,11 @@ app.use(
   })
 );
 //prevent xss, sqlinjection and csrf attacks
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 
 app.use(bodyParser.json());
 //cors middleware
