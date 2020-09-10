@@ -11,6 +11,7 @@ const moment = require('moment');
 const passport = require("passport");
 const users = require("./routes/api/endpoints.js");
 const path = require('path');
+const helmet = require("helmet");
 
 //Initialize mongoose connection with cloud db server
 //Connect to MongoDB
@@ -46,6 +47,9 @@ app.use(
     extended: false
   })
 );
+//prevent xss, sqlinjection and csrf attacks
+app.use(helmet());
+
 app.use(bodyParser.json());
 //cors middleware
 app.use(cors());

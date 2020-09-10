@@ -207,7 +207,7 @@ button {
   overflow: auto;
   border: 1px solid black;
 }
-/* custom class for RE comment/post input box */
+/* target builtin root class for RE editor textbox */
 .RichTextEditor__editor___1QqIU {
   height: 100%;
 }
