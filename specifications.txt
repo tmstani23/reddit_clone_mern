@@ -26,3 +26,5 @@ front end react
         heading
         user/timestamp
 
+    heroku auto deploy test
+
