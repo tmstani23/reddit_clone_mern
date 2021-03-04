@@ -18,6 +18,7 @@ p {
 body {
   background-color: rgb(0,0,0);
   font-family: 'Montserrat', sans-serif;
+  margin: 10px;
 }
 h1 {
   color: rgb(219,219,219);
